@@ -1,0 +1,398 @@
+/**
+ * AuthScreen — Glassmorphism login card matching reference image precisely
+ * "Welcome to Vishesh" · dark glassmorphism · blurred orb background
+ */
+import { useState } from 'react';
+import { useApp } from '../context/AppContext';
+
+export default function AuthScreen() {
+  const { dispatch, navigate } = useApp();
+  const [mode, setMode] = useState('signin'); // signin | signup
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [name, setName] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+  const [showPass, setShowPass] = useState(false);
+
+  // TODO(security): In production, replace with real auth (OAuth2/JWT via BFF).
+  // Credentials must NEVER be sent in URL params.
+  // Session tokens must be stored in HttpOnly, Secure, SameSite=Lax cookies only.
+  // CSRF tokens must be implemented for all state-changing endpoints.
+  const handleAuth = async (e) => {
+    e.preventDefault();
+    setError('');
+
+    // Input validation
+    if (!email.trim() || !password.trim()) {
+      setError('All fields are required.');
+      return;
+    }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      setError('Invalid identification string.');
+      return;
+    }
+    if (password.length < 8) {
+      setError('Access cipher must be at least 8 characters.');
+      return;
+    }
+
+    setLoading(true);
+    // Simulate auth handshake delay (replace with real API in production)
+    await new Promise((r) => setTimeout(r, 1200));
+
+    const user = {
+      name: name || email.split('@')[0],
+      // NOTE: Only store non-sensitive display data — no tokens in state
+      email: email.replace(/(.{2}).+(@.+)/, '$1***$2'), // Mask email for display
+      joinedAt: new Date().toISOString(),
+    };
+
+    dispatch({ type: 'SET_USER', payload: user });
+    setLoading(false);
+    navigate('hub');
+  };
+
+  const handleSocialAuth = (provider) => {
+    // TODO(security): Implement OAuth2 PKCE flow for social login in production
+    setLoading(true);
+    setTimeout(() => {
+      dispatch({
+        type: 'SET_USER',
+        payload: { name: `${provider} User`, email: '***@***.com', joinedAt: new Date().toISOString() },
+      });
+      setLoading(false);
+      navigate('hub');
+    }, 1000);
+  };
+
+  return (
+    <div style={{
+      minHeight: '100vh',
+      background: 'var(--bg-void)',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      position: 'relative',
+      overflow: 'hidden',
+    }}>
+      {/* Blurred orb background — exact match to reference */}
+      <div style={{
+        position: 'absolute',
+        top: '15%',
+        left: '15%',
+        width: '300px',
+        height: '300px',
+        background: 'radial-gradient(circle, rgba(6,182,212,0.25) 0%, transparent 70%)',
+        filter: 'blur(60px)',
+        borderRadius: '50%',
+        pointerEvents: 'none',
+      }} />
+      <div style={{
+        position: 'absolute',
+        bottom: '10%',
+        right: '12%',
+        width: '350px',
+        height: '350px',
+        background: 'radial-gradient(circle, rgba(124,58,237,0.3) 0%, transparent 70%)',
+        filter: 'blur(70px)',
+        borderRadius: '50%',
+        pointerEvents: 'none',
+      }} />
+
+      {/* Auth card */}
+      <div style={{
+        width: '100%',
+        maxWidth: '420px',
+        background: 'rgba(16, 16, 28, 0.85)',
+        backdropFilter: 'blur(24px)',
+        WebkitBackdropFilter: 'blur(24px)',
+        border: '1px solid rgba(139,92,246,0.2)',
+        borderRadius: '20px',
+        padding: '48px 40px',
+        position: 'relative',
+        zIndex: 1,
+        animation: 'fadeInUp 0.5s ease',
+        boxShadow: '0 24px 80px rgba(0,0,0,0.6), 0 0 60px rgba(139,92,246,0.08)',
+      }}>
+        {/* Synapse logo */}
+        <div style={{ textAlign: 'center', marginBottom: '32px' }}>
+          <div style={{ marginBottom: '12px', display: 'flex', justifyContent: 'center' }}>
+            <div style={{
+              width: 44,
+              height: 44,
+              background: 'linear-gradient(135deg, var(--violet-600), var(--violet-400))',
+              borderRadius: '12px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              fontSize: '22px',
+              boxShadow: '0 0 24px rgba(124,58,237,0.4)',
+            }}>✦</div>
+          </div>
+          <div style={{
+            fontFamily: 'var(--font-mono)',
+            fontSize: '11px',
+            letterSpacing: '0.25em',
+            color: 'var(--violet-400)',
+            marginBottom: '10px',
+            fontWeight: 600,
+          }}>SYNAPSE</div>
+          <h1 style={{
+            fontSize: '30px',
+            fontFamily: 'var(--font-display)',
+            fontWeight: 800,
+            marginBottom: '8px',
+          }}>
+            Welcome to Vishesh
+          </h1>
+          <p style={{
+            fontSize: '13px',
+            color: 'var(--text-muted)',
+            fontFamily: 'var(--font-mono)',
+          }}>
+            Authenticate to access the command center.
+          </p>
+        </div>
+
+        {/* Mode toggle */}
+        <div style={{
+          display: 'flex',
+          background: 'rgba(10,10,15,0.6)',
+          borderRadius: 'var(--radius-md)',
+          border: '1px solid var(--border-subtle)',
+          marginBottom: '28px',
+          padding: '3px',
+        }}>
+          {['signin', 'signup'].map((m) => (
+            <button
+              key={m}
+              onClick={() => { setMode(m); setError(''); }}
+              style={{
+                flex: 1,
+                padding: '8px',
+                borderRadius: '8px',
+                border: 'none',
+                cursor: 'pointer',
+                fontFamily: 'var(--font-mono)',
+                fontSize: '12px',
+                fontWeight: 600,
+                letterSpacing: '0.05em',
+                transition: 'all 0.2s ease',
+                background: mode === m ? 'rgba(124,58,237,0.3)' : 'transparent',
+                color: mode === m ? 'var(--violet-300)' : 'var(--text-muted)',
+                boxShadow: mode === m ? '0 0 12px rgba(124,58,237,0.2)' : 'none',
+              }}
+            >
+              {m === 'signin' ? 'Sign In' : 'Create Account'}
+            </button>
+          ))}
+        </div>
+
+        <form onSubmit={handleAuth} noValidate>
+          {/* Name (signup only) */}
+          {mode === 'signup' && (
+            <div className="input-group" style={{ marginBottom: '16px' }}>
+              <label className="input-label">Operative Name</label>
+              <div style={{ position: 'relative' }}>
+                <span className="input-icon" style={{ top: '50%', transform: 'translateY(-50%)' }}>👤</span>
+                <input
+                  className="input"
+                  type="text"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  placeholder="Your name"
+                  autoComplete="name"
+                  id="auth-name"
+                />
+              </div>
+            </div>
+          )}
+
+          {/* Email */}
+          <div className="input-group" style={{ marginBottom: '16px' }}>
+            <label className="input-label">Identification String (Email)</label>
+            <div style={{ position: 'relative' }}>
+              <span className="input-icon" style={{ top: '50%', transform: 'translateY(-50%)' }}>✉</span>
+              <input
+                className="input"
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="operator@synapse.net"
+                autoComplete="email"
+                id="auth-email"
+                required
+              />
+            </div>
+          </div>
+
+          {/* Password */}
+          <div className="input-group" style={{ marginBottom: '24px' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <label className="input-label">Access Cipher (Password)</label>
+              {mode === 'signin' && (
+                <span style={{ fontSize: '11px', color: 'var(--cyan-400)', cursor: 'pointer', fontFamily: 'var(--font-mono)' }}>
+                  Decrypt Access?
+                </span>
+              )}
+            </div>
+            <div style={{ position: 'relative' }}>
+              <span className="input-icon" style={{ top: '50%', transform: 'translateY(-50%)' }}>🔒</span>
+              <input
+                className="input"
+                type={showPass ? 'text' : 'password'}
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="••••••••••••"
+                autoComplete={mode === 'signin' ? 'current-password' : 'new-password'}
+                id="auth-password"
+                required
+                minLength={8}
+              />
+              <button
+                type="button"
+                onClick={() => setShowPass((s) => !s)}
+                style={{
+                  position: 'absolute',
+                  right: '14px',
+                  top: '50%',
+                  transform: 'translateY(-50%)',
+                  background: 'none',
+                  border: 'none',
+                  cursor: 'pointer',
+                  color: 'var(--text-muted)',
+                  fontSize: '14px',
+                  padding: '4px',
+                }}
+                aria-label={showPass ? 'Hide password' : 'Show password'}
+              >
+                {showPass ? '🙈' : '👁'}
+              </button>
+            </div>
+          </div>
+
+          {/* Error */}
+          {error && (
+            <div style={{
+              marginBottom: '16px',
+              padding: '10px 14px',
+              background: 'rgba(244,63,94,0.1)',
+              border: '1px solid rgba(244,63,94,0.25)',
+              borderRadius: 'var(--radius-md)',
+              fontSize: '12px',
+              color: 'var(--rose-400)',
+              fontFamily: 'var(--font-mono)',
+            }}>
+              ⚠ {error}
+            </div>
+          )}
+
+          {/* Submit */}
+          <button
+            type="submit"
+            className="btn btn-primary"
+            disabled={loading}
+            id="auth-submit"
+            style={{
+              width: '100%',
+              padding: '14px',
+              fontSize: '14px',
+              fontFamily: 'var(--font-mono)',
+              letterSpacing: '0.05em',
+              background: loading
+                ? 'rgba(124,58,237,0.4)'
+                : 'linear-gradient(135deg, var(--violet-600), var(--violet-500))',
+              opacity: loading ? 0.7 : 1,
+              cursor: loading ? 'not-allowed' : 'pointer',
+            }}
+          >
+            {loading ? (
+              <span style={{ display: 'flex', alignItems: 'center', gap: '8px', justifyContent: 'center' }}>
+                <span style={{
+                  width: '14px', height: '14px',
+                  border: '2px solid rgba(255,255,255,0.3)',
+                  borderTopColor: 'white',
+                  borderRadius: '50%',
+                  animation: 'spin-slow 0.8s linear infinite',
+                  display: 'inline-block',
+                }} />
+                Authenticating...
+              </span>
+            ) : (
+              `Initialize Session →`
+            )}
+          </button>
+        </form>
+
+        {/* Divider */}
+        <div style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: '16px',
+          margin: '24px 0',
+          color: 'var(--text-muted)',
+          fontSize: '11px',
+          fontFamily: 'var(--font-mono)',
+        }}>
+          <div style={{ flex: 1, height: '1px', background: 'var(--border-subtle)' }} />
+          External Protocols
+          <div style={{ flex: 1, height: '1px', background: 'var(--border-subtle)' }} />
+        </div>
+
+        {/* Social login */}
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '10px' }}>
+          {[
+            { id: 'google', label: 'Google', icon: 'G', color: '#ea4335' },
+            { id: 'github', label: 'GitHub', icon: '⌥', color: '#f8f8ff' },
+            { id: 'linkedin', label: 'LinkedIn', icon: 'in', color: '#0077b5' },
+          ].map((p) => (
+            <button
+              key={p.id}
+              id={`auth-social-${p.id}`}
+              onClick={() => handleSocialAuth(p.label)}
+              disabled={loading}
+              style={{
+                padding: '12px',
+                background: 'rgba(14,14,22,0.8)',
+                border: '1px solid var(--border-default)',
+                borderRadius: 'var(--radius-md)',
+                cursor: 'pointer',
+                transition: 'all 0.2s ease',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                fontSize: '14px',
+                fontWeight: 700,
+                color: p.color,
+                fontFamily: 'var(--font-mono)',
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.borderColor = 'var(--border-active)';
+                e.currentTarget.style.background = 'rgba(139,92,246,0.08)';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.borderColor = 'var(--border-default)';
+                e.currentTarget.style.background = 'rgba(14,14,22,0.8)';
+              }}
+              aria-label={`Sign in with ${p.label}`}
+            >
+              {p.icon}
+            </button>
+          ))}
+        </div>
+
+        <p style={{
+          textAlign: 'center',
+          marginTop: '24px',
+          fontSize: '11px',
+          color: 'var(--text-muted)',
+          fontFamily: 'var(--font-mono)',
+          lineHeight: 1.6,
+        }}>
+          By proceeding, you agree to the Synapse Neural Privacy Ledger and Terms of Operation.
+        </p>
+      </div>
+    </div>
+  );
+}

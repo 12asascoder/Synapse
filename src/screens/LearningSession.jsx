@@ -7,6 +7,7 @@ import { useState, useRef, useEffect, useCallback } from 'react';
 import { useApp } from '../context/AppContext';
 import { streamVisheshResponse, generateLessonIntro } from '../lib/vishesh';
 import SessionStartModal from '../components/SessionStartModal';
+import * as faceapi from '@vladmandic/face-api';
 
 function AnimatedWaveform({ active }) {
   const heights = [0.4, 0.7, 1, 0.6, 0.9, 0.5, 0.8, 1, 0.7, 0.5, 0.9, 0.6, 0.8, 0.4, 0.7, 1, 0.6, 0.5];
@@ -45,6 +46,10 @@ export default function LearningSession() {
   const abortRef = useRef(null);
   const bottomRef = useRef(null);
   const inputRef = useRef(null);
+  const videoRef = useRef(null);
+  const streamRef = useRef(null);
+  
+  const [expressionStatus, setExpressionStatus] = useState('Initializing Vision...');
 
   // Auto-scroll
   useEffect(() => {
@@ -107,6 +112,67 @@ export default function LearningSession() {
 
     startSession();
   }, [hasPermissions, currentDay, curriculum, selectedBootcamp, messages.length]);
+
+  // Init Webcam and FaceAPI
+  useEffect(() => {
+    if (!hasPermissions) return;
+
+    let isMounted = true;
+    const startWebcam = async () => {
+      try {
+        await faceapi.nets.tinyFaceDetector.loadFromUri('https://cdn.jsdelivr.net/npm/@vladmandic/face-api/model/');
+        await faceapi.nets.faceExpressionNet.loadFromUri('https://cdn.jsdelivr.net/npm/@vladmandic/face-api/model/');
+        
+        const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: false });
+        if (isMounted && videoRef.current) {
+          videoRef.current.srcObject = stream;
+        }
+        streamRef.current = stream;
+      } catch (err) {
+        console.error("Webcam/FaceAPI init error:", err);
+        if (isMounted) setExpressionStatus('Camera Unavailable');
+      }
+    };
+    startWebcam();
+
+    return () => {
+      isMounted = false;
+      if (streamRef.current) {
+        streamRef.current.getTracks().forEach(t => t.stop());
+      }
+    };
+  }, [hasPermissions]);
+
+  const handleVideoPlay = () => {
+    const interval = setInterval(async () => {
+      if (videoRef.current && !videoRef.current.paused && !videoRef.current.ended) {
+        const detection = await faceapi.detectSingleFace(videoRef.current, new faceapi.TinyFaceDetectorOptions()).withFaceExpressions();
+        if (detection) {
+          const expressions = detection.expressions;
+          const maxExpr = Object.keys(expressions).reduce((a, b) => expressions[a] > expressions[b] ? a : b);
+          
+          let state = "Focused (Neutral)";
+          if (maxExpr === 'happy') state = "Understanding";
+          if (maxExpr === 'sad' || maxExpr === 'angry' || maxExpr === 'fearful' || maxExpr === 'disgusted') state = "Confused";
+          if (maxExpr === 'surprised') state = "Curious";
+          
+          setExpressionStatus(state);
+        } else {
+          setExpressionStatus('Face Not Detected');
+        }
+      }
+    }, 500);
+    
+    // Attach interval ID to ref to clear later if needed, but simple return works if we re-bind it. 
+    // Actually, React onPlay will just run this once per play. We can just attach to window.
+    window._faceApiInterval = interval;
+  };
+
+  useEffect(() => {
+    return () => {
+      if (window._faceApiInterval) clearInterval(window._faceApiInterval);
+    }
+  }, []);
 
   const sendMessage = useCallback(async () => {
     const text = input.trim();
@@ -389,16 +455,22 @@ export default function LearningSession() {
                 border: '1px solid rgba(255,255,255,0.05)',
                 boxShadow: '0 12px 24px rgba(0,0,0,0.5)',
               }}>
-                {/* Mock Video Image / Avatar */}
-                <div style={{
-                  position: 'absolute', inset: 0,
-                  display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  background: 'url("https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&q=80&w=400&h=250") center/cover',
-                  opacity: 0.8
-                }}>
-                  {/* Holographic overlay */}
-                  <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(90deg, rgba(34,211,238,0.2), rgba(124,58,237,0.2))', mixBlendMode: 'overlay' }} />
-                </div>
+                {/* Live Webcam Feed */}
+                <video 
+                  ref={videoRef}
+                  autoPlay 
+                  muted 
+                  playsInline
+                  onPlay={handleVideoPlay}
+                  style={{
+                    position: 'absolute', inset: 0,
+                    width: '100%', height: '100%', objectFit: 'cover',
+                    transform: 'scaleX(-1)' // Mirror the webcam
+                  }}
+                />
+                
+                {/* Holographic overlay */}
+                <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(90deg, rgba(34,211,238,0.2), rgba(124,58,237,0.2))', mixBlendMode: 'overlay', pointerEvents: 'none' }} />
 
                 {/* Overlay Controls & Info */}
                 <div style={{
@@ -408,8 +480,8 @@ export default function LearningSession() {
                   padding: '6px 12px', backdropFilter: 'blur(4px)',
                 }}>
                   <div className="dot-live" style={{ width: 8, height: 8, background: 'var(--rose-500)', borderRadius: '50%', boxShadow: '0 0 8px var(--rose-500)' }} />
-                  <span style={{ fontSize: '10px', fontFamily: 'var(--font-mono)', fontWeight: 700, color: 'white', letterSpacing: '0.05em' }}>
-                    VISHESH AI · EXPLORING LORA
+                  <span style={{ fontSize: '10px', fontFamily: 'var(--font-mono)', fontWeight: 700, color: 'white', letterSpacing: '0.05em', textTransform: 'uppercase' }}>
+                    {expressionStatus}
                   </span>
                 </div>
                 

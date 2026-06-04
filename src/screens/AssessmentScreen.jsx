@@ -178,12 +178,71 @@ export default function AssessmentScreen() {
         </div>
       </div>
 
-      {/* QUESTION AREA */}
+      {/* MAIN CONTENT AREA */}
       <div style={{
         flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center',
         justifyContent: 'center', padding: '40px 24px', position: 'relative', zIndex: 1,
       }}>
-        <div style={{ width: '100%', maxWidth: '740px' }}>
+        {currentDay === 15 ? (
+          <div style={{ width: '100%', maxWidth: '900px', animation: 'fadeInUp 0.4s ease both' }}>
+            <div style={{ background: 'rgba(12,12,20,0.95)', border: '1px solid rgba(16,185,129,0.2)', borderRadius: '16px', padding: '40px', boxShadow: '0 24px 80px rgba(0,0,0,0.5)' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '24px' }}>
+                <div style={{ padding: '5px 14px', background: 'rgba(16,185,129,0.1)', border: '1px solid rgba(16,185,129,0.2)', borderRadius: '6px', fontSize: '11px', fontFamily: 'var(--font-mono)', fontWeight: 700, color: 'var(--emerald-400)', letterSpacing: '0.1em' }}>
+                  MID-TERM PROGRAMMING ASSESSMENT
+                </div>
+              </div>
+              <h2 style={{ fontSize: '24px', fontFamily: 'var(--font-display)', fontWeight: 800, marginBottom: '20px' }}>
+                Implement a distributed LoRA fine-tuning algorithm for a 7B parameter model.
+              </h2>
+              <div style={{ fontSize: '14px', color: 'var(--text-secondary)', marginBottom: '32px', lineHeight: 1.6 }}>
+                You have 45 minutes to implement the core algorithm. Your code will be evaluated on correctness, efficiency, and proper gradient scaling.
+              </div>
+              <div style={{ background: '#1e1e1e', padding: '20px', borderRadius: '12px', minHeight: '300px', fontFamily: 'var(--font-mono)', fontSize: '14px', color: '#d4d4d4', border: '1px solid #333' }}>
+                // Write your Python implementation here...
+                <br /><br />
+                def apply_lora(model, r=8, alpha=16):<br />
+                &nbsp;&nbsp;&nbsp;&nbsp;pass
+              </div>
+              {/* For mock purposes, just allow setting 'selected' to true when they click a fake 'Run Tests' button */}
+              <button 
+                onClick={() => setSelected(true)}
+                style={{ marginTop: '24px', padding: '12px 24px', background: 'rgba(16,185,129,0.15)', border: '1px solid rgba(16,185,129,0.4)', borderRadius: '8px', color: 'var(--emerald-400)', cursor: 'pointer', fontFamily: 'var(--font-mono)', fontSize: '12px', fontWeight: 700 }}
+              >
+                Run Test Suite
+              </button>
+            </div>
+          </div>
+        ) : currentDay === 30 ? (
+          <div style={{ width: '100%', maxWidth: '900px', animation: 'fadeInUp 0.4s ease both' }}>
+            <div style={{ background: 'rgba(12,12,20,0.95)', border: '1px solid rgba(245,158,11,0.2)', borderRadius: '16px', padding: '40px', boxShadow: '0 24px 80px rgba(0,0,0,0.5)' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '24px' }}>
+                <div style={{ padding: '5px 14px', background: 'rgba(245,158,11,0.1)', border: '1px solid rgba(245,158,11,0.2)', borderRadius: '6px', fontSize: '11px', fontFamily: 'var(--font-mono)', fontWeight: 700, color: 'var(--amber-400)', letterSpacing: '0.1em' }}>
+                  FINAL VALIDATION INTERVIEW
+                </div>
+              </div>
+              <div style={{ display: 'flex', gap: '40px', alignItems: 'center' }}>
+                <div style={{ flex: 1 }}>
+                  <h2 style={{ fontSize: '24px', fontFamily: 'var(--font-display)', fontWeight: 800, marginBottom: '20px' }}>
+                    Live Technical Interview with Vishesh AI
+                  </h2>
+                  <div style={{ fontSize: '14px', color: 'var(--text-secondary)', marginBottom: '32px', lineHeight: 1.6 }}>
+                    This is your final assessment. You will engage in a live voice/text conversation where Vishesh will probe your architectural decisions, system design capabilities, and core ML fundamentals.
+                  </div>
+                  <button 
+                    onClick={() => setSelected(true)}
+                    style={{ padding: '12px 24px', background: 'rgba(245,158,11,0.15)', border: '1px solid rgba(245,158,11,0.4)', borderRadius: '8px', color: 'var(--amber-400)', cursor: 'pointer', fontFamily: 'var(--font-mono)', fontSize: '12px', fontWeight: 700 }}
+                  >
+                    Start Interview
+                  </button>
+                </div>
+                <div style={{ width: '200px', height: '200px', borderRadius: '50%', background: 'linear-gradient(135deg, var(--amber-500), var(--rose-500))', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 0 40px rgba(245,158,11,0.2)', animation: 'pulse-dot 3s infinite' }}>
+                  <span style={{ fontSize: '48px' }}>🎙</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        ) : (
+          <div style={{ width: '100%', maxWidth: '740px' }}>
           {/* Question card */}
           <div style={{
             background: 'rgba(12,12,20,0.95)',
@@ -289,8 +348,9 @@ export default function AssessmentScreen() {
                 <span style={{ fontSize: '10px', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>High Certainty (Calculated)</span>
               </div>
             </div>
+            </div>
           </div>
-        </div>
+        )}
       </div>
 
       {/* BOTTOM NAV — matches reference */}

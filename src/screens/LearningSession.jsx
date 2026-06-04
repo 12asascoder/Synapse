@@ -289,7 +289,7 @@ export default function LearningSession() {
                         borderRadius: isVishesh ? '0' : '12px',
                         fontFamily: 'Inter, sans-serif'
                       }}>
-                        {msg.content}
+                        {msg.content.replace(/\*/g, '')}
                         {msg.streaming && (
                           <span style={{
                             display: 'inline-block', width: '3px', height: '16px',

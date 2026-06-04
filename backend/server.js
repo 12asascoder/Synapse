@@ -23,7 +23,9 @@ app.get('/health', (req, res) => {
 // Sync Database and Start Server
 db.sequelize.sync({ alter: true }).then(() => {
   console.log('[DB] SQLite Database synced successfully.');
-  app.listen(PORT, () => {
+  const http = require('http');
+  const server = http.createServer(app);
+  server.listen(PORT, () => {
     console.log(`[SERVER] Synapse API running on http://localhost:${PORT}`);
   });
 }).catch(err => {

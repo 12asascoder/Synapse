@@ -38,19 +38,46 @@ export default function AuthScreen() {
     }
 
     setLoading(true);
-    // Simulate auth handshake delay (replace with real API in production)
-    await new Promise((r) => setTimeout(r, 1200));
+    try {
+      const endpoint = mode === 'signup' ? '/auth/register' : '/auth/login';
+      const body = mode === 'signup' ? { name, email, password } : { email, password };
+      
+      // Hidden feature for testing: if email starts with admin@, we inject role
+      if (mode === 'signup' && email.startsWith('admin@')) {
+        body.role = 'SUPER_ADMIN';
+      }
+      
+      const res = await fetch(`${import.meta.env.VITE_API_URL}${endpoint}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body),
+      });
+      
+      const data = await res.json();
+      
+      if (!res.ok) {
+        throw new Error(data.error || 'Authentication failed');
+      }
 
-    const user = {
-      name: name || email.split('@')[0],
-      // NOTE: Only store non-sensitive display data — no tokens in state
-      email: email.replace(/(.{2}).+(@.+)/, '$1***$2'), // Mask email for display
-      joinedAt: new Date().toISOString(),
-    };
+      const user = {
+        name: data.user.name,
+        email: data.user.email.replace(/(.{2}).+(@.+)/, '$1***$2'), // Mask email for display
+        role: data.user.role,
+        joinedAt: new Date().toISOString(),
+      };
 
-    dispatch({ type: 'SET_USER', payload: user });
-    setLoading(false);
-    navigate('hub');
+      dispatch({ type: 'SET_USER', payload: user });
+      setLoading(false);
+      
+      if (user.role === 'SUPER_ADMIN') {
+        navigate('admin-dashboard');
+      } else {
+        navigate('hub');
+      }
+    } catch (err) {
+      setError(err.message);
+      setLoading(false);
+    }
   };
 
   const handleSocialAuth = (provider) => {

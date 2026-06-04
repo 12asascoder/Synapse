@@ -20,7 +20,7 @@ module.exports = (sequelize, DataTypes) => {
     },
     role: {
       type: DataTypes.STRING,
-      defaultValue: 'operative', // operative, admin, recruiter
+      defaultValue: 'USER', // SUPER_ADMIN or USER
     },
     tier: {
       type: DataTypes.STRING,

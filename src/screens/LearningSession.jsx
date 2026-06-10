@@ -31,7 +31,7 @@ function AnimatedWaveform({ active }) {
 
 export default function LearningSession() {
   const { state, dispatch, navigate } = useApp();
-  const { selectedBootcamp, currentDay, ollamaOnline, ollamaModel, user } = state;
+  const { selectedBootcamp, currentDay, user } = state;
 
   const [hasPermissions, setHasPermissions] = useState(false);
   const [curriculum, setCurriculum] = useState([]);
@@ -271,7 +271,7 @@ export default function LearningSession() {
       userMessage: text,
       history,
       context: `${selectedBootcamp?.name || 'AI Engineering'} — Day ${currentDay} — ${modeContext}`,
-      model: ollamaModel,
+
       abortController: abortRef.current,
       onToken: (_, full) => {
         setMessages((p) => p.map((m) => m.id === aId ? { ...m, content: full } : m));
@@ -310,7 +310,7 @@ export default function LearningSession() {
         setIsStreaming(false);
       },
     });
-  }, [input, isStreaming, messages, selectedBootcamp, currentDay, ollamaModel]);
+  }, [input, isStreaming, messages, selectedBootcamp, currentDay]);
 
   const handleKeyDown = (e) => {
     if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); }
@@ -412,11 +412,6 @@ export default function LearningSession() {
           }}>
             {/* Messages */}
             <div style={{ flex: 1, overflowY: 'auto', padding: '40px 10%' }} className="scroll-area">
-              {!ollamaOnline && (
-                <div style={{ marginBottom: '24px', padding: '12px 16px', background: 'rgba(245,158,11,0.1)', border: '1px solid rgba(245,158,11,0.2)', borderRadius: '8px', fontSize: '12px', color: 'var(--amber-400)', fontFamily: 'var(--font-mono)' }}>
-                  ⚡ Start Ollama locally to activate Vishesh AI
-                </div>
-              )}
 
               {messages.length === 0 && isThinking && (
                 <div style={{ display: 'flex', justifyContent: 'center', opacity: 0.5 }}>

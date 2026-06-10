@@ -2,39 +2,51 @@
  * SkillPassport — Professional verified profile with skill graph,
  * achievements, recruiter view, and public share link
  */
+import { useState, useEffect } from 'react';
 import { useApp } from '../context/AppContext';
 import Sidebar from '../components/Sidebar';
 import { RadarChart, PolarGrid, PolarAngleAxis, Radar, ResponsiveContainer } from 'recharts';
 
-const ACHIEVEMENTS = [
-  { icon: '🔥', label: '7-Day Streak', color: '#f59e0b' },
-  { icon: '⚡', label: 'Speed Learner', color: '#06b6d4' },
-  { icon: '🎯', label: 'Perfect Score', color: '#10b981' },
-  { icon: '🧠', label: 'Deep Thinker', color: '#7c3aed' },
-  { icon: '🏆', label: 'Architect II', color: '#a78bfa' },
-  { icon: '★', label: 'Milestone Pass', color: '#22d3ee' },
-];
+const API = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
 
-const VERIFIED_SKILLS = [
-  { skill: 'Large Language Models', level: 'Advanced', verified: true, score: 88 },
-  { skill: 'LoRA Fine-tuning', level: 'Intermediate', verified: true, score: 76 },
-  { skill: 'RAG Architecture', level: 'Advanced', verified: true, score: 82 },
-  { skill: 'Distributed Systems', level: 'Intermediate', verified: false, score: 65 },
-  { skill: 'MLOps Pipelines', level: 'Beginner', verified: false, score: 55 },
-];
+const ICON_MAP = { Footprints: '🔥', Flame: '⚡', Trophy: '🎯', Flag: '🧠', GraduationCap: '🏆', Zap: '★', Star: '✦', MessageCircle: '💬' };
 
 export default function SkillPassport() {
   const { state } = useApp();
   const { user, selectedBootcamp, scores, totalPoints, currentDay } = state;
+  const [achievements, setAchievements] = useState([]);
+  const [userAchievements, setUserAchievements] = useState([]);
   const shareUrl = `synapse.ai/passport/${user?.name?.toLowerCase().replace(/\s/g, '-') || 'operative'}`;
 
+  useEffect(() => {
+    fetch(`${API}/achievements`)
+      .then((r) => r.json())
+      .then((data) => setAchievements(data))
+      .catch(() => {});
+    if (user?.id) {
+      fetch(`${API}/achievements/user/${user.id}`)
+        .then((r) => r.json())
+        .then((data) => setUserAchievements(data.map((ua) => ua.achievementId)))
+        .catch(() => {});
+    }
+  }, [user?.id]);
+
+  const verifiedSkills = [
+    { skill: 'Technical', level: scores.technical > 70 ? 'Advanced' : scores.technical > 40 ? 'Intermediate' : 'Beginner', verified: scores.technical > 0, score: scores.technical || 0 },
+    { skill: 'Problem Solving', level: scores.problemSolving > 70 ? 'Advanced' : scores.problemSolving > 40 ? 'Intermediate' : 'Beginner', verified: scores.problemSolving > 0, score: scores.problemSolving || 0 },
+    { skill: 'Communication', level: scores.communication > 70 ? 'Advanced' : scores.communication > 40 ? 'Intermediate' : 'Beginner', verified: scores.communication > 0, score: scores.communication || 0 },
+    { skill: 'Consistency', level: scores.consistency > 70 ? 'Advanced' : scores.consistency > 40 ? 'Intermediate' : 'Beginner', verified: scores.consistency > 0, score: scores.consistency || 0 },
+    { skill: 'Retention', level: scores.retention > 70 ? 'Advanced' : scores.retention > 40 ? 'Intermediate' : 'Beginner', verified: scores.retention > 0, score: scores.retention || 0 },
+    { skill: 'Velocity', level: scores.velocity > 70 ? 'Advanced' : scores.velocity > 40 ? 'Intermediate' : 'Beginner', verified: scores.velocity > 0, score: scores.velocity || 0 },
+  ].filter((s) => s.score > 0);
+
   const radarData = [
-    { skill: 'System Arch', value: scores.technical || 50 },
-    { skill: 'Algorithms', value: scores.problemSolving || 50 },
-    { skill: 'Data Structs', value: scores.consistency || 50 },
-    { skill: 'Security', value: scores.retention || 50 },
-    { skill: 'DevOps', value: scores.velocity || 50 },
-    { skill: 'AI/ML', value: scores.communication || 50 },
+    { skill: 'System Arch', value: scores.technical || 0 },
+    { skill: 'Algorithms', value: scores.problemSolving || 0 },
+    { skill: 'Data Structs', value: scores.consistency || 0 },
+    { skill: 'Security', value: scores.retention || 0 },
+    { skill: 'DevOps', value: scores.velocity || 0 },
+    { skill: 'AI/ML', value: scores.communication || 0 },
   ];
 
   return (
@@ -113,21 +125,26 @@ export default function SkillPassport() {
                   ACHIEVEMENTS
                 </div>
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '10px' }}>
-                  {ACHIEVEMENTS.map((a) => (
-                    <div key={a.label} style={{
-                      display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '5px',
-                      padding: '12px 8px',
-                      background: `${a.color}12`, border: `1px solid ${a.color}22`,
-                      borderRadius: '10px', cursor: 'default',
-                      transition: 'all 0.2s ease',
-                    }}
-                    onMouseEnter={(e) => { e.currentTarget.style.transform = 'scale(1.05)'; e.currentTarget.style.boxShadow = `0 0 12px ${a.color}22`; }}
-                    onMouseLeave={(e) => { e.currentTarget.style.transform = 'none'; e.currentTarget.style.boxShadow = 'none'; }}
-                    >
-                      <span style={{ fontSize: '20px' }}>{a.icon}</span>
-                      <span style={{ fontSize: '9px', fontFamily: 'var(--font-mono)', color: 'var(--text-muted)', textAlign: 'center', lineHeight: 1.2 }}>{a.label}</span>
-                    </div>
-                  ))}
+                  {achievements.map((a) => {
+                    const earned = userAchievements.includes(a.id);
+                    const color = a.color || '#7c3aed';
+                    return (
+                      <div key={a.id} style={{
+                        display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '5px',
+                        padding: '12px 8px',
+                        background: earned ? `${color}18` : 'rgba(139,92,246,0.04)',
+                        border: `1px solid ${earned ? `${color}33` : 'var(--border-subtle)'}`,
+                        borderRadius: '10px', cursor: 'default', opacity: earned ? 1 : 0.4,
+                        transition: 'all 0.2s ease',
+                      }}
+                      onMouseEnter={(e) => { if (earned) { e.currentTarget.style.transform = 'scale(1.05)'; e.currentTarget.style.boxShadow = `0 0 12px ${color}22`; } }}
+                      onMouseLeave={(e) => { e.currentTarget.style.transform = 'none'; e.currentTarget.style.boxShadow = 'none'; }}
+                      >
+                        <span style={{ fontSize: '20px' }}>{ICON_MAP[a.icon] || '✦'}</span>
+                        <span style={{ fontSize: '9px', fontFamily: 'var(--font-mono)', color: earned ? 'var(--text-primary)' : 'var(--text-muted)', textAlign: 'center', lineHeight: 1.2 }}>{a.name}</span>
+                      </div>
+                    );
+                  })}
                 </div>
               </div>
 
@@ -192,31 +209,33 @@ export default function SkillPassport() {
               }}>
                 <div style={{ fontWeight: 700, fontSize: '16px', fontFamily: 'var(--font-display)', marginBottom: '16px' }}>Verified Skills</div>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                  {VERIFIED_SKILLS.map((sk) => (
-                    <div key={sk.skill} style={{
-                      padding: '14px 16px', borderRadius: '10px',
-                      background: 'rgba(10,10,18,0.5)',
-                      border: `1px solid ${sk.verified ? 'rgba(16,185,129,0.15)' : 'rgba(139,92,246,0.08)'}`,
-                    }}>
-                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px' }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                          {sk.verified && <span style={{ fontSize: '12px', color: 'var(--emerald-400)' }}>✓</span>}
-                          <span style={{ fontSize: '13px', fontWeight: 600, fontFamily: 'var(--font-mono)' }}>{sk.skill}</span>
-                          <span style={{ fontSize: '10px', padding: '2px 8px', background: 'rgba(139,92,246,0.1)', border: '1px solid rgba(139,92,246,0.2)', borderRadius: '4px', color: 'var(--violet-300)', fontFamily: 'var(--font-mono)' }}>{sk.level}</span>
+                  {verifiedSkills.length === 0
+                    ? <div style={{ padding: '24px', textAlign: 'center', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)', fontSize: '12px' }}>Complete assessments to build your verified skills.</div>
+                    : verifiedSkills.map((sk) => (
+                      <div key={sk.skill} style={{
+                        padding: '14px 16px', borderRadius: '10px',
+                        background: 'rgba(10,10,18,0.5)',
+                        border: `1px solid ${sk.verified ? 'rgba(16,185,129,0.15)' : 'rgba(139,92,246,0.08)'}`,
+                      }}>
+                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px' }}>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                            {sk.verified && <span style={{ fontSize: '12px', color: 'var(--emerald-400)' }}>✓</span>}
+                            <span style={{ fontSize: '13px', fontWeight: 600, fontFamily: 'var(--font-mono)' }}>{sk.skill}</span>
+                            <span style={{ fontSize: '10px', padding: '2px 8px', background: 'rgba(139,92,246,0.1)', border: '1px solid rgba(139,92,246,0.2)', borderRadius: '4px', color: 'var(--violet-300)', fontFamily: 'var(--font-mono)' }}>{sk.level}</span>
+                          </div>
+                          <span style={{ fontWeight: 800, fontSize: '14px', fontFamily: 'var(--font-mono)', color: sk.verified ? 'var(--emerald-400)' : 'var(--text-muted)' }}>{sk.score}%</span>
                         </div>
-                        <span style={{ fontWeight: 800, fontSize: '14px', fontFamily: 'var(--font-mono)', color: sk.verified ? 'var(--emerald-400)' : 'var(--text-muted)' }}>{sk.score}%</span>
+                        <div style={{ height: '4px', background: 'rgba(139,92,246,0.1)', borderRadius: '2px', overflow: 'hidden' }}>
+                          <div style={{
+                            height: '100%',
+                            width: `${sk.score}%`,
+                            background: sk.verified ? 'linear-gradient(90deg, var(--emerald-500), var(--cyan-400))' : 'linear-gradient(90deg, var(--violet-600), var(--violet-400))',
+                            borderRadius: '2px',
+                            transition: 'width 1s cubic-bezier(0.4,0,0.2,1)',
+                          }} />
+                        </div>
                       </div>
-                      <div style={{ height: '4px', background: 'rgba(139,92,246,0.1)', borderRadius: '2px', overflow: 'hidden' }}>
-                        <div style={{
-                          height: '100%',
-                          width: `${sk.score}%`,
-                          background: sk.verified ? 'linear-gradient(90deg, var(--emerald-500), var(--cyan-400))' : 'linear-gradient(90deg, var(--violet-600), var(--violet-400))',
-                          borderRadius: '2px',
-                          transition: 'width 1s cubic-bezier(0.4,0,0.2,1)',
-                        }} />
-                      </div>
-                    </div>
-                  ))}
+                    ))}
                 </div>
               </div>
 

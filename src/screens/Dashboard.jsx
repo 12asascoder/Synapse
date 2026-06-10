@@ -2,9 +2,12 @@
  * Dashboard — Core Feed / Main Dashboard
  * Today's mission, progress, Vishesh insights panel
  */
+import { useState, useEffect } from 'react';
 import { useApp } from '../context/AppContext';
 import Sidebar from '../components/Sidebar';
-import { RadarChart, PolarGrid, PolarAngleAxis, Radar, ResponsiveContainer, LineChart, Line, XAxis, YAxis, Tooltip, AreaChart, Area } from 'recharts';
+import { RadarChart, PolarGrid, PolarAngleAxis, Radar, ResponsiveContainer, AreaChart, Area, XAxis, YAxis, Tooltip } from 'recharts';
+
+const API = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
 
 function ScoreRing({ value, label, color = 'var(--violet-400)', size = 80 }) {
   const radius = (size - 10) / 2;
@@ -38,14 +41,35 @@ function ScoreRing({ value, label, color = 'var(--violet-400)', size = 80 }) {
 export default function Dashboard() {
   const { state, navigate } = useApp();
   const { selectedBootcamp, currentDay, streak, scores, totalPoints, progressHistory } = state;
+  const [milestones, setMilestones] = useState([]);
+  const [visheshInsight, setVisheshInsight] = useState('');
+
+  useEffect(() => {
+    if (!state.user?.id) return;
+    fetch(`${API}/curriculum/${state.user.id}`)
+      .then((r) => r.json())
+      .then((data) => {
+        const keyMilestones = data.filter((d) => d.day % 7 === 1 || d.day === 15 || d.day === 30 || d.contentType === 'assessment');
+        setMilestones(keyMilestones.slice(0, 6));
+      })
+      .catch(() => {});
+    fetch(`${API}/chat/message`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ message: `Brief insight for Day ${currentDay} student, one sentence.`, contextHistory: [] }),
+    })
+      .then((r) => r.json())
+      .then((data) => setVisheshInsight(data.response))
+      .catch(() => setVisheshInsight('Your consistency is exceptional. Keep pushing forward.'));
+  }, [state.user?.id, currentDay]);
 
   const radarData = [
-    { skill: 'Technical', value: scores.technical || 10, full: 100 },
-    { skill: 'Problem\nSolving', value: scores.problemSolving || 10, full: 100 },
-    { skill: 'Communication', value: scores.communication || 10, full: 100 },
-    { skill: 'Consistency', value: scores.consistency || 10, full: 100 },
-    { skill: 'Retention', value: scores.retention || 10, full: 100 },
-    { skill: 'Velocity', value: scores.velocity || 10, full: 100 },
+    { skill: 'Technical', value: scores.technical || 0, full: 100 },
+    { skill: 'Problem\nSolving', value: scores.problemSolving || 0, full: 100 },
+    { skill: 'Communication', value: scores.communication || 0, full: 100 },
+    { skill: 'Consistency', value: scores.consistency || 0, full: 100 },
+    { skill: 'Retention', value: scores.retention || 0, full: 100 },
+    { skill: 'Velocity', value: scores.velocity || 0, full: 100 },
   ];
 
   const progressData = progressHistory?.length > 0 ? progressHistory : [{ day: 1, score: 0 }];
@@ -146,37 +170,36 @@ export default function Dashboard() {
               <div className="card" style={{ animation: 'fadeInUp 0.5s ease 0.1s both' }}>
                 <div style={{ fontWeight: 700, fontSize: '15px', fontFamily: 'var(--font-display)', marginBottom: '20px' }}>Learning Path</div>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '0' }}>
-                  {[
-                    { day: 1, label: 'Neural Foundations', done: true },
-                    { day: 7, label: 'Core Architecture', done: true },
-                    { day: 14, label: 'Optimization Strategies', active: true },
-                    { day: 15, label: 'Phase 1 Milestone', milestone: true },
-                    { day: 22, label: 'Deployment & Scale', locked: true },
-                    { day: 30, label: 'Final Certification', locked: true },
-                  ].map((item, i) => (
-                    <div key={item.day} style={{ display: 'flex', gap: '16px', alignItems: 'flex-start', paddingBottom: '20px', position: 'relative' }}>
-                      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', flexShrink: 0 }}>
-                        <div style={{
-                          width: 28, height: 28, borderRadius: '50%',
-                          background: item.done ? 'var(--emerald-500)' : item.active ? 'var(--violet-500)' : item.milestone ? 'rgba(245,158,11,0.3)' : 'rgba(139,92,246,0.1)',
-                          border: `2px solid ${item.done ? 'var(--emerald-500)' : item.active ? 'var(--violet-400)' : item.milestone ? 'var(--amber-400)' : 'var(--border-subtle)'}`,
-                          display: 'flex', alignItems: 'center', justifyContent: 'center',
-                          fontSize: '11px', fontWeight: 700, color: 'white',
-                          boxShadow: item.active ? '0 0 12px rgba(124,58,237,0.5)' : 'none',
-                        }}>
-                          {item.done ? '✓' : item.active ? '▶' : item.milestone ? '★' : '○'}
+                  {(milestones.length > 0 ? milestones : []).map((item, i) => {
+                    const day = item.day;
+                    const isActive = day === currentDay;
+                    const isDone = day < currentDay;
+                    const isMilestone = item.contentType === 'assessment';
+                    return (
+                      <div key={day} style={{ display: 'flex', gap: '16px', alignItems: 'flex-start', paddingBottom: '20px', position: 'relative' }}>
+                        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', flexShrink: 0 }}>
+                          <div style={{
+                            width: 28, height: 28, borderRadius: '50%',
+                            background: isDone ? 'var(--emerald-500)' : isActive ? 'var(--violet-500)' : isMilestone ? 'rgba(245,158,11,0.3)' : 'rgba(139,92,246,0.1)',
+                            border: `2px solid ${isDone ? 'var(--emerald-500)' : isActive ? 'var(--violet-400)' : isMilestone ? 'var(--amber-400)' : 'var(--border-subtle)'}`,
+                            display: 'flex', alignItems: 'center', justifyContent: 'center',
+                            fontSize: '11px', fontWeight: 700, color: 'white',
+                            boxShadow: isActive ? '0 0 12px rgba(124,58,237,0.5)' : 'none',
+                          }}>
+                            {isDone ? '✓' : isActive ? '▶' : isMilestone ? '★' : '○'}
+                          </div>
+                          {i < milestones.length - 1 && <div style={{ width: 2, flex: 1, minHeight: '20px', background: isDone ? 'var(--emerald-500)' : 'rgba(139,92,246,0.2)', marginTop: '4px' }} />}
                         </div>
-                        {i < 5 && <div style={{ width: 2, flex: 1, minHeight: '20px', background: item.done ? 'var(--emerald-500)' : 'rgba(139,92,246,0.2)', marginTop: '4px' }} />}
-                      </div>
-                      <div style={{ paddingTop: '4px' }}>
-                        <div style={{ fontSize: '13px', fontWeight: item.active ? 700 : 500, color: item.active ? 'var(--text-primary)' : item.locked ? 'var(--text-muted)' : 'var(--text-secondary)', fontFamily: 'var(--font-mono)' }}>
-                          Day {item.day} — {item.label}
+                        <div style={{ paddingTop: '4px' }}>
+                          <div style={{ fontSize: '13px', fontWeight: isActive ? 700 : 500, color: isActive ? 'var(--text-primary)' : isDone ? 'var(--text-secondary)' : 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>
+                            Day {day} — {item.topic}
+                          </div>
+                          {isActive && <div style={{ fontSize: '11px', color: 'var(--violet-400)', fontFamily: 'var(--font-mono)', marginTop: '2px' }}>● Currently Active</div>}
+                          {isMilestone && <div style={{ fontSize: '11px', color: 'var(--amber-400)', fontFamily: 'var(--font-mono)', marginTop: '2px' }}>★ Major Validation</div>}
                         </div>
-                        {item.active && <div style={{ fontSize: '11px', color: 'var(--violet-400)', fontFamily: 'var(--font-mono)', marginTop: '2px' }}>● Currently Active</div>}
-                        {item.milestone && <div style={{ fontSize: '11px', color: 'var(--amber-400)', fontFamily: 'var(--font-mono)', marginTop: '2px' }}>★ Major Validation</div>}
                       </div>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
               </div>
 
@@ -217,7 +240,7 @@ export default function Dashboard() {
                   <div className="dot-live" style={{ marginLeft: 'auto' }} />
                 </div>
                 <div style={{ fontSize: '13px', color: 'var(--text-secondary)', lineHeight: 1.6, borderLeft: '2px solid var(--violet-500)', paddingLeft: '12px' }}>
-                  Your consistency is exceptional. Technical depth is improving — push harder on system design concepts today.
+                  {visheshInsight || 'Analyzing your progress...'}
                 </div>
               </div>
 

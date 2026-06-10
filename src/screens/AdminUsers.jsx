@@ -1,21 +1,34 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import AdminSidebar from '../components/AdminSidebar';
+import { useApp } from '../context/AppContext';
 
-// Mock data for UI demonstration
-const MOCK_USERS = [
-  { id: '1', name: 'Alice Chen', email: 'alice@example.com', role: 'USER', bootcamp: 'AI Engineering', progress: 85, status: 'Active' },
-  { id: '2', name: 'Bob Smith', email: 'bob@example.com', role: 'USER', bootcamp: 'Full Stack', progress: 42, status: 'Active' },
-  { id: '3', name: 'Admin Operative', email: 'admin@synapse.net', role: 'SUPER_ADMIN', bootcamp: 'N/A', progress: 100, status: 'Active' },
-  { id: '4', name: 'Diana Prince', email: 'diana@example.com', role: 'USER', bootcamp: 'Cybersecurity', progress: 12, status: 'Suspended' },
-];
+const API = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
 
 export default function AdminUsers() {
+  const { state } = useApp();
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedUser, setSelectedUser] = useState(null);
+  const [users, setUsers] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  const filteredUsers = MOCK_USERS.filter(u => 
-    u.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
-    u.email.toLowerCase().includes(searchTerm.toLowerCase())
+  useEffect(() => {
+    fetch(`${API}/users`, {
+      headers: { Authorization: `Bearer ${state.token}` },
+    })
+      .then((r) => r.json())
+      .then((data) => {
+        setUsers(Array.isArray(data) ? data : []);
+        setLoading(false);
+      })
+      .catch(() => {
+        setUsers([]);
+        setLoading(false);
+      });
+  }, [state.token]);
+
+  const filteredUsers = users.filter(u =>
+    (u.name || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+    (u.email || '').toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   return (
@@ -160,14 +173,12 @@ export default function AdminUsers() {
 
               <div style={{ display: 'grid', gap: '16px', fontFamily: 'var(--font-mono)', fontSize: '12px', marginBottom: '32px' }}>
                 <div>
-                  <div style={{ color: 'var(--text-muted)', marginBottom: '4px' }}>Bootcamp Enrollment</div>
-                  <div style={{ color: 'white', fontWeight: 600 }}>{selectedUser.bootcamp}</div>
+                  <div style={{ color: 'var(--text-muted)', marginBottom: '4px' }}>User ID</div>
+                  <div style={{ color: 'white', fontWeight: 600 }}>{selectedUser.id}</div>
                 </div>
                 <div>
-                  <div style={{ color: 'var(--text-muted)', marginBottom: '4px' }}>Neural Progress</div>
-                  <div style={{ width: '100%', height: '4px', background: 'rgba(255,255,255,0.1)', borderRadius: '2px', marginTop: '8px' }}>
-                    <div style={{ width: `${selectedUser.progress}%`, height: '100%', background: 'var(--cyan-400)', borderRadius: '2px' }} />
-                  </div>
+                  <div style={{ color: 'var(--text-muted)', marginBottom: '4px' }}>Role</div>
+                  <div style={{ color: 'white', fontWeight: 600 }}>{selectedUser.role || 'USER'}</div>
                 </div>
               </div>
 

@@ -6,22 +6,21 @@ export default function SessionStartModal({ onJoin }) {
 
   const handleEnableCamera = async () => {
     try {
-      await navigator.mediaDevices.getUserMedia({ video: true });
+      const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+      stream.getTracks().forEach((t) => t.stop());
       setCameraEnabled(true);
     } catch (err) {
-      // For development/mock purposes, if they deny or don't have a camera, we can simulate it
-      console.warn("Camera error, mocking permission", err);
-      setCameraEnabled(true);
+      setCameraEnabled(false);
     }
   };
 
   const handleEnableMic = async () => {
     try {
-      await navigator.mediaDevices.getUserMedia({ audio: true });
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      stream.getTracks().forEach((t) => t.stop());
       setMicEnabled(true);
     } catch (err) {
-      console.warn("Mic error, mocking permission", err);
-      setMicEnabled(true);
+      setMicEnabled(false);
     }
   };
 

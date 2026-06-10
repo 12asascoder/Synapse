@@ -6,14 +6,9 @@ import { useState, useEffect } from 'react';
 import { useApp } from '../context/AppContext';
 import NeuralSphere from '../components/NeuralSphere';
 
-const NAV_LINKS = ['Intelligence', 'Bootcamps', 'Skill Passport', 'Analytics', 'Community', 'Documentation'];
+const API = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
 
-const BOOTCAMP_PREVIEWS = [
-  { name: 'Forward Deployed\nEngineer', icon: '⚡', color: '#7c3aed' },
-  { name: 'AI Engineer', icon: '🧠', color: '#06b6d4' },
-  { name: 'Sales Representative', icon: '📈', color: '#10b981' },
-  { name: 'Product Manager', icon: '🎯', color: '#f59e0b' },
-];
+const PREVIEW_COLORS = ['#7c3aed', '#06b6d4', '#10b981', '#f59e0b'];
 
 const FEATURES = [
   {
@@ -69,6 +64,14 @@ export default function LandingPage() {
   const { navigate } = useApp();
   const [scrolled, setScrolled] = useState(false);
   const [hoveredBootcamp, setHoveredBootcamp] = useState(null);
+  const [bootcamps, setBootcamps] = useState([]);
+
+  useEffect(() => {
+    fetch(`${API}/bootcamps`)
+      .then((r) => r.json())
+      .then((data) => setBootcamps(data.slice(0, 4)))
+      .catch(() => {});
+  }, []);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 40);
@@ -368,38 +371,45 @@ export default function LandingPage() {
           </p>
 
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '16px' }}>
-            {BOOTCAMP_PREVIEWS.map((b, i) => (
-              <button
-                key={b.name}
-                onClick={() => navigate('auth')}
-                onMouseEnter={() => setHoveredBootcamp(i)}
-                onMouseLeave={() => setHoveredBootcamp(null)}
-                style={{
-                  background: hoveredBootcamp === i
-                    ? `rgba(${b.color === '#7c3aed' ? '124,58,237' : b.color === '#06b6d4' ? '6,182,212' : b.color === '#10b981' ? '16,185,129' : '245,158,11'}, 0.12)`
-                    : 'var(--bg-card)',
-                  border: `1px solid ${hoveredBootcamp === i ? b.color + '44' : 'var(--border-subtle)'}`,
-                  borderRadius: 'var(--radius-xl)',
-                  padding: '48px 24px 24px',
-                  cursor: 'pointer',
-                  transition: 'all 0.25s ease',
-                  transform: hoveredBootcamp === i ? 'translateY(-4px)' : 'none',
-                  boxShadow: hoveredBootcamp === i ? `0 8px 32px ${b.color}22` : 'none',
-                  textAlign: 'left',
-                }}>
-                <div style={{ fontSize: '28px', marginBottom: '40px' }}>{b.icon}</div>
-                <div style={{
-                  fontSize: '14px',
-                  fontWeight: 600,
-                  color: hoveredBootcamp === i ? b.color : 'var(--text-primary)',
-                  fontFamily: 'var(--font-display)',
-                  whiteSpace: 'pre-line',
-                  lineHeight: 1.3,
-                }}>
-                  {b.name}
-                </div>
-              </button>
-            ))}
+            {bootcamps.length === 0
+              ? Array.from({ length: 4 }).map((_, i) => (
+                  <div key={i} style={{ background: 'var(--bg-card)', border: '1px solid var(--border-subtle)', borderRadius: 'var(--radius-xl)', padding: '48px 24px 24px', textAlign: 'center' }}>
+                    <div style={{ fontSize: '12px', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>Loading...</div>
+                  </div>
+                ))
+              : bootcamps.map((b, i) => {
+                  const color = PREVIEW_COLORS[i] || '#7c3aed';
+                  const rgb = color === '#7c3aed' ? '124,58,237' : color === '#06b6d4' ? '6,182,212' : color === '#10b981' ? '16,185,129' : '245,158,11';
+                  return (
+                    <button
+                      key={b.id}
+                      onClick={() => navigate('auth')}
+                      onMouseEnter={() => setHoveredBootcamp(i)}
+                      onMouseLeave={() => setHoveredBootcamp(null)}
+                      style={{
+                        background: hoveredBootcamp === i ? `rgba(${rgb}, 0.12)` : 'var(--bg-card)',
+                        border: `1px solid ${hoveredBootcamp === i ? color + '44' : 'var(--border-subtle)'}`,
+                        borderRadius: 'var(--radius-xl)',
+                        padding: '48px 24px 24px',
+                        cursor: 'pointer',
+                        transition: 'all 0.25s ease',
+                        transform: hoveredBootcamp === i ? 'translateY(-4px)' : 'none',
+                        boxShadow: hoveredBootcamp === i ? `0 8px 32px ${color}22` : 'none',
+                        textAlign: 'left',
+                      }}>
+                      <div style={{ fontSize: '28px', marginBottom: '40px' }}>{['⚡', '🧠', '📈', '🎯'][i] || '✦'}</div>
+                      <div style={{
+                        fontSize: '14px',
+                        fontWeight: 600,
+                        color: hoveredBootcamp === i ? color : 'var(--text-primary)',
+                        fontFamily: 'var(--font-display)',
+                        lineHeight: 1.3,
+                      }}>
+                        {b.name}
+                      </div>
+                    </button>
+                  );
+                })}
           </div>
         </div>
       </section>

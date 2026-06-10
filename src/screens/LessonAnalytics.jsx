@@ -2,27 +2,44 @@
  * LessonAnalytics — "Skill Level Up" results screen
  * Exact match to reference: radar chart, Skill Passport card, Next Objective, Sector Alpha peers
  */
+import { useState, useEffect } from 'react';
 import { useApp } from '../context/AppContext';
 import { RadarChart, PolarGrid, PolarAngleAxis, Radar, ResponsiveContainer } from 'recharts';
+
+const API = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
 
 export default function LessonAnalytics() {
   const { state, navigate } = useApp();
   const { scores, currentDay } = state;
+  const [peers, setPeers] = useState([]);
+  const [nextTopic, setNextTopic] = useState('');
+
+  useEffect(() => {
+    fetch(`${API}/community/leaderboard`)
+      .then((r) => r.json())
+      .then((data) => setPeers(data.slice(0, 3)))
+      .catch(() => {});
+    if (state.user?.id) {
+      fetch(`${API}/curriculum/${state.user.id}`)
+        .then((r) => r.json())
+        .then((data) => {
+          const next = Array.isArray(data) ? data.find((d) => d.day === currentDay + 1) : null;
+          if (next) setNextTopic(next.topic);
+        })
+        .catch(() => setNextTopic('Distributed Systems'));
+    }
+  }, [currentDay, state.user?.id]);
 
   const radarData = [
-    { skill: 'System Arch', baseline: 55, current: scores.technical || 60 },
-    { skill: 'Algorithmic Logic', baseline: 50, current: scores.problemSolving || 50 },
-    { skill: 'Data Structs', baseline: 45, current: scores.consistency || 45 },
-    { skill: 'Security Protos', baseline: 40, current: scores.retention || 40 },
-    { skill: 'Opto-Mechanics', baseline: 48, current: scores.velocity || 50 },
-    { skill: 'Neural Nets', baseline: 52, current: scores.communication || 55 },
+    { skill: 'Technical', current: scores.technical || 0 },
+    { skill: 'Problem\nSolving', current: scores.problemSolving || 0 },
+    { skill: 'Communication', current: scores.communication || 0 },
+    { skill: 'Consistency', current: scores.consistency || 0 },
+    { skill: 'Retention', current: scores.retention || 0 },
+    { skill: 'Velocity', current: scores.velocity || 0 },
   ];
 
-  const PEERS = [
-    { rank: 1, name: 'Operative_Kyla', tier: 'Architect Tier III', pts: 9420, highlight: false },
-    { rank: 2, name: 'J_Vance_Sys', tier: 'Architect Tier II', pts: 8890, highlight: false },
-    { rank: 14, name: 'You', tier: '+500 Recent', pts: state.totalPoints || 4150, highlight: true },
-  ];
+  const peersList = peers.length > 0 ? peers.map((p, i) => ({ rank: p.rank || i + 1, name: p.name, tier: p.tier || 'Operative', pts: p.points || 0, highlight: false })) : [];
 
   return (
     <div style={{
@@ -65,25 +82,16 @@ export default function LessonAnalytics() {
             borderRadius: '16px', padding: '28px',
             animation: 'fadeInUp 0.5s ease 0.1s both',
           }}>
-            <div style={{ marginBottom: '16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-              <div>
-                <div style={{ fontWeight: 800, fontSize: '18px', fontFamily: 'var(--font-display)' }}>Competency Delta</div>
-                <div style={{ fontSize: '12px', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)', marginTop: '2px' }}>Baseline vs Current State</div>
-              </div>
-              <div style={{ display: 'flex', gap: '16px', fontSize: '11px', fontFamily: 'var(--font-mono)' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '5px', color: 'var(--text-muted)' }}>
-                  <div style={{ width: 12, height: 2, background: 'rgba(139,92,246,0.5)', borderRadius: '1px' }} /> Baseline
-                </div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '5px', color: 'var(--cyan-400)' }}>
-                  <div style={{ width: 12, height: 2, background: 'var(--cyan-400)', borderRadius: '1px' }} /> Current
+              <div style={{ marginBottom: '16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                <div>
+                  <div style={{ fontWeight: 800, fontSize: '18px', fontFamily: 'var(--font-display)' }}>Competency Matrix</div>
+                  <div style={{ fontSize: '12px', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)', marginTop: '2px' }}>Current assessment state</div>
                 </div>
               </div>
-            </div>
             <ResponsiveContainer width="100%" height={280}>
               <RadarChart data={radarData}>
                 <PolarGrid stroke="rgba(139,92,246,0.12)" />
                 <PolarAngleAxis dataKey="skill" tick={{ fill: '#6b6b88', fontSize: 10, fontFamily: 'JetBrains Mono' }} />
-                <Radar name="Baseline" dataKey="baseline" stroke="rgba(139,92,246,0.4)" fill="rgba(139,92,246,0.08)" strokeWidth={1} strokeDasharray="4 4" />
                 <Radar name="Current" dataKey="current" stroke="#22d3ee" fill="rgba(34,211,238,0.15)" strokeWidth={2} dot={{ fill: '#22d3ee', strokeWidth: 0, r: 4 }} />
               </RadarChart>
             </ResponsiveContainer>
@@ -180,10 +188,10 @@ export default function LessonAnalytics() {
             </div>
 
             <h3 style={{ fontSize: '24px', fontFamily: 'var(--font-display)', fontWeight: 800, marginBottom: '12px' }}>
-              Distributed Systems
+              {nextTopic || 'Loading...'}
             </h3>
             <p style={{ fontSize: '13px', color: 'var(--text-secondary)', lineHeight: 1.6, marginBottom: '20px' }}>
-              Prepare for tomorrow's simulation. Focus areas include consensus algorithms and fault tolerance in decentralized architectures.
+              Prepare for tomorrow's session. Focus on the key concepts and review any weak areas from today's assessment.
             </p>
 
             <button
@@ -219,8 +227,8 @@ export default function LessonAnalytics() {
             </div>
 
             <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-              {PEERS.map((peer) => (
-                <div key={peer.rank} style={{
+              {peersList.length === 0 ? <div key="empty" style={{ padding: '16px', textAlign: 'center', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)', fontSize: '12px' }}>No peer data available</div> : peersList.map((peer) => (
+                <div key={peer.rank || peer.id} style={{
                   display: 'flex', alignItems: 'center', gap: '12px',
                   padding: '14px 16px', borderRadius: '10px',
                   background: peer.highlight ? 'rgba(124,58,237,0.12)' : 'rgba(14,14,22,0.5)',

@@ -42,10 +42,6 @@ export default function AuthScreen() {
       const endpoint = mode === 'signup' ? '/auth/register' : '/auth/login';
       const body = mode === 'signup' ? { name, email, password } : { email, password };
       
-      // Hidden feature for testing: if email starts with admin@, we inject role
-      if (mode === 'signup' && email.startsWith('admin@')) {
-        body.role = 'SUPER_ADMIN';
-      }
       
       const res = await fetch(`${import.meta.env.VITE_API_URL}${endpoint}`, {
         method: 'POST',
@@ -78,19 +74,6 @@ export default function AuthScreen() {
       setError(err.message);
       setLoading(false);
     }
-  };
-
-  const handleSocialAuth = (provider) => {
-    // TODO(security): Implement OAuth2 PKCE flow for social login in production
-    setLoading(true);
-    setTimeout(() => {
-      dispatch({
-        type: 'SET_USER',
-        payload: { name: `${provider} User`, email: '***@***.com', joinedAt: new Date().toISOString() },
-      });
-      setLoading(false);
-      navigate('hub');
-    }, 1000);
   };
 
   return (
@@ -351,63 +334,6 @@ export default function AuthScreen() {
             )}
           </button>
         </form>
-
-        {/* Divider */}
-        <div style={{
-          display: 'flex',
-          alignItems: 'center',
-          gap: '16px',
-          margin: '24px 0',
-          color: 'var(--text-muted)',
-          fontSize: '11px',
-          fontFamily: 'var(--font-mono)',
-        }}>
-          <div style={{ flex: 1, height: '1px', background: 'var(--border-subtle)' }} />
-          External Protocols
-          <div style={{ flex: 1, height: '1px', background: 'var(--border-subtle)' }} />
-        </div>
-
-        {/* Social login */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '10px' }}>
-          {[
-            { id: 'google', label: 'Google', icon: 'G', color: '#ea4335' },
-            { id: 'github', label: 'GitHub', icon: '⌥', color: '#f8f8ff' },
-            { id: 'linkedin', label: 'LinkedIn', icon: 'in', color: '#0077b5' },
-          ].map((p) => (
-            <button
-              key={p.id}
-              id={`auth-social-${p.id}`}
-              onClick={() => handleSocialAuth(p.label)}
-              disabled={loading}
-              style={{
-                padding: '12px',
-                background: 'rgba(14,14,22,0.8)',
-                border: '1px solid var(--border-default)',
-                borderRadius: 'var(--radius-md)',
-                cursor: 'pointer',
-                transition: 'all 0.2s ease',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                fontSize: '14px',
-                fontWeight: 700,
-                color: p.color,
-                fontFamily: 'var(--font-mono)',
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.borderColor = 'var(--border-active)';
-                e.currentTarget.style.background = 'rgba(139,92,246,0.08)';
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.borderColor = 'var(--border-default)';
-                e.currentTarget.style.background = 'rgba(14,14,22,0.8)';
-              }}
-              aria-label={`Sign in with ${p.label}`}
-            >
-              {p.icon}
-            </button>
-          ))}
-        </div>
 
         <p style={{
           textAlign: 'center',

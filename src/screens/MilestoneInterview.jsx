@@ -8,13 +8,13 @@ import { streamVisheshResponse } from '../lib/vishesh';
 
 export default function MilestoneInterview() {
   const { state, dispatch, navigate } = useApp();
-  const { currentDay, ollamaModel } = state;
+  const { currentDay } = state;
   const isFinal = currentDay >= 30;
 
   const [messages, setMessages] = useState([
     {
       role: 'assistant',
-      content: `Welcome to your ${isFinal ? 'Day 30 Final' : 'Day 15 Milestone'} Oral Validation. I will be evaluating your technical reasoning. Let's begin: Can you explain the trade-offs between dense retrieval and sparse retrieval in RAG systems?`,
+      content: `Welcome to your ${isFinal ? 'Day 30 Final' : 'Day 15 Milestone'} Oral Validation. I will be evaluating your technical reasoning. Let's begin with your first question.`,
       id: 'init-1',
     },
   ]);
@@ -62,7 +62,7 @@ export default function MilestoneInterview() {
       userMessage: text,
       history,
       context: `You are conducting an oral validation technical interview for a software engineering bootcamp. Grade responses strictly. Ask follow up questions.`,
-      model: ollamaModel,
+
       abortController: abortRef.current,
       onToken: (_, full) => {
         setMessages((p) => p.map((m) => m.id === aId ? { ...m, content: full } : m));
@@ -76,15 +76,23 @@ export default function MilestoneInterview() {
         setIsStreaming(false);
       },
     });
-  }, [input, isStreaming, messages, ollamaModel]);
+  }, [input, isStreaming, messages]);
 
   const finishInterview = () => {
+    const totalMessages = messages.filter((m) => m.role === 'user').length;
+    const qualityScore = Math.min(100, 60 + totalMessages * 5);
     dispatch({
       type: 'COMPLETE_ASSESSMENT',
       payload: {
         day: currentDay,
-        scores: { knowledge: 88, accuracy: 85, confidence: 90, communication: 82, problemSolving: 85 }
-      }
+        scores: {
+          knowledge: qualityScore,
+          accuracy: qualityScore - 5,
+          confidence: qualityScore - 3,
+          communication: Math.min(100, qualityScore + 2),
+          problemSolving: qualityScore - 2,
+        },
+      },
     });
     navigate('lesson-analytics');
   };

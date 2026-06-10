@@ -183,7 +183,6 @@ export default function VisheshChat({ context = '', placeholder = 'Ask Vishesh a
       userMessage: text,
       history,
       context,
-      model: state.ollamaModel || undefined,
       abortController: abortRef.current,
       onToken: (token, fullText) => {
         setMessages((prev) =>
@@ -217,7 +216,7 @@ export default function VisheshChat({ context = '', placeholder = 'Ask Vishesh a
         setIsStreaming(false);
       },
     });
-  }, [input, isStreaming, messages, context, state.ollamaModel, dispatch]);
+  }, [input, isStreaming, messages, context, dispatch]);
 
   const handleKeyDown = (e) => {
     if (e.key === 'Enter' && !e.shiftKey) {
@@ -260,15 +259,13 @@ export default function VisheshChat({ context = '', placeholder = 'Ask Vishesh a
               VISHESH
             </div>
             <div style={{ fontSize: 10, color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>
-              {state.ollamaOnline ? `${state.ollamaModel || 'local'} · online` : 'connecting...'}
+              TruGen AI · online
             </div>
           </div>
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
           <WaveformIcon active={isStreaming} />
-          {state.ollamaOnline && (
-            <div className="badge badge-emerald">LOCAL</div>
-          )}
+          <div className="badge badge-emerald" style={{ fontSize: '9px', padding: '2px 6px' }}>AI</div>
         </div>
       </div>
 
@@ -313,20 +310,7 @@ export default function VisheshChat({ context = '', placeholder = 'Ask Vishesh a
         borderTop: '1px solid var(--border-subtle)',
         background: 'rgba(10, 10, 15, 0.9)',
       }}>
-        {!state.ollamaOnline && (
-          <div style={{
-            marginBottom: '10px',
-            padding: '8px 12px',
-            background: 'rgba(245, 158, 11, 0.1)',
-            border: '1px solid rgba(245, 158, 11, 0.2)',
-            borderRadius: 'var(--radius-md)',
-            fontSize: '12px',
-            color: 'var(--amber-400)',
-            fontFamily: 'var(--font-mono)',
-          }}>
-            ⚡ Run <code style={{ color: 'var(--cyan-400)' }}>ollama serve</code> locally to activate Vishesh
-          </div>
-        )}
+        
         <div style={{ display: 'flex', gap: '10px', alignItems: 'flex-end' }}>
           <textarea
             ref={inputRef}
@@ -382,7 +366,7 @@ export default function VisheshChat({ context = '', placeholder = 'Ask Vishesh a
           )}
         </div>
         <div style={{ marginTop: '8px', fontSize: '10px', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)', textAlign: 'center' }}>
-          Enter to send · Shift+Enter for new line · 100% local · powered by Ollama
+          Enter to send · Shift+Enter for new line · powered by TruGen AI
         </div>
       </div>
     </div>

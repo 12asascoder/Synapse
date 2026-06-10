@@ -1,16 +1,8 @@
-/**
- * Settings — User preferences, neural link config, model selection
- */
 import { useApp } from '../context/AppContext';
 import Sidebar from '../components/Sidebar';
 
 export default function Settings() {
   const { state, dispatch } = useApp();
-  const { ollamaOnline, ollamaModel } = state;
-
-  const handleModelChange = (e) => {
-    dispatch({ type: 'SET_MODEL', payload: e.target.value });
-  };
 
   return (
     <div style={{ display: 'flex', height: '100vh', background: 'var(--bg-void)', overflow: 'hidden' }}>
@@ -35,29 +27,22 @@ export default function Settings() {
               
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '16px', background: 'rgba(10,10,18,0.5)', borderRadius: '10px', border: '1px solid rgba(139,92,246,0.1)', marginBottom: '16px' }}>
                 <div>
-                  <div style={{ fontWeight: 600, fontSize: '13px', fontFamily: 'var(--font-mono)', marginBottom: '4px' }}>Local Inference Status</div>
-                  <div style={{ fontSize: '11px', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>Ollama connection state</div>
+                  <div style={{ fontWeight: 600, fontSize: '13px', fontFamily: 'var(--font-mono)', marginBottom: '4px' }}>AI Provider Status</div>
+                  <div style={{ fontSize: '11px', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>TruGen AI connection state</div>
                 </div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '6px 12px', background: ollamaOnline ? 'rgba(16,185,129,0.1)' : 'rgba(244,63,94,0.1)', border: `1px solid ${ollamaOnline ? 'rgba(16,185,129,0.3)' : 'rgba(244,63,94,0.3)'}`, borderRadius: '6px' }}>
-                  <div style={{ width: 8, height: 8, borderRadius: '50%', background: ollamaOnline ? 'var(--emerald-400)' : 'var(--rose-400)', boxShadow: `0 0 8px ${ollamaOnline ? 'var(--emerald-400)' : 'var(--rose-400)'}` }} />
-                  <span style={{ fontSize: '11px', fontWeight: 700, fontFamily: 'var(--font-mono)', color: ollamaOnline ? 'var(--emerald-400)' : 'var(--rose-400)' }}>{ollamaOnline ? 'ONLINE' : 'OFFLINE'}</span>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '6px 12px', background: 'rgba(16,185,129,0.1)', border: '1px solid rgba(16,185,129,0.3)', borderRadius: '6px' }}>
+                  <div style={{ width: 8, height: 8, borderRadius: '50%', background: 'var(--emerald-400)', boxShadow: '0 0 8px var(--emerald-400)' }} />
+                  <span style={{ fontSize: '11px', fontWeight: 700, fontFamily: 'var(--font-mono)', color: 'var(--emerald-400)' }}>ONLINE</span>
                 </div>
               </div>
 
               <div style={{ padding: '16px', background: 'rgba(10,10,18,0.5)', borderRadius: '10px', border: '1px solid rgba(139,92,246,0.1)' }}>
-                <div style={{ fontWeight: 600, fontSize: '13px', fontFamily: 'var(--font-mono)', marginBottom: '12px' }}>Neural Model</div>
-                <select 
-                  value={ollamaModel} 
-                  onChange={handleModelChange}
-                  style={{ width: '100%', padding: '10px 14px', background: 'rgba(14,14,22,0.8)', border: '1px solid var(--border-default)', borderRadius: '8px', color: 'var(--text-primary)', fontFamily: 'var(--font-mono)', fontSize: '12px', outline: 'none' }}
-                >
-                  <option value="llama3">llama3 (Recommended for speed)</option>
-                  <option value="llama2">llama2</option>
-                  <option value="mistral">mistral</option>
-                  <option value="phi">phi</option>
-                </select>
+                <div style={{ fontWeight: 600, fontSize: '13px', fontFamily: 'var(--font-mono)', marginBottom: '8px' }}>Neural Model</div>
+                <div style={{ fontSize: '12px', color: 'var(--text-primary)', fontFamily: 'var(--font-mono)' }}>
+                  TruGen AI · Cloud Inference
+                </div>
                 <div style={{ fontSize: '10px', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)', marginTop: '8px' }}>
-                  Ensure the model is pulled locally via `ollama run &lt;model&gt;`
+                  Configured via TRUGEN_MODEL environment variable
                 </div>
               </div>
             </div>

@@ -32,10 +32,6 @@ const initialState = {
   streak: 0,
   totalPoints: 0,
   growthScore: 0,
-  // Vishesh
-  ollamaOnline: false,
-  ollamaModel: null,
-  availableModels: [],
   // UI
   currentScreen: 'loading', // loading | landing | auth | hub | bootcamp-init | dashboard | lesson | assessment | analytics | skill-passport | community | certificates | settings | milestone | results
   sidebarOpen: true,
@@ -81,13 +77,6 @@ function reducer(state, action) {
     }
     case 'UPDATE_SCORES':
       return { ...state, scores: { ...state.scores, ...action.payload } };
-    case 'SET_OLLAMA_STATUS':
-      return {
-        ...state,
-        ollamaOnline: action.payload.online,
-        ollamaModel: action.payload.model,
-        availableModels: action.payload.models || [],
-      };
     case 'ADD_MESSAGE':
       return {
         ...state,

@@ -4,7 +4,6 @@
  */
 import { useEffect, useState } from 'react';
 import NeuralSphere from '../components/NeuralSphere';
-import { checkOllamaStatus } from '../lib/vishesh';
 import { useApp } from '../context/AppContext';
 
 const LOADING_MESSAGES = [
@@ -18,16 +17,12 @@ const LOADING_MESSAGES = [
 ];
 
 export default function LoadingScreen() {
-  const { dispatch, navigate } = useApp();
+  const { navigate } = useApp();
   const [msgIdx, setMsgIdx] = useState(0);
   const [progress, setProgress] = useState(0);
   const [fadeMsg, setFadeMsg] = useState(true);
 
   useEffect(() => {
-    // Check Ollama status
-    checkOllamaStatus().then((status) => {
-      dispatch({ type: 'SET_OLLAMA_STATUS', payload: status });
-    });
 
     // Cycle messages
     const msgInterval = setInterval(() => {

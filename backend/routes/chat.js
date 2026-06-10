@@ -30,29 +30,40 @@ router.post('/stream', async (req, res) => {
     const decoder = new TextDecoder();
     let buffer = '';
 
+    const handleSSELine = (line) => {
+      const trimmed = line.trim();
+      if (!trimmed) return;
+      if (trimmed === 'data: [DONE]') {
+        res.write('data: [DONE]\n\n');
+        return;
+      }
+      if (!trimmed.startsWith('data: ')) return;
+      const json = trimmed.slice(6);
+      try {
+        const parsed = JSON.parse(json);
+        const content = parsed.choices?.[0]?.delta?.content || parsed.choices?.[0]?.text || parsed.content || '';
+        if (content) {
+          res.write(`data: ${JSON.stringify({ content })}\n\n`);
+        }
+      } catch {
+        // skip malformed JSON
+      }
+    };
+
     while (true) {
       const { done, value } = await reader.read();
-      if (done) {
-        res.write('data: [DONE]\n\n');
-        res.end();
-        break;
-      }
+      if (done) break;
       buffer += decoder.decode(value, { stream: true });
       const lines = buffer.split('\n');
       buffer = lines.pop() || '';
       for (const line of lines) {
-        if (line.trim() === '') continue;
-        try {
-          const parsed = JSON.parse(line);
-          const content = parsed.choices?.[0]?.delta?.content || parsed.choices?.[0]?.text || '';
-          if (content) {
-            res.write(`data: ${JSON.stringify({ content })}\n\n`);
-          }
-        } catch {
-          res.write(`data: ${JSON.stringify({ content: line })}\n\n`);
-        }
+        handleSSELine(line);
       }
     }
+    // Process remaining buffer
+    if (buffer.trim()) handleSSELine(buffer);
+    res.write('data: [DONE]\n\n');
+    res.end();
   } catch (error) {
     res.status(500).json({ error: error.message });
   }

@@ -6,22 +6,23 @@
 import { useState, useEffect } from 'react';
 import { useApp } from '../context/AppContext';
 
-const BOOTCAMPS = [
-  { id: 'ai-eng', name: 'AI Engineering', icon: '🧠', duration: '30 Days', level: 'Advanced', color: '#7c3aed', outcomes: ['LLM Fine-tuning', 'RAG Systems', 'MLOps'], cert: 'AI Engineer Certified' },
-  { id: 'frontend', name: 'Frontend Engineering', icon: '⚡', duration: '30 Days', level: 'Intermediate', color: '#06b6d4', outcomes: ['React Mastery', 'System Design', 'Performance'], cert: 'Frontend Pro Certified' },
-  { id: 'backend', name: 'Backend Engineering', icon: '⚙', duration: '30 Days', level: 'Advanced', color: '#10b981', outcomes: ['Distributed Systems', 'APIs', 'Databases'], cert: 'Backend Architect Certified' },
-  { id: 'product', name: 'Product Management', icon: '🎯', duration: '30 Days', level: 'Intermediate', color: '#f59e0b', outcomes: ['Strategy', 'Roadmapping', 'GTM'], cert: 'PM Leader Certified' },
-  { id: 'sales', name: 'Sales Excellence', icon: '📈', duration: '30 Days', level: 'Beginner', color: '#f43f5e', outcomes: ['Consultative Sales', 'CRM Mastery', 'Closing'], cert: 'Sales Pro Certified' },
-  { id: 'data', name: 'Data Science', icon: '📊', duration: '30 Days', level: 'Advanced', color: '#8b5cf6', outcomes: ['ML Models', 'Data Pipelines', 'Analytics'], cert: 'Data Scientist Certified' },
-  { id: 'cyber', name: 'Cybersecurity', icon: '🛡', duration: '30 Days', level: 'Advanced', color: '#06b6d4', outcomes: ['Penetration Testing', 'SIEM', 'Zero Trust'], cert: 'Security Analyst Certified' },
-  { id: 'devops', name: 'DevOps Engineering', icon: '🚀', duration: '30 Days', level: 'Advanced', color: '#10b981', outcomes: ['Kubernetes', 'CI/CD', 'Observability'], cert: 'DevOps Engineer Certified' },
-  { id: 'uiux', name: 'UI/UX Design', icon: '✦', duration: '30 Days', level: 'Intermediate', color: '#f59e0b', outcomes: ['Design Systems', 'Prototyping', 'User Research'], cert: 'UX Designer Certified' },
-  { id: 'cloud', name: 'Cloud Engineering', icon: '☁', duration: '30 Days', level: 'Advanced', color: '#7c3aed', outcomes: ['AWS/GCP/Azure', 'Serverless', 'FinOps'], cert: 'Cloud Architect Certified' },
-];
+const API = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+
+const ICON_MAP = {
+  Brain: '🧠', Monitor: '⚡', Server: '⚙', Rocket: '🎯',
+  BarChart3: '📊', Shield: '🛡', Container: '🚀', Palette: '✦',
+  Cloud: '☁', Handshake: '📈',
+};
+
+const hexToRgb = (hex) => {
+  const c = hex.replace('#', '');
+  return `${parseInt(c.substring(0, 2), 16)},${parseInt(c.substring(2, 4), 16)},${parseInt(c.substring(4, 6), 16)}`;
+};
 
 function BootcampCard({ bootcamp, selected, onSelect }) {
   const [hovered, setHovered] = useState(false);
   const isActive = selected?.id === bootcamp.id;
+  const rgb = bootcamp.color ? hexToRgb(bootcamp.color) : '124,58,237';
 
   return (
     <button
@@ -30,9 +31,7 @@ function BootcampCard({ bootcamp, selected, onSelect }) {
       onMouseLeave={() => setHovered(false)}
       id={`bootcamp-${bootcamp.id}`}
       style={{
-        background: isActive
-          ? `rgba(${bootcamp.color === '#7c3aed' ? '124,58,237' : bootcamp.color === '#06b6d4' ? '6,182,212' : bootcamp.color === '#10b981' ? '16,185,129' : bootcamp.color === '#f59e0b' ? '245,158,11' : bootcamp.color === '#f43f5e' ? '244,63,94' : bootcamp.color === '#8b5cf6' ? '139,92,246' : '124,58,237'}, 0.18)`
-          : hovered ? 'rgba(139,92,246,0.08)' : 'var(--bg-card)',
+        background: isActive ? `rgba(${rgb}, 0.18)` : hovered ? 'rgba(139,92,246,0.08)' : 'var(--bg-card)',
         border: `1px solid ${isActive ? bootcamp.color + '66' : hovered ? 'rgba(139,92,246,0.3)' : 'var(--border-subtle)'}`,
         borderRadius: '14px',
         padding: '20px',
@@ -50,7 +49,7 @@ function BootcampCard({ bootcamp, selected, onSelect }) {
           background: `${bootcamp.color}22`,
           border: `1px solid ${bootcamp.color}44`,
           display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '18px',
-        }}>{bootcamp.icon}</div>
+        }}>{ICON_MAP[bootcamp.icon] || '🧠'}</div>
         <div style={{ flex: 1, minWidth: 0 }}>
           <div style={{ fontWeight: 700, fontSize: '13px', color: isActive ? bootcamp.color : 'var(--text-primary)', fontFamily: 'var(--font-display)', marginBottom: '4px' }}>
             {bootcamp.name}
@@ -62,7 +61,7 @@ function BootcampCard({ bootcamp, selected, onSelect }) {
           </div>
           {isActive && (
             <div style={{ marginTop: '10px', display: 'flex', gap: '4px', flexWrap: 'wrap' }}>
-              {bootcamp.outcomes.map((o) => (
+              {(bootcamp.outcomes || []).map((o) => (
                 <span key={o} style={{
                   fontSize: '10px', padding: '2px 8px',
                   background: `${bootcamp.color}22`, color: bootcamp.color,
@@ -82,10 +81,20 @@ function BootcampCard({ bootcamp, selected, onSelect }) {
 
 export default function WelcomeHub() {
   const { state, dispatch, navigate } = useApp();
+  const [bootcamps, setBootcamps] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [selected, setSelected] = useState(null);
   const [syncProgress] = useState(98);
-  const [phase, setPhase] = useState('select'); // select | confirm
+  const [phase, setPhase] = useState('select');
   const [robotFloatY, setRobotFloatY] = useState(0);
+
+  useEffect(() => {
+    fetch(`${API}/bootcamps`)
+      .then((r) => r.json())
+      .then((data) => setBootcamps(data))
+      .catch(() => setBootcamps([]))
+      .finally(() => setLoading(false));
+  }, []);
 
   // Float animation for robot
   useEffect(() => {
@@ -307,7 +316,9 @@ export default function WelcomeHub() {
           gap: '14px',
           marginBottom: '48px',
         }}>
-          {BOOTCAMPS.map((b, i) => (
+          {loading ? (
+            <div style={{ gridColumn: '1 / -1', textAlign: 'center', padding: '60px', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)', fontSize: '12px' }}>Loading bootcamps...</div>
+          ) : bootcamps.map((b, i) => (
             <div key={b.id} style={{ animation: `fadeInUp 0.4s ease ${i * 60}ms both` }}>
               <BootcampCard bootcamp={b} selected={selected} onSelect={setSelected} />
             </div>
@@ -333,7 +344,7 @@ export default function WelcomeHub() {
               }}>{selected.icon}</div>
               <div>
                 <div style={{ fontWeight: 700, fontSize: '15px', fontFamily: 'var(--font-display)' }}>{selected.name}</div>
-                <div style={{ fontSize: '12px', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>30 Days · {selected.cert}</div>
+                <div style={{ fontSize: '12px', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>{selected.duration} · {selected.cert ? 'Certified' : 'Certificate Not Available'}</div>
               </div>
             </div>
             <div style={{ display: 'flex', gap: '12px' }}>

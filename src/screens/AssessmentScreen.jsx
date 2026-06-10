@@ -2,53 +2,17 @@
  * AssessmentScreen — Cognitive Assessment with timer, confidence slider
  * Exact match to reference: SYNAPSE CORE header, QUESTION X OF 20, options, confidence matrix
  */
-import { useState, useEffect, useCallback, useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useApp } from '../context/AppContext';
 
-const DEFAULT_QUESTIONS = [
-  {
-    id: 1,
-    question: 'In a highly dense neural network, if node activation latency increases non-linearly with payload size, which topological optimization strategy minimizes overall computational drift?',
-    options: [
-      { id: 'A', text: 'Implementing a deterministic sharding protocol across peripheral nodes.' },
-      { id: 'B', text: 'Applying recurrent feedback loops to intermediate processing layers.' },
-      { id: 'C', text: 'Increasing the global learning rate while suppressing outlier datasets.' },
-      { id: 'D', text: 'Reducing activation thresholds uniformly across all dense layers.' },
-    ],
-    correct: 'B',
-    explanation: 'Recurrent feedback loops allow adaptive correction in real-time processing pipelines, effectively managing non-linear latency growth.',
-  },
-  {
-    id: 2,
-    question: 'When implementing a distributed LoRA fine-tuning pipeline, which parameter configuration prevents gradient explosion while maintaining model plasticity?',
-    options: [
-      { id: 'A', text: 'Setting rank r=1 with alpha scaling at 0.01 across all attention layers.' },
-      { id: 'B', text: 'Using gradient clipping with norm=1.0 and adaptive learning rate decay.' },
-      { id: 'C', text: 'Freezing all base model weights while training only the output projection.' },
-      { id: 'D', text: 'Applying L1 regularization exclusively to the query projection matrices.' },
-    ],
-    correct: 'B',
-    explanation: 'Gradient clipping with adaptive learning rate decay ensures training stability while preserving the model\'s ability to learn new representations.',
-  },
-  {
-    id: 3,
-    question: 'In a RAG system with a vector store of 10M embeddings, which retrieval optimization reduces P99 latency below 50ms without sacrificing recall accuracy?',
-    options: [
-      { id: 'A', text: 'Sequential linear scan with early termination heuristics.' },
-      { id: 'B', text: 'Hierarchical Navigable Small World (HNSW) with ef=200 and M=16.' },
-      { id: 'C', text: 'Inverted flat index with exhaustive nearest-neighbor search.' },
-      { id: 'D', text: 'Random projection trees with 8 hash functions per bucket.' },
-    ],
-    correct: 'B',
-    explanation: 'HNSW graphs provide logarithmic search complexity with configurable accuracy-speed trade-offs, making them ideal for large-scale production RAG systems.',
-  },
-];
+const API = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
 
 export default function AssessmentScreen() {
   const { state, dispatch, navigate } = useApp();
-  const { selectedBootcamp, currentDay, ollamaOnline, ollamaModel } = state;
+  const { selectedBootcamp, currentDay } = state;
 
-  const [questions, setQuestions] = useState(DEFAULT_QUESTIONS);
+  const [questions, setQuestions] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [currentQ, setCurrentQ] = useState(0);
   const [selected, setSelected] = useState(null);
   const [confidence, setConfidence] = useState(75);
@@ -56,9 +20,29 @@ export default function AssessmentScreen() {
   const [showResult, setShowResult] = useState(false);
   const [totalTime] = useState(45 * 60); // 45 minutes
   const [timeLeft, setTimeLeft] = useState(45 * 60);
-  const [loading, setLoading] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const timerRef = useRef(null);
+
+  useEffect(() => {
+    fetch(`${API}/assessments/questions?limit=5`)
+      .then((r) => r.json())
+      .then((data) => {
+        const mapped = data.map((q) => ({
+          id: q.id,
+          question: q.question,
+          options: q.options.map((text, i) => ({
+            id: String.fromCharCode(65 + i),
+            text,
+          })),
+          correct: String.fromCharCode(65 + q.correctAnswer),
+          explanation: q.explanation,
+        }));
+        setQuestions(mapped.length > 0 ? mapped : []);
+      })
+      .catch(() => setQuestions([]))
+      .finally(() => setLoading(false));
+  }, []);
 
   // Timer countdown
   useEffect(() => {
@@ -104,14 +88,22 @@ export default function AssessmentScreen() {
           knowledge: accuracy,
           accuracy,
           confidence: avgConf,
-          retention: accuracy * 0.9 | 0,
-          velocity: 82,
+          retention: Math.round(accuracy * (avgConf / 100)),
+          velocity: Math.round(Math.min(100, accuracy * 0.85 + 15)),
         },
       },
     });
     setSubmitted(true);
     setTimeout(() => navigate('lesson-analytics'), 1200);
   };
+
+  if (loading) {
+    return (
+      <div style={{ minHeight: '100vh', background: 'var(--bg-void)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: 'var(--font-mono)', color: 'var(--text-muted)', fontSize: '12px' }}>
+        Loading assessment questions...
+      </div>
+    );
+  }
 
   const q = questions[currentQ];
   const timePercent = (timeLeft / totalTime) * 100;

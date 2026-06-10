@@ -1,36 +1,30 @@
 /**
  * Community — Cohorts, leaderboard, challenges, peer learning
  */
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useApp } from '../context/AppContext';
 import Sidebar from '../components/Sidebar';
 
-const LEADERBOARD = [
-  { rank: 1, name: 'Operative_Kyla', bootcamp: 'AI Engineering', pts: 9420, tier: 'Architect III', streak: 22 },
-  { rank: 2, name: 'J_Vance_Sys', bootcamp: 'Backend Engineering', pts: 8890, tier: 'Architect II', streak: 18 },
-  { rank: 3, name: 'Priya_Neural', bootcamp: 'Data Science', pts: 8240, tier: 'Architect II', streak: 15 },
-  { rank: 4, name: 'MarcusX', bootcamp: 'AI Engineering', pts: 7680, tier: 'Architect I', streak: 12 },
-  { rank: 5, name: 'Zara_Dev', bootcamp: 'Frontend Engineering', pts: 7120, tier: 'Architect I', streak: 10 },
-  { rank: 14, name: 'You', bootcamp: 'AI Engineering', pts: 4150, tier: 'Architect II', streak: 7, isYou: true },
-];
+const API = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
 
-const CHALLENGES = [
-  { id: 1, title: 'Weekly Neural Challenge', desc: 'Implement a transformer attention mechanism from scratch', difficulty: 'Hard', participants: 234, reward: '+200 pts', deadline: '2 days', color: '#7c3aed' },
-  { id: 2, title: 'Speed Coding Sprint', desc: 'Solve 5 algorithmic problems in under 30 minutes', difficulty: 'Medium', participants: 412, reward: '+150 pts', deadline: '5 days', color: '#06b6d4' },
-  { id: 3, title: 'Case Study Analysis', desc: 'Analyze the OpenAI GPT-4 architecture paper and present key findings', difficulty: 'Medium', participants: 156, reward: '+120 pts', deadline: '1 week', color: '#10b981' },
-];
-
-const DISCUSSIONS = [
-  { user: 'Operative_Kyla', time: '2h ago', msg: 'Anyone else finding the LoRA fine-tuning section particularly dense? Happy to break it down.', replies: 8, likes: 24 },
-  { user: 'MarcusX', time: '4h ago', msg: 'Just passed Day 15 milestone with 89%! The oral validation with Vishesh was intense but fair.', replies: 15, likes: 42 },
-  { user: 'Zara_Dev', time: '6h ago', msg: 'Vishesh caught something in my code that I\'d been missing for 3 days. The AI evaluation is genuinely impressive.', replies: 6, likes: 31 },
-];
+const tabs = ['leaderboard', 'challenges', 'discussions', 'cohorts'];
 
 export default function Community() {
   const { state } = useApp();
   const [activeTab, setActiveTab] = useState('leaderboard');
+  const [leaderboard, setLeaderboard] = useState([]);
+  const [discussions, setDiscussions] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  const tabs = ['leaderboard', 'challenges', 'discussions', 'cohorts'];
+  useEffect(() => {
+    Promise.all([
+      fetch(`${API}/community/leaderboard`).then((r) => r.json()).catch(() => []),
+      fetch(`${API}/community/discussions`).then((r) => r.json()).catch(() => []),
+    ]).then(([lb, ds]) => {
+      setLeaderboard(lb);
+      setDiscussions(ds);
+    }).finally(() => setLoading(false));
+  }, []);
 
   return (
     <div style={{ display: 'flex', height: '100vh', background: 'var(--bg-void)', overflow: 'hidden' }}>
@@ -70,12 +64,12 @@ export default function Community() {
                     <div style={{ fontWeight: 700, fontSize: '15px', fontFamily: 'var(--font-display)' }}>Sector Alpha Rankings</div>
                     <span className="badge badge-violet">LIVE</span>
                   </div>
-                  {LEADERBOARD.map((op, i) => (
-                    <div key={op.rank} style={{
+                  {loading ? <div style={{ padding: '40px', textAlign: 'center', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)', fontSize: '12px' }}>Loading leaderboard...</div> : leaderboard.map((op, i) => (
+                    <div key={op.rank || i} style={{
                       display: 'flex', alignItems: 'center', gap: '14px',
                       padding: '16px 24px',
                       background: op.isYou ? 'rgba(124,58,237,0.1)' : i % 2 === 0 ? 'rgba(10,10,18,0.2)' : 'transparent',
-                      borderBottom: i < LEADERBOARD.length - 1 ? '1px solid rgba(139,92,246,0.06)' : 'none',
+                      borderBottom: i < leaderboard.length - 1 ? '1px solid rgba(139,92,246,0.06)' : 'none',
                       borderLeft: op.isYou ? '3px solid var(--violet-500)' : '3px solid transparent',
                       transition: 'background 0.15s ease',
                       animation: `fadeInUp 0.3s ease ${i * 60}ms both`,
@@ -92,13 +86,12 @@ export default function Community() {
                           {op.name} {op.isYou && <span style={{ fontSize: '10px', color: 'var(--violet-400)' }}>(you)</span>}
                         </div>
                         <div style={{ fontSize: '11px', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)', marginTop: '2px' }}>
-                          {op.bootcamp} · {op.tier}
+                          {op.tier}
                         </div>
                       </div>
                       <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                        <div style={{ fontSize: '10px', color: 'var(--amber-400)', fontFamily: 'var(--font-mono)' }}>🔥{op.streak}</div>
                         <div style={{ fontWeight: 800, fontSize: '14px', fontFamily: 'var(--font-mono)', color: op.isYou ? 'var(--violet-300)' : 'var(--text-secondary)' }}>
-                          {op.pts.toLocaleString()}
+                          {op.points?.toLocaleString() || 0}
                           <span style={{ fontSize: '10px', color: 'var(--text-muted)', marginLeft: '3px' }}>pts</span>
                         </div>
                       </div>
@@ -129,34 +122,8 @@ export default function Community() {
 
           {/* CHALLENGES */}
           {activeTab === 'challenges' && (
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: '16px', animation: 'fadeIn 0.3s ease' }}>
-              {CHALLENGES.map((c, i) => (
-                <div key={c.id} style={{
-                  background: 'rgba(12,12,22,0.9)', border: `1px solid ${c.color}22`,
-                  borderRadius: '14px', padding: '24px', animation: `fadeInUp 0.4s ease ${i * 80}ms both`,
-                  transition: 'all 0.2s ease',
-                }}
-                onMouseEnter={(e) => { e.currentTarget.style.borderColor = `${c.color}44`; e.currentTarget.style.boxShadow = `0 0 20px ${c.color}18`; }}
-                onMouseLeave={(e) => { e.currentTarget.style.borderColor = `${c.color}22`; e.currentTarget.style.boxShadow = 'none'; }}
-                >
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '16px' }}>
-                    <span style={{ fontSize: '10px', padding: '3px 10px', background: `${c.color}18`, border: `1px solid ${c.color}33`, borderRadius: '4px', color: c.color, fontFamily: 'var(--font-mono)', fontWeight: 700 }}>{c.difficulty.toUpperCase()}</span>
-                    <span style={{ fontSize: '10px', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>Ends in {c.deadline}</span>
-                  </div>
-                  <h3 style={{ fontSize: '16px', fontFamily: 'var(--font-display)', fontWeight: 700, marginBottom: '8px' }}>{c.title}</h3>
-                  <p style={{ fontSize: '13px', color: 'var(--text-secondary)', lineHeight: 1.6, marginBottom: '20px' }}>{c.desc}</p>
-                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                    <div style={{ fontSize: '12px', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>👥 {c.participants} joined</div>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                      <span style={{ fontSize: '11px', fontWeight: 700, color: c.color, fontFamily: 'var(--font-mono)' }}>{c.reward}</span>
-                      <button style={{ padding: '7px 16px', background: `${c.color}18`, border: `1px solid ${c.color}44`, borderRadius: '7px', cursor: 'pointer', color: c.color, fontFamily: 'var(--font-mono)', fontSize: '11px', fontWeight: 700, transition: 'all 0.15s ease' }}
-                      onMouseEnter={(e) => { e.currentTarget.style.background = `${c.color}28`; }}
-                      onMouseLeave={(e) => { e.currentTarget.style.background = `${c.color}18`; }}
-                      >Join →</button>
-                    </div>
-                  </div>
-                </div>
-              ))}
+            <div style={{ padding: '60px', textAlign: 'center', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)', fontSize: '14px', background: 'rgba(12,12,22,0.6)', border: '1px solid var(--border-subtle)', borderRadius: '14px' }}>
+              Challenges coming soon — powered by real community data.
             </div>
           )}
 
@@ -164,8 +131,8 @@ export default function Community() {
           {activeTab === 'discussions' && (
             <div style={{ maxWidth: '720px', animation: 'fadeIn 0.3s ease' }}>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
-                {DISCUSSIONS.map((d, i) => (
-                  <div key={i} style={{
+                {loading ? <div style={{ padding: '40px', textAlign: 'center', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)', fontSize: '12px' }}>Loading discussions...</div> : discussions.map((d, i) => (
+                  <div key={d.id || i} style={{
                     background: 'rgba(12,12,22,0.9)', border: '1px solid var(--border-subtle)',
                     borderRadius: '14px', padding: '20px',
                     animation: `fadeInUp 0.3s ease ${i * 80}ms both`,
@@ -176,17 +143,17 @@ export default function Community() {
                   >
                     <div style={{ display: 'flex', gap: '12px' }}>
                       <div style={{ width: 36, height: 36, borderRadius: '50%', background: 'linear-gradient(135deg, var(--violet-700), var(--violet-500))', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '12px', fontWeight: 700, flexShrink: 0, border: '1px solid rgba(124,58,237,0.3)' }}>
-                        {d.user[0]}
+                        {(d.User?.name || d.title || '?')[0]}
                       </div>
                       <div style={{ flex: 1 }}>
                         <div style={{ display: 'flex', gap: '8px', alignItems: 'center', marginBottom: '8px' }}>
-                          <span style={{ fontWeight: 700, fontSize: '13px', fontFamily: 'var(--font-mono)', color: 'var(--violet-300)' }}>{d.user}</span>
-                          <span style={{ fontSize: '11px', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>{d.time}</span>
+                          <span style={{ fontWeight: 700, fontSize: '13px', fontFamily: 'var(--font-mono)', color: 'var(--violet-300)' }}>{d.User?.name || 'Anonymous'}</span>
+                          <span style={{ fontSize: '11px', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>{new Date(d.createdAt).toLocaleDateString()}</span>
                         </div>
-                        <p style={{ fontSize: '14px', color: 'var(--text-secondary)', lineHeight: 1.6, marginBottom: '14px' }}>{d.msg}</p>
+                        <p style={{ fontSize: '14px', color: 'var(--text-secondary)', lineHeight: 1.6, marginBottom: '14px' }}>{d.content || d.title}</p>
                         <div style={{ display: 'flex', gap: '16px' }}>
-                          <button style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-muted)', fontSize: '12px', fontFamily: 'var(--font-mono)', display: 'flex', alignItems: 'center', gap: '4px' }}>💬 {d.replies} replies</button>
-                          <button style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-muted)', fontSize: '12px', fontFamily: 'var(--font-mono)', display: 'flex', alignItems: 'center', gap: '4px' }}>♡ {d.likes}</button>
+                          <span style={{ color: 'var(--text-muted)', fontSize: '12px', fontFamily: 'var(--font-mono)' }}>💬 {d.replies || 0} replies</span>
+                          <span style={{ color: 'var(--text-muted)', fontSize: '12px', fontFamily: 'var(--font-mono)' }}>♡ {d.likes || 0}</span>
                         </div>
                       </div>
                     </div>

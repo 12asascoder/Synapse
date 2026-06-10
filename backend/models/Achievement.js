@@ -1,5 +1,5 @@
 module.exports = (sequelize, DataTypes) => {
-  return sequelize.define('User', {
+  return sequelize.define('Achievement', {
     id: {
       type: DataTypes.UUID,
       defaultValue: DataTypes.UUIDV4,
@@ -9,30 +9,26 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       allowNull: false,
     },
-    email: {
+    slug: {
       type: DataTypes.STRING,
       allowNull: false,
       unique: true,
     },
-    password: {
-      type: DataTypes.STRING,
-      allowNull: false,
+    description: {
+      type: DataTypes.TEXT,
+      defaultValue: '',
     },
-    role: {
+    icon: {
       type: DataTypes.STRING,
-      defaultValue: 'USER',
+      defaultValue: 'Award',
     },
-    tier: {
+    color: {
       type: DataTypes.STRING,
-      defaultValue: 'Trainee',
+      defaultValue: '#fbbf24',
     },
-    points: {
-      type: DataTypes.INTEGER,
-      defaultValue: 0,
-    },
-    avatar: {
-      type: DataTypes.STRING,
-      defaultValue: null,
+    criteria: {
+      type: DataTypes.JSON,
+      defaultValue: {},
     },
   });
 };

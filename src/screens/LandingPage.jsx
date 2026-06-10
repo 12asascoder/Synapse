@@ -7,6 +7,7 @@ import { useApp } from '../context/AppContext';
 import NeuralSphere from '../components/NeuralSphere';
 
 const API = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+const NAV_LINKS = ['Features', 'Bootcamps', 'Testimonials', 'Universities'];
 
 const PREVIEW_COLORS = ['#7c3aed', '#06b6d4', '#10b981', '#f59e0b'];
 

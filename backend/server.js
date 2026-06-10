@@ -6,29 +6,31 @@ const db = require('./models');
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-// Middleware
 app.use(cors());
 app.use(express.json());
 
-// Routes
 app.use('/api/auth', require('./routes/auth'));
 app.use('/api/progress', require('./routes/progress'));
 app.use('/api/chat', require('./routes/chat'));
 app.use('/api/curriculum', require('./routes/curriculum'));
+app.use('/api/bootcamps', require('./routes/bootcamps'));
+app.use('/api/assessments', require('./routes/assessments'));
+app.use('/api/achievements', require('./routes/achievements'));
+app.use('/api/community', require('./routes/community'));
+app.use('/api/users', require('./routes/users'));
+app.use('/api/analytics', require('./routes/analytics'));
 
-// Basic Health Check
 app.get('/health', (req, res) => {
-  res.json({ status: 'Synapse Backend Online', version: '1.0.0' });
+  res.json({ status: 'Synapse Backend Online' });
 });
 
-// Sync Database and Start Server
 db.sequelize.sync({ alter: true }).then(() => {
-  console.log('[DB] SQLite Database synced successfully.');
+  console.log('[DB] PostgreSQL synced successfully.');
   const http = require('http');
   const server = http.createServer(app);
   server.listen(PORT, () => {
     console.log(`[SERVER] Synapse API running on http://localhost:${PORT}`);
   });
-}).catch(err => {
+}).catch((err) => {
   console.error('[DB] Failed to sync database:', err);
 });

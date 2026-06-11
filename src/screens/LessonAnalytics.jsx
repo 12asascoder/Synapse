@@ -26,7 +26,7 @@ export default function LessonAnalytics() {
           const next = Array.isArray(data) ? data.find((d) => d.day === currentDay + 1) : null;
           if (next) setNextTopic(next.topic);
         })
-        .catch(() => setNextTopic('Distributed Systems'));
+        .catch(() => {});
     }
   }, [currentDay, state.user?.id]);
 

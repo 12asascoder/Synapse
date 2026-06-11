@@ -43,15 +43,6 @@ export default function BootcampInit() {
               data.forEach((d, i) => grouped.push({ day: `${i + 1}`, title: `Day ${i + 1}`, desc: d.topic }));
             }
             setObjectives(grouped);
-          } else {
-            setObjectives([
-              { day: '1-7', title: 'Foundation', desc: 'Core concepts, mental models, and vocabulary' },
-              { day: '8-14', title: 'Depth', desc: 'Advanced techniques and hands-on application' },
-              { day: '15', title: 'Phase 1 Milestone', desc: 'Validation — AI Interview + Assessment', milestone: true },
-              { day: '16-22', title: 'Adaptive Phase', desc: 'Personalized based on your performance' },
-              { day: '23-29', title: 'Mastery Sprint', desc: 'Real-world projects and simulations' },
-              { day: '30', title: 'Final Certification', desc: 'Full validation + career readiness report', milestone: true },
-            ]);
           }
         })
         .catch(() => setObjectives([]));

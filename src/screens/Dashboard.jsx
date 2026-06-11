@@ -61,7 +61,7 @@ export default function Dashboard() {
     })
       .then((r) => r.json())
       .then((data) => setVisheshInsight(data.response))
-      .catch(() => setVisheshInsight('Your consistency is exceptional. Keep pushing forward.'));
+      .catch(() => {});
   }, [state.user?.id, currentDay]);
 
   const radarData = [

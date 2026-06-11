@@ -122,7 +122,8 @@ export default function ProfileSetup() {
     }
     try {
       await apiPut(`/profile/${state.user.id}`, payload, token);
-      navigate('hub');
+      if (goal === 'interview') navigate('interview-prep');
+      else navigate('hub');
     } catch {
       alert('Failed to save profile. Please try again.');
     }

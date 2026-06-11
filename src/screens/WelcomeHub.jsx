@@ -242,6 +242,12 @@ export default function WelcomeHub() {
         }}>
           {loading ? (
             <div style={{ gridColumn: '1 / -1', textAlign: 'center', padding: '60px', color: 'var(--text-muted)', fontSize: '14px' }}>Loading bootcamps...</div>
+          ) : bootcamps.length === 0 ? (
+            <div style={{ gridColumn: '1 / -1', textAlign: 'center', padding: '60px', color: 'var(--text-muted)' }}>
+              <div style={{ fontSize: '40px', marginBottom: '16px' }}>📭</div>
+              <div style={{ fontSize: '16px', fontWeight: 600, color: 'var(--text-secondary)', marginBottom: '8px' }}>No bootcamps available</div>
+              <div style={{ fontSize: '13px', lineHeight: 1.6 }}>Make sure the backend server is running and has seeded bootcamp data.<br />Run <code style={{ background: 'var(--bg-surface)', padding: '2px 8px', borderRadius: '4px', fontFamily: 'var(--font-mono)' }}>cd backend && node seed.js</code> to populate bootcamps.</div>
+            </div>
           ) : bootcamps.map((b, i) => (
             <div key={b.id} style={{ animation: `fadeInUp 0.4s ease ${i * 60}ms both` }}>
               <BootcampCard bootcamp={b} selected={selected} onSelect={setSelected} />

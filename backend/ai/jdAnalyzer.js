@@ -14,7 +14,7 @@ function localAnalyze(jdText, resumeProfile) {
   const skills = resumeProfile?.skills || [];
   const skillNames = skills.map(s => s.name?.toLowerCase() || '');
   const kw = ['Python','JavaScript','TypeScript','React','Node','AWS','Docker','Kubernetes','SQL','MongoDB','PostgreSQL','Redis','GraphQL','REST','API','Git','Linux','Java','Go','Rust','Ruby','PHP','Swift','Kotlin','TensorFlow','PyTorch','Machine Learning','Deep Learning','NLP','Computer Vision','Agile','Scrum','CI/CD','Terraform','Ansible','Jenkins','GCP','Azure','System Design','Microservices','Leadership','Communication'];
-  const keywords = kw.filter(k => t.toLowerCase().includes(k.toLowerCase())) || [];
+  const keywords = kw.filter(k => jdText.toLowerCase().includes(k.toLowerCase())) || [];
 
   const uniqueKeywords = [...new Set(keywords.map(k => k.toLowerCase()))];
   const matched = uniqueKeywords.filter(k => skillNames.includes(k));

@@ -118,7 +118,7 @@ export default function WelcomeHub() {
             <div style={{ width: 28, height: 28, background: 'var(--border-active)', borderRadius: '6px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '14px', color: '#010203', fontWeight: 800 }}>✦</div>
             <span style={{ fontWeight: 800, fontSize: '16px', color: 'var(--text-primary)', letterSpacing: '0.05em' }}>SYNAPSE</span>
           </div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '12px', color: 'var(--text-secondary)', fontWeight: 500 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '12px', fontWeight: 500 }}>
             <div style={{ width: 8, height: 8, borderRadius: '50%', background: 'var(--border-active)' }} />
             System Ready
           </div>
@@ -129,7 +129,7 @@ export default function WelcomeHub() {
           flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center',
           paddingTop: '64px', minHeight: '100vh',
         }}>
-          <div style={{ maxWidth: '640px', textAlign: 'center', padding: '40px' }}>
+          <div style={{ maxWidth: '800px', textAlign: 'center', padding: '40px' }}>
             <div style={{ animation: 'fadeInUp 0.5s ease both' }}>
               <div style={{
                 width: 64, height: 64, borderRadius: '16px', background: 'var(--border-active)', color: '#010203',
@@ -139,38 +139,62 @@ export default function WelcomeHub() {
                 ✦
               </div>
               <h1 style={{
-                fontSize: '48px',
+                fontSize: '44px',
                 fontFamily: 'var(--font-display)',
                 fontWeight: 800,
                 lineHeight: 1.15,
-                marginBottom: '24px',
+                marginBottom: '12px',
                 letterSpacing: '-0.02em',
                 color: 'var(--text-primary)'
               }}>
-                Begin Your<br />
-                Learning Journey.
+                Choose Your Path.
               </h1>
-
               <p style={{
                 fontSize: '16px', color: 'var(--text-secondary)', lineHeight: 1.6,
-                marginBottom: '48px', margin: '0 auto 48px',
+                marginBottom: '48px',
               }}>
-                Your workspace is ready. Select a bootcamp path to configure your curriculum and begin.
+                Pick a bootcamp curriculum or prepare for an interview.
               </p>
 
-              <button
-                className="btn btn-primary btn-lg"
-                onClick={() => setPhase('catalog')}
-                style={{
-                  gap: '8px', fontSize: '15px', padding: '16px 32px',
-                  borderRadius: '12px', minWidth: '240px',
-                  background: 'var(--border-active)', color: '#010203',
-                  border: 'none', fontWeight: 700, cursor: 'pointer'
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '24px', maxWidth: '640px', margin: '0 auto' }}>
+                <button onClick={() => setPhase('catalog')} style={{
+                  padding: '36px 24px', borderRadius: '16px', border: '1px solid rgba(243,242,238,0.2)',
+                  background: 'rgba(10,10,12,0.8)', cursor: 'pointer', textAlign: 'center',
+                  transition: 'all 0.2s', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '16px',
+                  boxShadow: '0 4px 20px rgba(0,0,0,0.3)',
                 }}
-                id="hub-continue-btn"
-              >
-                Browse Catalog →
-              </button>
+                  onMouseEnter={e => { e.currentTarget.style.borderColor = '#CFFF00'; e.currentTarget.style.transform = 'translateY(-4px)'; e.currentTarget.style.boxShadow = '0 12px 24px rgba(207,255,0,0.08)'; }}
+                  onMouseLeave={e => { e.currentTarget.style.borderColor = 'rgba(243,242,238,0.2)'; e.currentTarget.style.transform = 'none'; e.currentTarget.style.boxShadow = '0 4px 20px rgba(0,0,0,0.3)'; }}
+                >
+                  <div style={{ fontSize: '40px' }}>📚</div>
+                  <div style={{ fontWeight: 700, fontSize: '18px', color: '#f3f2ee' }}>Bootcamp Curriculum</div>
+                  <div style={{ fontSize: '14px', color: '#A59F97', lineHeight: 1.5 }}>
+                    Follow a structured 30-day learning path with lessons, exercises, and assessments.
+                  </div>
+                  <div style={{ marginTop: '8px', padding: '8px 20px', borderRadius: '8px', background: '#CFFF00', color: '#010203', fontWeight: 700, fontSize: '14px' }}>
+                    Browse Bootcamps →
+                  </div>
+                </button>
+
+                <button onClick={() => navigate('interview-prep')} style={{
+                  padding: '36px 24px', borderRadius: '16px', border: '1px solid rgba(243,242,238,0.2)',
+                  background: 'rgba(10,10,12,0.8)', cursor: 'pointer', textAlign: 'center',
+                  transition: 'all 0.2s', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '16px',
+                  boxShadow: '0 4px 20px rgba(0,0,0,0.3)',
+                }}
+                  onMouseEnter={e => { e.currentTarget.style.borderColor = '#CFFF00'; e.currentTarget.style.transform = 'translateY(-4px)'; e.currentTarget.style.boxShadow = '0 12px 24px rgba(207,255,0,0.08)'; }}
+                  onMouseLeave={e => { e.currentTarget.style.borderColor = 'rgba(243,242,238,0.2)'; e.currentTarget.style.transform = 'none'; e.currentTarget.style.boxShadow = '0 4px 20px rgba(0,0,0,0.3)'; }}
+                >
+                  <div style={{ fontSize: '40px' }}>🎯</div>
+                  <div style={{ fontWeight: 700, fontSize: '18px', color: '#f3f2ee' }}>Interview Preparation</div>
+                  <div style={{ fontSize: '14px', color: '#A59F97', lineHeight: 1.5 }}>
+                    Submit a job description, practice STAR questions, and get AI-powered feedback.
+                  </div>
+                  <div style={{ marginTop: '8px', padding: '8px 20px', borderRadius: '8px', background: '#CFFF00', color: '#010203', fontWeight: 700, fontSize: '14px' }}>
+                    Start Prep →
+                  </div>
+                </button>
+              </div>
             </div>
           </div>
         </div>
@@ -193,7 +217,7 @@ export default function WelcomeHub() {
           <div style={{ width: 28, height: 28, background: 'var(--border-active)', borderRadius: '6px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '14px', color: '#010203', fontWeight: 800 }}>✦</div>
           <span style={{ fontWeight: 800, fontSize: '16px', color: 'var(--text-primary)', letterSpacing: '0.05em' }}>SYNAPSE</span>
         </div>
-        <div style={{ display: 'flex', gap: '8px', alignItems: 'center', fontSize: '12px', color: 'var(--text-secondary)', fontWeight: 500 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '12px', fontWeight: 500 }}>
           <div style={{ width: 8, height: 8, borderRadius: '50%', background: 'var(--border-active)' }} /> System Ready
         </div>
       </nav>
@@ -218,6 +242,12 @@ export default function WelcomeHub() {
         }}>
           {loading ? (
             <div style={{ gridColumn: '1 / -1', textAlign: 'center', padding: '60px', color: 'var(--text-muted)', fontSize: '14px' }}>Loading bootcamps...</div>
+          ) : bootcamps.length === 0 ? (
+            <div style={{ gridColumn: '1 / -1', textAlign: 'center', padding: '60px', color: 'var(--text-muted)' }}>
+              <div style={{ fontSize: '40px', marginBottom: '16px' }}>📭</div>
+              <div style={{ fontSize: '16px', fontWeight: 600, color: 'var(--text-secondary)', marginBottom: '8px' }}>No bootcamps available</div>
+              <div style={{ fontSize: '13px', lineHeight: 1.6 }}>Make sure the backend server is running and has seeded bootcamp data.<br />Run <code style={{ background: 'var(--bg-surface)', padding: '2px 8px', borderRadius: '4px', fontFamily: 'var(--font-mono)' }}>cd backend && node seed.js</code> to populate bootcamps.</div>
+            </div>
           ) : bootcamps.map((b, i) => (
             <div key={b.id} style={{ animation: `fadeInUp 0.4s ease ${i * 60}ms both` }}>
               <BootcampCard bootcamp={b} selected={selected} onSelect={setSelected} />

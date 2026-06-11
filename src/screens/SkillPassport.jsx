@@ -42,12 +42,12 @@ export default function SkillPassport() {
   ].filter((s) => s.score > 0);
 
   const radarData = [
-    { skill: 'System Arch', value: scores.technical || 0 },
-    { skill: 'Algorithms', value: scores.problemSolving || 0 },
-    { skill: 'Data Structs', value: scores.consistency || 0 },
-    { skill: 'Security', value: scores.retention || 0 },
-    { skill: 'DevOps', value: scores.velocity || 0 },
-    { skill: 'AI/ML', value: scores.communication || 0 },
+    { skill: 'Technical', value: scores.technical || 0 },
+    { skill: 'Problem\nSolving', value: scores.problemSolving || 0 },
+    { skill: 'Communication', value: scores.communication || 0 },
+    { skill: 'Consistency', value: scores.consistency || 0 },
+    { skill: 'Retention', value: scores.retention || 0 },
+    { skill: 'Velocity', value: scores.velocity || 0 },
   ];
 
   return (

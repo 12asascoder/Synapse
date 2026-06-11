@@ -4,7 +4,10 @@ const { User } = require('../models');
 const { authenticate, requireAdmin } = require('../middleware/auth');
 
 router.get('/me', authenticate, async (req, res) => {
-  res.json(req.user);
+  const user = await require('../models').User.findByPk(req.user.id, {
+    attributes: { exclude: ['password'] },
+  });
+  res.json(user);
 });
 
 router.get('/', authenticate, requireAdmin, async (req, res) => {

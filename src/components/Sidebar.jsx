@@ -10,6 +10,7 @@ const NAV_ITEMS = [
   { id: 'analytics', label: 'Analytics', icon: '▦' },
   { id: 'community', label: 'Community', icon: '⌘' },
   { id: 'skill-passport', label: 'Skill Passport', icon: '◆' },
+  { id: 'interview-prep', label: 'Interview Prep', icon: '🎯' },
   { id: 'certificates', label: 'Certificates', icon: '◇' },
 ];
 

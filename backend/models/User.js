@@ -38,5 +38,9 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.JSON,
       defaultValue: { streaming: true, animations: true, sound: false },
     },
+    onboardingComplete: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: false,
+    },
   });
 };

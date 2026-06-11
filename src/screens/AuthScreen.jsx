@@ -126,21 +126,19 @@ export default function AuthScreen() {
       }
 
       const user = {
+        id: data.user.id,
         name: data.user.name,
         email: data.user.email.replace(/(.{2}).+(@.+)/, '$1***$2'),
         role: data.user.role,
+        onboardingComplete: data.user.onboardingComplete,
         token: data.token,
       };
 
       dispatch({ type: 'SET_USER', payload: user });
       dispatch({ type: 'SET_TOKEN', payload: data.token });
       setLoading(false);
-      
-      if (user.role === 'SUPER_ADMIN') {
-        navigate('admin-dashboard');
-      } else {
-        navigate('hub');
-      }
+
+      navigate(data.user.onboardingComplete === false ? 'profile-setup' : user.role === 'SUPER_ADMIN' ? 'admin-dashboard' : 'hub');
     } catch (err) {
       setError(err.message);
       setLoading(false);

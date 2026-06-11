@@ -33,13 +33,15 @@ export default function AdminVishesh() {
     setTesting(false);
   };
 
+  const apiUrl = import.meta.env.VITE_TRUGEN_API_URL || 'https://api.openai.com/v1';
+  const model = import.meta.env.VITE_TRUGEN_MODEL || 'gpt-4o-mini';
+  const fallback = import.meta.env.VITE_AI_FALLBACK || import.meta.env.VITE_AI_FALLBACK_ON_ERROR || 'false';
+
   const configItems = [
     { label: 'API Provider', value: 'TruGen AI (OpenAI-compatible)', color: 'var(--cyan-400)', icon: '🤖' },
-    { label: 'API URL', value: import.meta.env.VITE_TRUGEN_API_URL || 'Configured in backend .env', color: 'var(--violet-400)', icon: '🔗' },
-    { label: 'Model', value: 'gpt-4o-mini (configurable via TRUGEN_MODEL)', color: 'var(--amber-400)', icon: '🧠' },
-    { label: 'Fallback Mode', value: 'Enabled on API error (AI_FALLBACK_ON_ERROR=true)', color: 'var(--emerald-400)', icon: '🔄' },
-    { label: 'Temperature', value: '0.7 (balanced creativity)', color: 'var(--rose-400)', icon: '🌡️' },
-    { label: 'Max Tokens', value: '1024', color: 'var(--indigo-400)', icon: '📝' },
+    { label: 'API URL', value: apiUrl, color: 'var(--violet-400)', icon: '🔗' },
+    { label: 'Model', value: model, color: 'var(--amber-400)', icon: '🧠' },
+    { label: 'Fallback Mode', value: fallback === 'true' ? 'Enabled' : 'Disabled', color: fallback === 'true' ? 'var(--emerald-400)' : 'var(--rose-400)', icon: '🔄' },
   ];
 
   const systemPrompt = 'You are Vishesh, an elite AI mentor specializing in software engineering, data structures, algorithms, and career guidance. Respond concisely and accurately.';

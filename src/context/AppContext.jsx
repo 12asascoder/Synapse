@@ -143,7 +143,7 @@ export function AppProvider({ children }) {
             totalPoints: parsed.totalPoints || 0,
             growthScore: parsed.growthScore || 0,
             progressHistory: parsed.progressHistory || [],
-            currentScreen: parsed.isAuthenticated ? (parsed.user?.role === 'SUPER_ADMIN' ? 'admin-dashboard' : (parsed.selectedBootcamp ? 'dashboard' : 'hub')) : 'landing',
+            currentScreen: parsed.isAuthenticated ? (parsed.user?.onboardingComplete === false ? 'profile-setup' : parsed.user?.role === 'SUPER_ADMIN' ? 'admin-dashboard' : (parsed.selectedBootcamp ? 'dashboard' : 'hub')) : 'landing',
           },
         });
       }
@@ -171,7 +171,7 @@ export function AppProvider({ children }) {
     if (state.isAuthenticated) {
       try {
         const toSave = {
-          user: { name: state.user?.name, email: state.user?.email, role: state.user?.role, token: state.token },
+          user: { name: state.user?.name, email: state.user?.email, role: state.user?.role, token: state.token, onboardingComplete: state.user?.onboardingComplete },
           token: state.token,
           isAuthenticated: state.isAuthenticated,
           selectedBootcamp: state.selectedBootcamp,

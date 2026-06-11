@@ -1,6 +1,5 @@
 /**
- * AdminSidebar — Enterprise AI Operations Center Navigation
- * Specialized sidebar for SUPER_ADMIN role.
+ * AdminSidebar — Hackorizon Dark Admin Navigation
  */
 import { useApp } from '../context/AppContext';
 
@@ -29,8 +28,8 @@ export default function AdminSidebar() {
     <div style={{
       width: '240px',
       minHeight: '100vh',
-      background: 'rgba(10, 15, 25, 0.98)',
-      borderRight: '1px solid rgba(56, 189, 248, 0.2)',
+      background: 'var(--bg-surface)',
+      borderRight: '1px solid var(--border-subtle)',
       display: 'flex',
       flexDirection: 'column',
       flexShrink: 0,
@@ -42,25 +41,26 @@ export default function AdminSidebar() {
       {/* Admin Header */}
       <div style={{
         padding: '24px 20px 16px',
-        borderBottom: '1px solid rgba(56, 189, 248, 0.2)',
+        borderBottom: '1px solid var(--border-subtle)',
       }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '4px' }}>
           <div style={{
-            width: 40, height: 40, borderRadius: '12px',
-            background: 'linear-gradient(135deg, var(--cyan-600), var(--cyan-400))',
+            width: 36, height: 36, borderRadius: '10px',
+            background: 'var(--border-active)',
             display: 'flex', alignItems: 'center', justifyContent: 'center',
-            fontSize: '18px', boxShadow: '0 0 16px rgba(6,182,212,0.5)',
-            flexShrink: 0, color: '#fff'
+            fontSize: '16px', color: '#010203',
+            flexShrink: 0,
+            fontWeight: 800,
           }}>✦</div>
           <div>
-            <div style={{ fontWeight: 800, fontSize: '14px', fontFamily: 'var(--font-display)', lineHeight: 1.2, color: 'var(--cyan-50)' }}>
+            <div style={{ fontWeight: 800, fontSize: '14px', fontFamily: 'var(--font-display)', lineHeight: 1.2, color: 'var(--text-primary)', letterSpacing: '0.05em' }}>
               SYNAPSE<br />ENTERPRISE
             </div>
           </div>
         </div>
         <div style={{
-          fontSize: '10px', color: 'var(--cyan-400)', fontFamily: 'var(--font-mono)',
-          marginTop: '6px', letterSpacing: '0.1em', fontWeight: 600,
+          fontSize: '11px', color: 'var(--text-muted)', fontFamily: 'var(--font-body)',
+          marginTop: '6px', letterSpacing: '0.05em', fontWeight: 500,
         }}>
           SUPER ADMIN LEVEL
         </div>
@@ -83,31 +83,32 @@ export default function AdminSidebar() {
                 gap: '12px',
                 padding: '10px 14px',
                 borderRadius: '8px',
-                border: isActive ? '1px solid rgba(56, 189, 248, 0.3)' : '1px solid transparent',
-                background: isActive ? 'rgba(56, 189, 248, 0.1)' : 'transparent',
-                color: isActive ? 'var(--cyan-300)' : 'var(--text-muted)',
-                fontFamily: 'var(--font-mono)',
+                border: 'none',
+                background: isActive ? 'rgba(207,255,0,0.08)' : 'transparent',
+                color: isActive ? 'var(--text-accent)' : 'var(--text-secondary)',
+                fontFamily: 'var(--font-body)',
                 fontSize: '13px',
-                fontWeight: isActive ? 600 : 400,
+                fontWeight: isActive ? 700 : 450,
                 cursor: 'pointer',
                 transition: 'all 0.15s ease',
                 textAlign: 'left',
                 marginBottom: '4px',
+                borderLeft: isActive ? '2px solid var(--border-active)' : '2px solid transparent',
               }}
               onMouseEnter={(e) => {
                 if (!isActive) {
-                  e.currentTarget.style.background = 'rgba(56, 189, 248, 0.05)';
+                  e.currentTarget.style.background = 'rgba(243,242,238,0.04)';
                   e.currentTarget.style.color = 'var(--text-primary)';
                 }
               }}
               onMouseLeave={(e) => {
                 if (!isActive) {
                   e.currentTarget.style.background = 'transparent';
-                  e.currentTarget.style.color = 'var(--text-muted)';
+                  e.currentTarget.style.color = 'var(--text-secondary)';
                 }
               }}
             >
-              <span style={{ fontSize: '16px', flexShrink: 0, opacity: isActive ? 1 : 0.7 }}>{item.icon}</span>
+              <span style={{ fontSize: '16px', flexShrink: 0, opacity: isActive ? 1 : 0.5 }}>{item.icon}</span>
               <span style={{ flex: 1 }}>{item.label}</span>
             </button>
           );
@@ -115,7 +116,7 @@ export default function AdminSidebar() {
       </nav>
 
       {/* Bottom items */}
-      <div style={{ padding: '12px', borderTop: '1px solid rgba(56, 189, 248, 0.2)' }}>
+      <div style={{ padding: '12px', borderTop: '1px solid var(--border-subtle)' }}>
         {BOTTOM_ITEMS.map((item) => (
           <button
             key={item.id}
@@ -123,16 +124,17 @@ export default function AdminSidebar() {
             style={{
               width: '100%', display: 'flex', alignItems: 'center', gap: '10px',
               padding: '10px 14px', borderRadius: '8px',
-              border: currentScreen === item.id ? '1px solid rgba(56, 189, 248, 0.2)' : '1px solid transparent',
-              background: currentScreen === item.id ? 'rgba(56, 189, 248, 0.1)' : 'transparent',
-              color: currentScreen === item.id ? 'var(--cyan-300)' : 'var(--text-muted)',
-              fontFamily: 'var(--font-mono)', fontSize: '12px', cursor: 'pointer',
+              border: 'none',
+              background: currentScreen === item.id ? 'rgba(207,255,0,0.08)' : 'transparent',
+              color: currentScreen === item.id ? 'var(--text-accent)' : 'var(--text-secondary)',
+              fontFamily: 'var(--font-body)', fontSize: '13px', cursor: 'pointer',
               transition: 'all 0.15s ease', marginBottom: '2px',
+              fontWeight: currentScreen === item.id ? 600 : 450,
             }}
-            onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(56, 189, 248, 0.05)'; e.currentTarget.style.color = 'var(--text-primary)'; }}
-            onMouseLeave={(e) => { e.currentTarget.style.background = currentScreen === item.id ? 'rgba(56, 189, 248, 0.1)' : 'transparent'; e.currentTarget.style.color = currentScreen === item.id ? 'var(--cyan-300)' : 'var(--text-muted)'; }}
+            onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(243,242,238,0.04)'; e.currentTarget.style.color = 'var(--text-primary)'; }}
+            onMouseLeave={(e) => { e.currentTarget.style.background = currentScreen === item.id ? 'rgba(207,255,0,0.08)' : 'transparent'; e.currentTarget.style.color = currentScreen === item.id ? 'var(--text-accent)' : 'var(--text-secondary)'; }}
           >
-            <span style={{ fontSize: '14px' }}>{item.icon}</span>
+            <span style={{ fontSize: '14px', opacity: 0.5 }}>{item.icon}</span>
             <span>{item.label}</span>
           </button>
         ))}

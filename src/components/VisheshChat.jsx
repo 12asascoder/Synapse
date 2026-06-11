@@ -1,6 +1,5 @@
 /**
- * VisheshChat — Streaming AI conversation component
- * Renders tokens as they arrive from Ollama with typewriter effect
+ * VisheshChat — Clean white streaming AI conversation component
  */
 import { useState, useRef, useCallback, useEffect } from 'react';
 import { streamVisheshResponse } from '../lib/vishesh';
@@ -49,12 +48,11 @@ function Message({ msg }) {
       >
         {isVishesh && (
           <div style={{
-            fontSize: '11px',
-            fontFamily: 'var(--font-mono)',
-            color: 'var(--violet-400)',
+            fontSize: '12px',
+            fontFamily: 'var(--font-body)',
+            color: '#A59F97',
             marginBottom: '6px',
             fontWeight: 600,
-            letterSpacing: '0.06em',
           }}>
             VISHESH
           </div>
@@ -62,14 +60,14 @@ function Message({ msg }) {
         <div
           style={{
             background: isVishesh
-              ? 'rgba(22, 22, 42, 0.8)'
-              : 'rgba(124, 58, 237, 0.15)',
-            border: `1px solid ${isVishesh ? 'rgba(139, 92, 246, 0.15)' : 'rgba(139, 92, 246, 0.35)'}`,
-            borderRadius: isVishesh ? '4px 14px 14px 14px' : '14px 4px 14px 14px',
+              ? '#F5F3F1'
+              : '#000000',
+            border: `1px solid ${isVishesh ? '#E8E6E3' : 'transparent'}`,
+            borderRadius: isVishesh ? '4px 16px 16px 16px' : '16px 4px 16px 16px',
             padding: '14px 18px',
             fontSize: '14px',
             lineHeight: 1.7,
-            color: 'var(--text-primary)',
+            color: isVishesh ? '#000000' : '#FFFFFF',
             whiteSpace: 'pre-wrap',
             wordBreak: 'break-word',
           }}
@@ -80,7 +78,7 @@ function Message({ msg }) {
               display: 'inline-block',
               width: '2px',
               height: '16px',
-              background: 'var(--cyan-400)',
+              background: isVishesh ? '#000' : '#fff',
               marginLeft: '2px',
               verticalAlign: 'middle',
               animation: 'pulse-dot 0.8s ease-in-out infinite',
@@ -88,7 +86,7 @@ function Message({ msg }) {
           )}
         </div>
         {msg.timestamp && (
-          <div style={{ fontSize: '10px', color: 'var(--text-muted)', marginTop: '4px', fontFamily: 'var(--font-mono)' }}>
+          <div style={{ fontSize: '11px', color: '#A59F97', marginTop: '4px' }}>
             {msg.timestamp}
           </div>
         )}
@@ -99,14 +97,15 @@ function Message({ msg }) {
             width: '32px',
             height: '32px',
             borderRadius: '50%',
-            background: 'linear-gradient(135deg, var(--bg-card), var(--bg-panel))',
-            border: '1px solid var(--border-default)',
+            background: '#F0EEEC',
+            border: '1px solid #E8E6E3',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
             fontSize: '12px',
             fontWeight: 700,
             flexShrink: 0,
+            color: '#44403B',
           }}
         >
           U
@@ -132,7 +131,7 @@ export default function VisheshChat({ context = '', placeholder = 'Ask Vishesh a
       const bootcamp = state.selectedBootcamp?.name || 'your learning journey';
       setMessages([{
         role: 'assistant',
-        content: `Neural link established. I am Vishesh.\n\nI'm analyzing your current position in ${bootcamp} and building your personalized growth vector. Ask me anything — concepts, problems, strategies, or career guidance.\n\nWhat would you like to explore today?`,
+        content: `Welcome! I'm Vishesh, your AI learning mentor.\n\nI'm here to guide you through ${bootcamp}. Ask me anything — concepts, problems, strategies, or career guidance.\n\nWhat would you like to explore today?`,
         timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
         streaming: false,
       }]);
@@ -238,41 +237,41 @@ export default function VisheshChat({ context = '', placeholder = 'Ask Vishesh a
       display: 'flex',
       flexDirection: 'column',
       height: '100%',
-      background: 'var(--bg-surface)',
+      background: '#FFFFFF',
       borderRadius: 'var(--radius-xl)',
-      border: '1px solid var(--border-subtle)',
+      border: '1px solid #E8E6E3',
       overflow: 'hidden',
     }}>
       {/* Header */}
       <div style={{
         padding: '16px 20px',
-        borderBottom: '1px solid var(--border-subtle)',
+        borderBottom: '1px solid #E8E6E3',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',
-        background: 'rgba(14, 14, 22, 0.8)',
+        background: '#FDFCFC',
       }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
           <div className="vishesh-avatar" style={{ width: 32, height: 32, fontSize: 12 }}>V</div>
           <div>
-            <div style={{ fontSize: 13, fontWeight: 700, fontFamily: 'var(--font-mono)', color: 'var(--violet-300)' }}>
-              VISHESH
+            <div style={{ fontSize: 14, fontWeight: 600, color: '#000' }}>
+              Vishesh
             </div>
-            <div style={{ fontSize: 10, color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>
+            <div style={{ fontSize: 11, color: '#A59F97' }}>
               TruGen AI · online
             </div>
           </div>
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
           <WaveformIcon active={isStreaming} />
-          <div className="badge badge-emerald" style={{ fontSize: '9px', padding: '2px 6px' }}>AI</div>
+          <div className="badge badge-emerald" style={{ fontSize: '10px', padding: '2px 8px' }}>AI</div>
         </div>
       </div>
 
       {/* Messages */}
       <div
         className="scroll-area"
-        style={{ flex: 1, padding: '20px', overflowY: 'auto' }}
+        style={{ flex: 1, padding: '20px', overflowY: 'auto', background: '#FDFCFC' }}
       >
         {messages.map((msg, i) => (
           <Message key={msg.id || i} msg={msg} />
@@ -284,8 +283,8 @@ export default function VisheshChat({ context = '', placeholder = 'Ask Vishesh a
               display: 'flex',
               gap: '6px',
               padding: '12px 16px',
-              background: 'rgba(22, 22, 42, 0.8)',
-              border: '1px solid rgba(139,92,246,0.15)',
+              background: '#F5F3F1',
+              border: '1px solid #E8E6E3',
               borderRadius: '4px 14px 14px 14px',
             }}>
               {[0, 1, 2].map((i) => (
@@ -293,7 +292,7 @@ export default function VisheshChat({ context = '', placeholder = 'Ask Vishesh a
                   width: '6px',
                   height: '6px',
                   borderRadius: '50%',
-                  background: 'var(--violet-400)',
+                  background: '#A59F97',
                   animation: 'pulse-dot 1.2s ease-in-out infinite',
                   animationDelay: `${i * 200}ms`,
                 }} />
@@ -307,8 +306,8 @@ export default function VisheshChat({ context = '', placeholder = 'Ask Vishesh a
       {/* Input Area */}
       <div style={{
         padding: '16px 20px',
-        borderTop: '1px solid var(--border-subtle)',
-        background: 'rgba(10, 10, 15, 0.9)',
+        borderTop: '1px solid #E8E6E3',
+        background: '#FFFFFF',
       }}>
         
         <div style={{ display: 'flex', gap: '10px', alignItems: 'flex-end' }}>
@@ -322,12 +321,12 @@ export default function VisheshChat({ context = '', placeholder = 'Ask Vishesh a
             rows={1}
             style={{
               flex: 1,
-              background: 'rgba(14, 14, 22, 0.9)',
-              border: '1px solid var(--border-default)',
+              background: '#FFFFFF',
+              border: '1px solid #DCDCDC',
               borderRadius: 'var(--radius-md)',
-              color: 'var(--text-primary)',
-              fontFamily: 'var(--font-mono)',
-              fontSize: '13px',
+              color: '#000',
+              fontFamily: 'var(--font-body)',
+              fontSize: '14px',
               padding: '12px 16px',
               resize: 'none',
               outline: 'none',
@@ -335,17 +334,17 @@ export default function VisheshChat({ context = '', placeholder = 'Ask Vishesh a
               overflow: 'auto',
               transition: 'border-color 0.2s',
             }}
-            onFocus={(e) => { e.target.style.borderColor = 'var(--violet-500)'; }}
-            onBlur={(e) => { e.target.style.borderColor = 'var(--border-default)'; }}
+            onFocus={(e) => { e.target.style.borderColor = '#000'; }}
+            onBlur={(e) => { e.target.style.borderColor = '#DCDCDC'; }}
           />
           {isStreaming ? (
             <button
               onClick={stopStreaming}
               className="btn btn-sm"
               style={{
-                background: 'rgba(244, 63, 94, 0.2)',
-                color: 'var(--rose-400)',
-                border: '1px solid rgba(244,63,94,0.3)',
+                background: '#FEF2F2',
+                color: '#DC2626',
+                border: '1px solid #FEE2E2',
                 padding: '12px 16px',
                 borderRadius: 'var(--radius-md)',
               }}
@@ -365,7 +364,7 @@ export default function VisheshChat({ context = '', placeholder = 'Ask Vishesh a
             </button>
           )}
         </div>
-        <div style={{ marginTop: '8px', fontSize: '10px', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)', textAlign: 'center' }}>
+        <div style={{ marginTop: '8px', fontSize: '11px', color: '#A59F97', textAlign: 'center' }}>
           Enter to send · Shift+Enter for new line · powered by TruGen AI
         </div>
       </div>

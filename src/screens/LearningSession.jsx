@@ -1,7 +1,6 @@
 /**
  * LearningSession — AI-powered live bootcamp session
- * Layout matches reference image exactly: edge-to-edge, chat on left, 
- * floating Vishesh live video panel on right, curriculum on right sidebar.
+ * Clean ElevenLabs aesthetic
  */
 import { useState, useRef, useEffect, useCallback } from 'react';
 import { useApp } from '../context/AppContext';
@@ -17,8 +16,8 @@ function AnimatedWaveform({ active }) {
         <div key={i} style={{
           width: '3px', height: '40px', borderRadius: '2px',
           background: active
-            ? 'linear-gradient(180deg, var(--cyan-400), var(--violet-500))'
-            : 'rgba(139,92,246,0.25)',
+            ? '#000000'
+            : '#E8E6E3',
           transform: `scaleY(${active ? h : 0.2})`,
           animation: active ? `waveform 1.3s ease-in-out infinite` : 'none',
           animationDelay: `${i * 80}ms`,
@@ -41,7 +40,7 @@ export default function LearningSession() {
   const [input, setInput] = useState('');
   const [isStreaming, setIsStreaming] = useState(false);
   const [isThinking, setIsThinking] = useState(false);
-  const [sessionId] = useState(`Bootcamp-${Math.random().toString(16).slice(2, 5).toUpperCase()}`);
+  const [sessionId] = useState(`Session-${Math.random().toString(16).slice(2, 5).toUpperCase()}`);
   
   const abortRef = useRef(null);
   const bottomRef = useRef(null);
@@ -131,7 +130,6 @@ export default function LearningSession() {
     }
     const utterance = new SpeechSynthesisUtterance(text.replace(/\*/g, '')); // Strip markdown
     const voices = window.speechSynthesis.getVoices();
-    // Try to find a good English voice
     utterance.voice = voices.find(v => v.lang.includes('en') && (v.name.includes('Google') || v.name.includes('Samantha') || v.name.includes('Daniel'))) || voices[0];
     utterance.rate = 1.05;
     utterance.pitch = 0.95;
@@ -151,7 +149,6 @@ export default function LearningSession() {
         const transcript = event.results[0][0].transcript;
         setInput(transcript);
         setIsListening(false);
-        // We defer sending message slightly so state updates first
         setTimeout(() => document.getElementById('session-send-btn')?.click(), 100);
       };
 
@@ -230,8 +227,6 @@ export default function LearningSession() {
       }
     }, 500);
     
-    // Attach interval ID to ref to clear later if needed, but simple return works if we re-bind it. 
-    // Actually, React onPlay will just run this once per play. We can just attach to window.
     window._faceApiInterval = interval;
   };
 
@@ -325,26 +320,26 @@ export default function LearningSession() {
     <>
       {!hasPermissions && <SessionStartModal onJoin={() => setHasPermissions(true)} />}
       
-      <div style={{ display: 'flex', flexDirection: 'column', height: '100vh', background: 'var(--bg-void)', overflow: 'hidden' }}>
+      <div style={{ display: 'flex', flexDirection: 'column', height: '100vh', background: '#FDFCFC', overflow: 'hidden' }}>
         
-        {/* TOP NAV — Matches reference exactly */}
+        {/* TOP NAV */}
         <nav style={{
-          height: '56px', background: 'var(--bg-void)',
-          borderBottom: '1px solid rgba(255, 255, 255, 0.05)',
+          height: '64px', background: '#FFFFFF',
+          borderBottom: '1px solid #E8E6E3',
           display: 'flex', alignItems: 'center', padding: '0 32px',
           gap: '0', flexShrink: 0, position: 'relative', zIndex: 10,
         }}>
-          <div style={{ fontFamily: 'var(--font-display)', fontWeight: 900, fontSize: '20px', marginRight: '40px', letterSpacing: '-0.02em', color: 'white' }}>
-            SYNAPSE
+          <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: '18px', marginRight: '40px', color: '#000' }}>
+            Synapse
           </div>
           {['Curriculum', 'Network', 'Simulations'].map((item, i) => (
             <button key={item} style={{
               background: 'none', border: 'none', cursor: 'pointer',
-              fontFamily: 'var(--font-mono)', fontSize: '14px',
-              color: i === 0 ? 'var(--violet-300)' : 'var(--text-muted)',
+              fontSize: '14px',
+              color: i === 0 ? '#000' : '#6B6B6B',
               padding: '0 20px', height: '100%',
-              borderBottom: i === 0 ? '2px solid var(--violet-500)' : '2px solid transparent',
-              fontWeight: i === 0 ? 600 : 400,
+              borderBottom: i === 0 ? '2px solid #000' : '2px solid transparent',
+              fontWeight: i === 0 ? 600 : 500,
               transition: 'color 0.15s ease',
             }}>
               {item}
@@ -352,53 +347,29 @@ export default function LearningSession() {
           ))}
 
           <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: '20px' }}>
-            <button style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-muted)', fontSize: '18px' }}>⊡</button>
-            <button style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-muted)', fontSize: '18px' }}>🔔</button>
             <button
               onClick={completeLesson}
-              style={{
-                padding: '10px 24px',
-                background: 'linear-gradient(135deg, var(--violet-600), var(--violet-500))',
-                border: 'none', borderRadius: '4px', cursor: 'pointer',
-                fontFamily: 'var(--font-mono)', fontSize: '13px', fontWeight: 700,
-                color: 'white', letterSpacing: '0.04em',
-              }}
-            >Launch Neural Link</button>
-            <div style={{
-              width: 36, height: 36, borderRadius: '50%',
-              background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)',
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-              cursor: 'pointer',
-            }}>
-              <span style={{ fontSize: '16px', color: 'var(--cyan-400)' }}>👤</span>
-            </div>
+              className="btn btn-primary"
+              style={{ padding: '10px 24px', fontSize: '14px', fontWeight: 600 }}
+            >Finish Session</button>
           </div>
         </nav>
 
         {/* SUB NAV: LIVE ANALYSIS BAR */}
         <div style={{
-          height: '48px', background: 'var(--bg-void)',
-          borderBottom: '1px solid rgba(255, 255, 255, 0.05)',
+          height: '48px', background: '#FFFFFF',
+          borderBottom: '1px solid #E8E6E3',
           display: 'flex', alignItems: 'center',
           padding: '0 32px', gap: '24px', flexShrink: 0,
         }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <div className="dot-live" style={{ width: 8, height: 8, background: 'var(--cyan-400)', borderRadius: '50%', boxShadow: '0 0 8px var(--cyan-400)' }} />
-            <span style={{ fontSize: '12px', fontFamily: 'var(--font-mono)', fontWeight: 700, color: 'var(--cyan-400)', letterSpacing: '0.1em' }}>LIVE ANALYSIS</span>
+            <div style={{ width: 8, height: 8, background: '#059669', borderRadius: '50%' }} />
+            <span style={{ fontSize: '12px', fontWeight: 700, color: '#059669', textTransform: 'uppercase' }}>Live Session</span>
           </div>
-          <div style={{ width: '1px', height: '16px', background: 'rgba(255,255,255,0.1)' }} />
-          <span style={{ fontSize: '12px', fontFamily: 'var(--font-mono)', color: 'var(--text-muted)' }}>
+          <div style={{ width: '1px', height: '16px', background: '#E8E6E3' }} />
+          <span style={{ fontSize: '12px', color: '#A59F97' }}>
             Session ID: {sessionId}
           </span>
-          <div style={{ marginLeft: 'auto' }}>
-            <span style={{
-              fontSize: '11px', fontFamily: 'var(--font-mono)', fontWeight: 700,
-              padding: '6px 16px',
-              background: 'rgba(124,58,237,0.1)',
-              border: '1px solid rgba(124,58,237,0.3)',
-              borderRadius: '4px', color: 'var(--violet-400)', letterSpacing: '0.1em',
-            }}>LEARNING SESSION ACTIVE</span>
-          </div>
         </div>
 
         {/* MAIN LAYOUT */}
@@ -411,10 +382,10 @@ export default function LearningSession() {
             overflow: 'hidden',
           }}>
             {/* Messages */}
-            <div style={{ flex: 1, overflowY: 'auto', padding: '40px 10%' }} className="scroll-area">
+            <div style={{ flex: 1, overflowY: 'auto', padding: '40px 10%', background: '#FDFCFC' }} className="scroll-area">
 
               {messages.length === 0 && isThinking && (
-                <div style={{ display: 'flex', justifyContent: 'center', opacity: 0.5 }}>
+                <div style={{ display: 'flex', justifyContent: 'center', opacity: 0.5, color: '#6B6B6B' }}>
                   Preparing learning session...
                 </div>
               )}
@@ -430,28 +401,28 @@ export default function LearningSession() {
                     {/* Avatar */}
                     {isVishesh && (
                       <div style={{
-                        width: 28, height: 28, borderRadius: '50%', flexShrink: 0,
-                        background: 'var(--violet-600)',
+                        width: 32, height: 32, borderRadius: '50%', flexShrink: 0,
+                        background: '#000',
                         display: 'flex', alignItems: 'center', justifyContent: 'center',
                         fontSize: '12px', color: 'white', marginTop: '4px'
-                      }}>◈</div>
+                      }}>V</div>
                     )}
 
                     <div style={{ maxWidth: '85%' }}>
                       <div style={{
-                        fontSize: '15px', color: 'white',
+                        fontSize: '15px', color: '#000',
                         lineHeight: 1.6, whiteSpace: 'pre-wrap',
-                        padding: isVishesh ? '4px 0' : '16px 20px',
-                        background: isVishesh ? 'transparent' : 'rgba(124,58,237,0.1)',
-                        border: isVishesh ? 'none' : '1px solid rgba(124,58,237,0.2)',
-                        borderRadius: isVishesh ? '0' : '12px',
-                        fontFamily: 'Inter, sans-serif'
+                        padding: isVishesh ? '12px 16px' : '12px 20px',
+                        background: isVishesh ? '#F5F3F1' : '#FFFFFF',
+                        border: '1px solid #E8E6E3',
+                        borderRadius: isVishesh ? '4px 16px 16px 16px' : '16px 4px 16px 16px',
+                        boxShadow: '0 2px 8px rgba(0,0,0,0.02)'
                       }}>
                         {msg.content.replace(/\*/g, '')}
                         {msg.streaming && (
                           <span style={{
                             display: 'inline-block', width: '3px', height: '16px',
-                            background: 'var(--violet-400)', marginLeft: '4px',
+                            background: '#000', marginLeft: '4px',
                             verticalAlign: 'middle', animation: 'pulse-dot 0.7s infinite',
                           }} />
                         )}
@@ -469,10 +440,10 @@ export default function LearningSession() {
               )}
               {isThinking && messages.length > 0 && (
                 <div style={{ display: 'flex', gap: '16px', alignItems: 'center', marginBottom: '32px' }}>
-                  <div style={{ width: 28, height: 28, borderRadius: '50%', background: 'var(--violet-600)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '12px' }}>◈</div>
+                  <div style={{ width: 32, height: 32, borderRadius: '50%', background: '#000', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '12px', color: '#fff' }}>V</div>
                   <div style={{ display: 'flex', gap: '6px' }}>
                     {[0,1,2].map((i) => (
-                      <div key={i} style={{ width: 6, height: 6, borderRadius: '50%', background: 'var(--violet-400)', animation: 'pulse-dot 1.2s infinite', animationDelay: `${i * 200}ms` }} />
+                      <div key={i} style={{ width: 6, height: 6, borderRadius: '50%', background: '#A59F97', animation: 'pulse-dot 1.2s infinite', animationDelay: `${i * 200}ms` }} />
                     ))}
                   </div>
                 </div>
@@ -481,7 +452,7 @@ export default function LearningSession() {
             </div>
 
             {/* INPUT BAR */}
-            <div style={{ padding: '0 10% 40px' }}>
+            <div style={{ padding: '0 10% 40px', background: '#FDFCFC' }}>
               {!isStreaming && !isThinking && messages.length > 0 && (
                 <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '16px' }}>
                   <AnimatedWaveform active={false} />
@@ -489,17 +460,15 @@ export default function LearningSession() {
               )}
               <div style={{
                 display: 'flex', alignItems: 'center', gap: '12px',
-                background: 'rgba(14,14,22,0.8)',
-                border: '1px solid rgba(255,255,255,0.1)',
-                borderRadius: '12px', padding: '8px 16px 8px 8px',
+                background: '#FFFFFF',
+                border: '1px solid #DCDCDC',
+                borderRadius: '16px', padding: '10px 16px',
                 transition: 'border-color 0.2s ease',
+                boxShadow: '0 4px 12px rgba(0,0,0,0.03)'
               }}
-              onFocusCapture={(e) => { e.currentTarget.style.borderColor = 'rgba(124,58,237,0.5)'; }}
-              onBlurCapture={(e) => { e.currentTarget.style.borderColor = 'rgba(255,255,255,0.1)'; }}
+              onFocusCapture={(e) => { e.currentTarget.style.borderColor = '#000'; }}
+              onBlurCapture={(e) => { e.currentTarget.style.borderColor = '#DCDCDC'; }}
               >
-                <button style={{
-                  background: 'none', border: 'none', color: 'var(--text-muted)', fontSize: '20px', cursor: 'pointer', padding: '0 8px'
-                }}>+</button>
                 <textarea
                   ref={inputRef}
                   value={input}
@@ -510,7 +479,7 @@ export default function LearningSession() {
                   disabled={isStreaming}
                   style={{
                     flex: 1, background: 'transparent', border: 'none', outline: 'none',
-                    color: 'white', fontFamily: 'var(--font-mono)', fontSize: '14px',
+                    color: '#000', fontSize: '15px',
                     resize: 'none', maxHeight: '120px', overflow: 'auto',
                     lineHeight: 1.5, padding: '8px 0',
                   }}
@@ -518,11 +487,11 @@ export default function LearningSession() {
                 <button 
                   onClick={toggleListening}
                   style={{ 
-                    background: isListening ? 'rgba(244,63,94,0.2)' : 'none', 
-                    border: `1px solid ${isListening ? 'rgba(244,63,94,0.5)' : 'transparent'}`,
+                    background: isListening ? '#FEF2F2' : 'none', 
+                    border: `1px solid ${isListening ? '#FCA5A5' : 'transparent'}`,
                     borderRadius: '8px', cursor: 'pointer', 
-                    color: isListening ? 'var(--rose-400)' : 'var(--text-muted)', 
-                    fontSize: '18px', padding: '4px 8px',
+                    color: isListening ? '#DC2626' : '#A59F97', 
+                    fontSize: '18px', padding: '6px 10px',
                     transition: 'all 0.2s ease',
                     animation: isListening ? 'pulse-dot 1.5s infinite' : 'none'
                   }}
@@ -533,12 +502,13 @@ export default function LearningSession() {
                   id="session-send-btn"
                   onClick={isStreaming ? () => abortRef.current?.abort() : sendMessage}
                   style={{
-                    background: 'none', border: 'none', cursor: 'pointer', 
-                    color: input.trim() || isStreaming ? 'white' : 'var(--text-muted)', 
-                    fontSize: '18px', padding: '4px'
+                    background: input.trim() ? '#000' : '#F5F3F1', border: 'none', cursor: 'pointer', 
+                    color: input.trim() ? '#fff' : '#A59F97', 
+                    fontSize: '18px', padding: '6px 12px', borderRadius: '8px',
+                    transition: 'all 0.2s ease'
                   }}
                 >
-                  {isStreaming ? '■' : '▷'}
+                  {isStreaming ? '■' : '▶'}
                 </button>
               </div>
             </div>
@@ -547,19 +517,18 @@ export default function LearningSession() {
           {/* RIGHT: VISHESH VIDEO & CURRICULUM */}
           <div style={{
             width: '380px', display: 'flex', flexDirection: 'column',
-            background: 'var(--bg-void)', flexShrink: 0,
-            borderLeft: '1px solid rgba(255, 255, 255, 0.05)',
+            background: '#FFFFFF', flexShrink: 0,
+            borderLeft: '1px solid #E8E6E3',
           }}>
             
             {/* VISHESH LIVE PANEL */}
             <div style={{ padding: '32px 32px 16px' }}>
               <div style={{
-                width: '100%', height: '200px',
-                background: 'linear-gradient(135deg, #101827, #1e1b4b)',
-                borderRadius: '12px',
+                width: '100%', height: '220px',
+                background: '#000',
+                borderRadius: '16px',
                 position: 'relative', overflow: 'hidden',
-                border: '1px solid rgba(255,255,255,0.05)',
-                boxShadow: '0 12px 24px rgba(0,0,0,0.5)',
+                boxShadow: '0 12px 32px rgba(0,0,0,0.08)',
               }}>
                 {/* Live Webcam Feed */}
                 <video 
@@ -571,33 +540,22 @@ export default function LearningSession() {
                   style={{
                     position: 'absolute', inset: 0,
                     width: '100%', height: '100%', objectFit: 'cover',
-                    transform: 'scaleX(-1)' // Mirror the webcam
+                    transform: 'scaleX(-1)', // Mirror the webcam
+                    opacity: 0.8
                   }}
                 />
-                
-                {/* Holographic overlay */}
-                <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(90deg, rgba(34,211,238,0.2), rgba(124,58,237,0.2))', mixBlendMode: 'overlay', pointerEvents: 'none' }} />
 
                 {/* Overlay Controls & Info */}
                 <div style={{
                   position: 'absolute', bottom: '12px', left: '12px',
                   display: 'flex', alignItems: 'center', gap: '8px',
-                  background: 'rgba(5, 5, 8, 0.8)', borderRadius: '4px',
-                  padding: '6px 12px', backdropFilter: 'blur(4px)',
+                  background: 'rgba(0,0,0,0.6)', borderRadius: '8px',
+                  padding: '6px 12px', backdropFilter: 'blur(8px)',
                 }}>
-                  <div className="dot-live" style={{ width: 8, height: 8, background: 'var(--rose-500)', borderRadius: '50%', boxShadow: '0 0 8px var(--rose-500)' }} />
-                  <span style={{ fontSize: '10px', fontFamily: 'var(--font-mono)', fontWeight: 700, color: 'white', letterSpacing: '0.05em', textTransform: 'uppercase' }}>
+                  <div style={{ width: 6, height: 6, background: '#10B981', borderRadius: '50%' }} />
+                  <span style={{ fontSize: '11px', fontWeight: 600, color: 'white', textTransform: 'uppercase' }}>
                     {expressionStatus}
                   </span>
-                </div>
-                
-                <div style={{ position: 'absolute', bottom: '12px', right: '12px', display: 'flex', gap: '8px' }}>
-                  <div style={{ background: 'rgba(5,5,8,0.8)', padding: '6px 8px', borderRadius: '4px', backdropFilter: 'blur(4px)' }}>
-                    <span style={{ fontSize: '12px', color: 'white' }}>🎥</span>
-                  </div>
-                  <div style={{ background: 'rgba(5,5,8,0.8)', padding: '6px 8px', borderRadius: '4px', backdropFilter: 'blur(4px)' }}>
-                    <span style={{ fontSize: '12px', color: 'white' }}>🎙</span>
-                  </div>
                 </div>
               </div>
             </div>
@@ -605,29 +563,29 @@ export default function LearningSession() {
             {/* CURRICULUM SIDEBAR */}
             <div style={{ flex: 1, overflowY: 'auto', padding: '16px 32px' }} className="scroll-area">
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '24px' }}>
-                <span style={{ fontWeight: 800, fontSize: '16px', color: 'white', fontFamily: 'Inter, sans-serif' }}>Curriculum</span>
+                <span style={{ fontWeight: 700, fontSize: '16px', color: '#000' }}>Curriculum</span>
                 <span style={{
-                  fontSize: '10px', fontFamily: 'var(--font-mono)', padding: '4px 10px',
-                  background: 'rgba(124,58,237,0.1)', border: '1px solid rgba(124,58,237,0.3)',
-                  borderRadius: '4px', color: 'var(--violet-400)', fontWeight: 700,
-                }}>PHASE 1</span>
+                  fontSize: '11px', padding: '4px 10px',
+                  background: '#F5F3F1', border: '1px solid #E8E6E3',
+                  borderRadius: '6px', color: '#44403B', fontWeight: 600,
+                }}>Phase 1</span>
               </div>
 
               {/* Current Bootcamp Header */}
               <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '32px' }}>
                 <div style={{
-                  width: 40, height: 40, borderRadius: '8px',
-                  background: 'rgba(124,58,237,0.1)', border: '1px solid rgba(124,58,237,0.3)',
-                  display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--violet-400)', fontSize: '20px'
+                  width: 48, height: 48, borderRadius: '12px',
+                  background: '#F5F3F1',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#000', fontSize: '20px'
                 }}>◈</div>
                 <div>
-                  <div style={{ color: 'white', fontWeight: 600, fontSize: '14px' }}>Vishesh Learning Lab</div>
-                  <div style={{ color: 'var(--text-muted)', fontSize: '12px', fontFamily: 'var(--font-mono)' }}>Day {currentDay} of 30</div>
+                  <div style={{ color: '#000', fontWeight: 600, fontSize: '15px' }}>Vishesh Learning Lab</div>
+                  <div style={{ color: '#6B6B6B', fontSize: '13px' }}>Day {currentDay} of 30</div>
                 </div>
               </div>
 
               <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                {loadingCurriculum && <div style={{ color: 'var(--text-muted)', fontSize: '12px', textAlign: 'center' }}>Loading curriculum...</div>}
+                {loadingCurriculum && <div style={{ color: '#A59F97', fontSize: '13px', textAlign: 'center' }}>Loading curriculum...</div>}
                 
                 {curriculum.map((item) => {
                   const isActive = item.status === 'active';
@@ -637,38 +595,39 @@ export default function LearningSession() {
                   return (
                     <div key={item.day} style={{
                       padding: '16px',
-                      background: isActive ? 'rgba(124,58,237,0.1)' : 'transparent',
-                      border: `1px solid ${isActive ? 'rgba(124,58,237,0.3)' : 'transparent'}`,
-                      borderRadius: '8px',
+                      background: isActive ? '#F5F3F1' : 'transparent',
+                      border: `1px solid ${isActive ? '#E8E6E3' : 'transparent'}`,
+                      borderRadius: '12px',
                       cursor: isLocked ? 'not-allowed' : 'pointer',
                       transition: 'all 0.2s ease',
-                      opacity: isLocked ? 0.4 : 1,
+                      opacity: isLocked ? 0.5 : 1,
                     }}>
                       <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
                         <div style={{
-                          width: 32, height: 32, borderRadius: '4px', flexShrink: 0,
-                          background: isActive ? 'var(--violet-600)' : isComplete ? 'rgba(255,255,255,0.05)' : 'rgba(255,255,255,0.02)',
+                          width: 32, height: 32, borderRadius: '8px', flexShrink: 0,
+                          background: isActive ? '#000' : isComplete ? '#F5F3F1' : '#FFFFFF',
+                          border: `1px solid ${isComplete ? '#E8E6E3' : isActive ? '#000' : '#E8E6E3'}`,
                           display: 'flex', alignItems: 'center', justifyContent: 'center',
-                          fontSize: '12px', fontWeight: 700, fontFamily: 'var(--font-mono)',
-                          color: isActive ? 'white' : 'var(--text-muted)',
+                          fontSize: '13px', fontWeight: 600,
+                          color: isActive ? 'white' : '#6B6B6B',
                         }}>
                           {String(item.day).padStart(2, '0')}
                         </div>
                         <div style={{ flex: 1, minWidth: 0 }}>
                           <div style={{
-                            fontSize: '13px', fontWeight: 600,
-                            color: isActive ? 'var(--violet-300)' : 'var(--text-muted)',
+                            fontSize: '14px', fontWeight: 600,
+                            color: isActive ? '#000' : '#44403B',
                             marginBottom: '4px'
                           }}>{item.topic}</div>
                           {item.sublabel && (
-                            <div style={{ fontSize: '11px', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>
+                            <div style={{ fontSize: '12px', color: '#A59F97' }}>
                               {isComplete ? 'Completed · 100%' : (isActive ? `Active · ${item.sublabel}` : item.sublabel)}
                             </div>
                           )}
                         </div>
-                        {isComplete && <div style={{ color: 'var(--text-muted)', fontSize: '14px' }}>✓</div>}
-                        {isActive && <div style={{ width: 6, height: 6, borderRadius: '50%', background: 'var(--violet-400)', boxShadow: '0 0 6px var(--violet-400)' }} />}
-                        {isLocked && <div style={{ color: 'var(--text-muted)', fontSize: '14px' }}>🔒</div>}
+                        {isComplete && <div style={{ color: '#10B981', fontSize: '16px', fontWeight: 700 }}>✓</div>}
+                        {isActive && <div style={{ width: 8, height: 8, borderRadius: '50%', background: '#000' }} />}
+                        {isLocked && <div style={{ color: '#A59F97', fontSize: '14px' }}>🔒</div>}
                       </div>
                     </div>
                   );
@@ -677,20 +636,21 @@ export default function LearningSession() {
             </div>
 
             {/* View Detailed Performance Footer */}
-            <div style={{ padding: '24px 32px', borderTop: '1px solid rgba(255,255,255,0.05)' }}>
+            <div style={{ padding: '24px 32px', borderTop: '1px solid #E8E6E3' }}>
               <button
                 onClick={() => navigate('analytics')}
+                className="btn"
                 style={{
                   width: '100%', padding: '14px',
-                  background: 'rgba(255,255,255,0.03)',
-                  border: '1px solid rgba(255,255,255,0.1)',
-                  borderRadius: '4px', cursor: 'pointer',
+                  background: '#FDFCFC',
+                  border: '1px solid #E8E6E3',
+                  borderRadius: '10px', cursor: 'pointer',
                   display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px',
-                  color: 'var(--text-muted)', fontFamily: 'var(--font-mono)', fontSize: '12px',
+                  color: '#44403B', fontSize: '13px', fontWeight: 500,
                   transition: 'all 0.2s ease',
                 }}
-                onMouseEnter={(e) => { e.currentTarget.style.borderColor = 'var(--text-muted)'; e.currentTarget.style.color = 'white'; }}
-                onMouseLeave={(e) => { e.currentTarget.style.borderColor = 'rgba(255,255,255,0.1)'; e.currentTarget.style.color = 'var(--text-muted)'; }}
+                onMouseEnter={(e) => { e.currentTarget.style.background = '#F5F3F1'; }}
+                onMouseLeave={(e) => { e.currentTarget.style.background = '#FDFCFC'; }}
               >
                 <span>▦</span> View Detailed Performance
               </button>

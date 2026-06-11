@@ -1,0 +1,51 @@
+export const COLORS = {
+  background: '#010203',
+  accent: '#CFFF00',
+  textPrimary: '#f3f2ee',
+  textSecondary: '#A59F97',
+  textMuted: '#6B6B6B',
+  cardBackground: 'rgba(255,255,255,0.07)',
+  inputBackground: 'rgba(255,255,255,0.05)',
+  borderSubtle: 'rgba(255,255,255,0.2)',
+  borderActive: 'rgba(207,255,0,0.8)',
+};
+
+export const SHARED_STYLES = {
+  page: {
+    background: COLORS.background,
+    minHeight: '100vh',
+    color: COLORS.textPrimary,
+    fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, sans-serif',
+    overflowX: 'hidden',
+    position: 'relative',
+    cursor: 'none',
+  },
+  card: {
+    background: COLORS.cardBackground,
+    backdropFilter: 'blur(12px)',
+    borderRadius: '12px',
+    padding: '24px',
+    border: `1px solid ${COLORS.borderSubtle}`,
+  },
+  btnAccent: {
+    background: COLORS.accent,
+    color: COLORS.background,
+    border: 'none',
+    padding: '10px 22px',
+    fontWeight: 800,
+    fontSize: '12px',
+    letterSpacing: '0.08em',
+    cursor: 'none',
+    fontFamily: 'inherit',
+    textTransform: 'uppercase',
+    transition: 'opacity 0.2s',
+  },
+  input: {
+    background: COLORS.inputBackground,
+    color: COLORS.textPrimary,
+    border: `1px solid ${COLORS.borderSubtle}`,
+    borderRadius: '6px',
+    padding: '8px 12px',
+    fontSize: '13px',
+  },
+};

@@ -1,10 +1,10 @@
 /**
  * NeuralSphere — Animated 3D neural network sphere using Canvas
- * Pure canvas, no external deps, max performance
+ * Restyled for clean white ElevenLabs aesthetic
  */
 import { useEffect, useRef } from 'react';
 
-export default function NeuralSphere({ size = 200, color1 = '#7c3aed', color2 = '#22d3ee', speed = 0.3 }) {
+export default function NeuralSphere({ size = 200, color1 = '#000000', color2 = '#A59F97', speed = 0.3 }) {
   const canvasRef = useRef(null);
   const animRef = useRef(null);
 
@@ -97,19 +97,16 @@ export default function NeuralSphere({ size = 200, color1 = '#7c3aed', color2 = 
         ctx.beginPath();
         ctx.arc(p.x, p.y, nodeR, 0, Math.PI * 2);
 
-        // Gradient fill
-        const g = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, nodeR * 2);
-        g.addColorStop(0, `${color2}ff`);
-        g.addColorStop(1, `${color1}00`);
-        ctx.fillStyle = `rgba(34,211,238,${alpha * 0.9})`;
+        // Solid fill
+        ctx.fillStyle = `rgba(0, 0, 0, ${alpha * 0.9})`;
         ctx.fill();
 
-        // Glow
-        ctx.shadowColor = color2;
-        ctx.shadowBlur = 6 * visible;
+        // Subtle glow / outline
+        ctx.shadowColor = 'rgba(0,0,0,0.2)';
+        ctx.shadowBlur = 4 * visible;
         ctx.beginPath();
         ctx.arc(p.x, p.y, nodeR * 0.5, 0, Math.PI * 2);
-        ctx.fillStyle = `rgba(255,255,255,${alpha * 0.8})`;
+        ctx.fillStyle = `rgba(165, 159, 151, ${alpha * 0.8})`;
         ctx.fill();
         ctx.shadowBlur = 0;
       }

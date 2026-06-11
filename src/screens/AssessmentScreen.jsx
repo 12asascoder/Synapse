@@ -203,27 +203,65 @@ export default function AssessmentScreen() {
         flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center',
         justifyContent: 'center', padding: '40px 24px', position: 'relative', zIndex: 1,
       }}>
-        {currentDay === 15 || currentDay === 30 ? (
-          <div style={{ width: '100%', maxWidth: '600px', textAlign: 'center', animation: 'fadeInUp 0.4s ease both' }}>
+        {currentDay === 15 ? (
+          <div style={{ width: '100%', maxWidth: '900px', animation: 'fadeInUp 0.4s ease both' }}>
             <div style={{ background: '#FFFFFF', border: '1px solid #000', borderRadius: '24px', padding: '48px', boxShadow: '0 12px 32px rgba(0,0,0,0.04)' }}>
-              <div style={{ fontSize: '40px', marginBottom: '16px' }}>{currentDay === 15 ? '🎯' : '🏁'}</div>
-              <h2 style={{ fontSize: '24px', fontFamily: 'var(--font-display)', fontWeight: 700, marginBottom: '16px', color: '#000' }}>
-                {currentDay === 15 ? 'Mid-Term Milestone' : 'Final Validation'}
+              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '32px' }}>
+                <div style={{ padding: '6px 16px', background: '#F5F3F1', border: '1px solid #E8E6E3', borderRadius: '8px', fontSize: '12px', fontWeight: 700, color: '#000', letterSpacing: '0.05em' }}>
+                  MID-TERM PROGRAMMING ASSESSMENT
+                </div>
+              </div>
+              <h2 style={{ fontSize: '28px', fontFamily: 'var(--font-display)', fontWeight: 700, marginBottom: '24px', color: '#000' }}>
+                Implement a distributed LoRA fine-tuning algorithm for a 7B parameter model.
               </h2>
-              <p style={{ fontSize: '15px', color: '#6B6B6B', marginBottom: '32px', lineHeight: 1.6 }}>
-                {currentDay === 15
-                  ? 'Complete the MCQ assessment above. Then proceed to the milestone interview for your oral validation.'
-                  : 'Complete the MCQ assessment above. Then start the final validation interview to demonstrate your mastery.'}
-              </p>
-              <button
-                onClick={() => navigate(currentDay === 15 ? 'milestone' : 'interview')}
-                style={{
-                  padding: '14px 28px', borderRadius: '12px', border: '2px solid #000',
-                  background: '#000', color: '#fff', fontSize: '15px', fontWeight: 700, cursor: 'pointer',
-                }}
+              <div style={{ fontSize: '15px', color: '#6B6B6B', marginBottom: '40px', lineHeight: 1.6 }}>
+                You have 45 minutes to implement the core algorithm. Your code will be evaluated on correctness, efficiency, and proper gradient scaling.
+              </div>
+              <div style={{ background: '#FDFCFC', padding: '24px', borderRadius: '16px', minHeight: '300px', fontFamily: 'var(--font-mono)', fontSize: '14px', color: '#000', border: '1px solid #E8E6E3' }}>
+                <span style={{ color: '#A59F97' }}>// Write your Python implementation here...</span>
+                <br /><br />
+                <span style={{ color: '#2563EB' }}>def</span> apply_lora(model, r=8, alpha=16):<br />
+                &nbsp;&nbsp;&nbsp;&nbsp;<span style={{ color: '#2563EB' }}>pass</span>
+              </div>
+              <button 
+                onClick={() => navigate('milestone')}
+                className="btn btn-primary"
+                style={{ marginTop: '32px', padding: '14px 28px', fontSize: '14px', fontWeight: 600, borderRadius: '10px' }}
               >
-                {currentDay === 15 ? 'Start Oral Validation →' : 'Begin Final Interview →'}
+                Run Test Suite
               </button>
+            </div>
+          </div>
+        ) : currentDay === 30 ? (
+          <div style={{ width: '100%', maxWidth: '900px', animation: 'fadeInUp 0.4s ease both' }}>
+            <div style={{ background: '#FFFFFF', border: '1px solid #000', borderRadius: '24px', padding: '48px', boxShadow: '0 12px 32px rgba(0,0,0,0.04)' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '32px' }}>
+                <div style={{ padding: '6px 16px', background: '#F5F3F1', border: '1px solid #E8E6E3', borderRadius: '8px', fontSize: '12px', fontWeight: 700, color: '#000', letterSpacing: '0.05em' }}>
+                  FINAL VALIDATION INTERVIEW
+                </div>
+              </div>
+              <div style={{ display: 'flex', gap: '48px', alignItems: 'center' }}>
+                <div style={{ flex: 1 }}>
+                  <h2 style={{ fontSize: '32px', fontFamily: 'var(--font-display)', fontWeight: 700, marginBottom: '24px', color: '#000' }}>
+                    Live Technical Interview with Vishesh AI
+                  </h2>
+                  <div style={{ fontSize: '15px', color: '#6B6B6B', marginBottom: '40px', lineHeight: 1.6 }}>
+                    This is your final assessment. You will engage in a live voice/text conversation where Vishesh will probe your architectural decisions, system design capabilities, and core ML fundamentals.
+                  </div>
+                  <button 
+                    onClick={() => navigate('interview')}
+                    className="btn btn-primary"
+                    style={{ padding: '16px 32px', fontSize: '15px', fontWeight: 600, borderRadius: '12px' }}
+                  >
+                    Start Interview
+                  </button>
+                </div>
+                <div style={{ width: '240px', height: '240px', borderRadius: '50%', background: '#FDFCFC', border: '2px solid #E8E6E3', display: 'flex', alignItems: 'center', justifyContent: 'center', animation: 'pulse-dot 3s infinite', position: 'relative' }}>
+                  <div style={{ position: 'absolute', inset: 8, borderRadius: '50%', background: '#F5F3F1', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <span style={{ fontSize: '64px' }}>🎙</span>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         ) : (

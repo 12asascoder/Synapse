@@ -21,7 +21,13 @@ import MilestoneInterview from './screens/MilestoneInterview';
 // Admin Screens
 import AdminDashboard from './screens/AdminDashboard';
 import AdminUsers from './screens/AdminUsers';
-import AdminPlaceholder from './screens/AdminPlaceholder';
+import AdminBootcamps from './screens/AdminBootcamps';
+import AdminCurriculum from './screens/AdminCurriculum';
+import AdminAssessments from './screens/AdminAssessments';
+import AdminCertificates from './screens/AdminCertificates';
+import AdminCommunity from './screens/AdminCommunity';
+import AdminVishesh from './screens/AdminVishesh';
+import AdminAnalytics from './screens/AdminAnalytics';
 
 // Inner component that can access context
 function AppRouter() {
@@ -64,13 +70,13 @@ function AppRouter() {
     // Admin Routes
     case 'admin-dashboard': return <AdminDashboard />;
     case 'admin-users': return <AdminUsers />;
-    case 'admin-bootcamps': return <AdminPlaceholder title="Bootcamp Management" description="Create and configure bootcamp programs" />;
-    case 'admin-curriculum': return <AdminPlaceholder title="Curriculum Management" description="Manage learning content and AI teaching materials" />;
-    case 'admin-assessments': return <AdminPlaceholder title="Assessment Management" description="Configure evaluation logic and passing scores" />;
-    case 'admin-certificates': return <AdminPlaceholder title="Certificate Management" description="View and verify generated certificates" />;
-    case 'admin-community': return <AdminPlaceholder title="Community Management" description="Moderate discussions and manage events" />;
-    case 'admin-vishesh': return <AdminPlaceholder title="Vishesh Control Center" description="Configure AI personality and teaching style" />;
-    case 'admin-analytics': return <AdminPlaceholder title="Platform Analytics" description="User growth trends and overall platform performance" />;
+    case 'admin-bootcamps': return <AdminBootcamps />;
+    case 'admin-curriculum': return <AdminCurriculum />;
+    case 'admin-assessments': return <AdminAssessments />;
+    case 'admin-certificates': return <AdminCertificates />;
+    case 'admin-community': return <AdminCommunity />;
+    case 'admin-vishesh': return <AdminVishesh />;
+    case 'admin-analytics': return <AdminAnalytics />;
 
     default:
       return <LandingPage />;

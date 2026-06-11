@@ -6,6 +6,7 @@ import { useState, useEffect, useRef } from 'react';
 import { io } from 'socket.io-client';
 import { useApp } from '../context/AppContext';
 import Sidebar from '../components/Sidebar';
+import ThemeContainer from '../components/ThemeContainer';
 
 const API = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
 const WS_URL = import.meta.env.VITE_WS_URL || 'http://localhost:5000';

@@ -143,7 +143,6 @@ export default function BootcampInit() {
         )}
       </div>
     </div>
-    </div>
     </ThemeContainer>
   );
 }

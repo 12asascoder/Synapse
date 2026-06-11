@@ -55,9 +55,38 @@ router.post('/resume/parse', authenticate, async (req, res) => {
 
     const text = resumeText || `[Resume at ${resumeUrl} — text extraction not available server-side]`;
 
-    // Use TruGen AI to parse the resume
-    const trugen = require('../ai/trugen');
-    const prompt = `You are a resume parser. Extract structured information from this resume text.
+    // Local fallback parser — extracts skills from plain text without AI
+    function localParseResume(t) {
+      const skillsList = [];
+      const techKeywords = ['Python', 'JavaScript', 'TypeScript', 'React', 'Node', 'AWS', 'Docker',
+        'Kubernetes', 'SQL', 'MongoDB', 'PostgreSQL', 'Redis', 'GraphQL', 'REST', 'API',
+        'Git', 'Linux', 'Java', 'C++', 'Go', 'Rust', 'Ruby', 'PHP', 'Swift', 'Kotlin',
+        'TensorFlow', 'PyTorch', 'Machine Learning', 'Deep Learning', 'NLP', 'Computer Vision',
+        'Agile', 'Scrum', 'CI/CD', 'Terraform', 'Ansible', 'Jenkins', 'kubernetes', 'gcp'];
+      techKeywords.forEach(skill => {
+        if (t.toLowerCase().includes(skill.toLowerCase())) {
+          skillsList.push({ name: skill, category: 'technical', years: 1 });
+        }
+      });
+      return {
+        success: true,
+        data: {
+          name: null, email: null, phone: null, linkedin: null, github: null,
+          portfolio: null, summary: t.length > 100 ? t.slice(0, 500) + '...' : t,
+          experiences: [],
+          education: [],
+          skills: skillsList.slice(0, 20),
+          certifications: []
+        },
+        warnings: ['AI not available — basic keyword extraction used'],
+        confidence: 'low'
+      };
+    }
+
+    let result;
+    try {
+      const trugen = require('../ai/trugen');
+      const prompt = `You are a resume parser. Extract structured information from this resume text.
 
 Resume text:
 ${text.slice(0, 8000)}
@@ -84,16 +113,20 @@ Return valid JSON with this exact schema (no markdown, no explanation):
 
 If the text is unparseable, set success: false and include a clear error message.`;
 
-    const result = await trugen.generate(prompt);
+      result = await trugen.trugenGenerate(prompt);
+    } catch (err) {
+      return res.json(localParseResume(text));
+    }
+
     let parsed;
     try {
-      parsed = JSON.parse(result.response);
+      parsed = JSON.parse(result);
     } catch {
-      return res.status(422).json({ error: 'Failed to parse resume', detail: 'AI returned unparseable response' });
+      return res.json(localParseResume(text));
     }
 
     if (!parsed.success) {
-      return res.status(422).json({ error: 'Failed to parse resume', detail: parsed.userMessage || 'Could not extract information from resume' });
+      return res.json(localParseResume(text));
     }
 
     res.json(parsed);

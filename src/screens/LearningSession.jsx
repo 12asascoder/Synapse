@@ -94,7 +94,7 @@ export default function LearningSession() {
         introMessage = "Welcome to your Milestone Validation. I will be assessing your knowledge across the topics we've covered. Are you ready to begin?";
       } else {
         // Teach mode
-        const topic = curriculum.find(c => c.day === currentDay)?.topic || 'Optimization Strategies';
+        const topic = curriculum.find(c => String(c.day) === String(currentDay))?.topic || 'Optimization Strategies';
         const bootcampName = selectedBootcamp?.name || 'AI Engineering';
         
         try {
@@ -263,14 +263,14 @@ export default function LearningSession() {
     abortRef.current = new AbortController();
     const history = messages.slice(-10).map((m) => ({ role: m.role, content: m.content }));
     
-    // Inject teaching persona context
     const isValidation = currentDay === 15 || currentDay === 30;
     const modeContext = isValidation ? "Validation Mode: Assess the user" : "Teaching Mode: Instruct, explain, and interactively guide the user.";
+    const topic = curriculum.find(c => String(c.day) === String(currentDay))?.topic || 'this subject';
 
     await streamVisheshResponse({
       userMessage: text,
       history,
-      context: `${selectedBootcamp?.name || 'AI Engineering'} — Day ${currentDay} — ${modeContext}`,
+      context: `Bootcamp: ${selectedBootcamp?.name || 'AI Engineering'} | Day: ${currentDay} | Topic: ${topic} | Mode: ${modeContext}`,
 
       abortController: abortRef.current,
       onToken: (_, full) => {

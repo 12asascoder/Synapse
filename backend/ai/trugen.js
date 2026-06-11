@@ -41,50 +41,28 @@ async function aiFetch(body) {
 /* ------------------------------------------------------------------ */
 function localGenerate(prompt, contextHistory = []) {
   const ctx = contextHistory.find((m) => m.role === 'system')?.content || '';
-  const bootcamp = ctx.match(/(\w+\s?\w*)\s*[—-]?\s*Day/i)?.[1] || 'your program';
-  const day = ctx.match(/Day\s+(\d+)/i)?.[1] || '';
-  const userMsg = [...contextHistory, { content: prompt }].filter((m) => m.role === 'user').pop()?.content || prompt;
+  const bootcamp = ctx.match(/Bootcamp:\s*(.*?)\s*\|/i)?.[1] || 'your program';
+  const day = ctx.match(/Day:\s*(\d+)/i)?.[1] || '';
+  
+  // Try to grab topic from the new context string format (Topic: X |) or the intro prompt (The topic is: X.)
+  const topicMatch = ctx.match(/Topic:\s*(.*?)\s*\|/i) || ctx.match(/The topic is:\s*(.*?)\./i);
+  const topic = topicMatch ? topicMatch[1] : 'this subject';
 
-  if (/introduce|hello|hi\b|who are/i.test(userMsg)) {
-    return `I am Vishesh — your AI Growth Intelligence mentor for ${bootcamp}${day ? ` (Day ${day})` : ''}. I'm here to guide you through concepts, debug your code, and prepare you for real-world engineering challenges. What would you like to work on today?`;
+  const aiMessages = contextHistory.filter((m) => m.role === 'assistant' || m.role === 'model' || m.role === 'vishesh');
+  const alreadyGreeted = aiMessages.some(m => m.content && m.content.includes("How are you doing today"));
+
+  // If this is the initial lesson generation intro prompt from the frontend
+  if (prompt.includes('Write a compelling lesson introduction') || (!alreadyGreeted && /hello|hi\b|hey|start/i.test(prompt))) {
+    return `Hello! I am Vishesh. How are you doing today?`;
   }
-  if (/\bexplain\b|\bwhat is\b|\bhow does\b|\bdefine\b/i.test(userMsg)) {
-    return `That's a great question about ${bootcamp}${day ? ` Day ${day}` : ''}. The core idea here is to break down the problem systematically:
 
-1. First, understand the fundamental concept and its purpose in real-world systems.
-2. Then, examine how it connects to the broader architecture you're building.
-3. Finally, apply it through practical examples.
-
-Could you share more about what specifically you'd like to explore? I can dive deeper into theory, provide code examples, or walk through a hands-on exercise.`;
+  // If we already greeted them, we transition straight into the lesson
+  if (alreadyGreeted && aiMessages.length <= 2) {
+    return `Cool! So coming to the lesson on ${topic}... The whole thing gets divided into a 30-day segment to make you perfect and proficient in ${topic}.\n\nLet's get started. What do you already know about this topic?`;
   }
-  if (/\bcode\b|implement|write|syntax|function|error|bug|debug/i.test(userMsg)) {
-    return `Let me help you with the implementation. Here's my analysis:
 
-**Key considerations:**
-- Focus on clean, maintainable code that follows best practices
-- Think about edge cases and error handling early
-- Consider the trade-offs between different approaches
-
-Here's a template to get you started:
-
-\`\`\`
-// Approach: Start with a clear structure, then refine
-function solve(input) {
-  // 1. Validate inputs
-  // 2. Process the core logic
-  // 3. Return the result
-}
-\`\`\`
-
-Try implementing this and share your progress — I'll review and provide specific feedback.`;
-  }
-  return `I understand you're working on ${bootcamp}${day ? ` Day ${day}` : ''}. Here's my guidance:
-
-1. **Foundation** — Make sure you've understood the core principles before diving into implementation.
-2. **Practice** — Apply what you've learned through the exercises provided in your curriculum.
-3. **Reflect** — Review your solutions and think about optimization opportunities.
-
-What specific aspect would you like me to elaborate on?`;
+  // General fallback for ongoing conversation
+  return `That makes sense. Since our goal over these 30 days is to make you an expert in ${topic}, let's break this down further.\n\nCould you try explaining your approach, or would you like me to provide a concrete example?`;
 }
 
 /* ------------------------------------------------------------------ */

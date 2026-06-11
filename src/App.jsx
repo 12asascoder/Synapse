@@ -83,10 +83,28 @@ function AppRouter() {
   }
 }
 
+import AnimatedBackground from './components/AnimatedBackground';
+
+// Screens that manage their own backgrounds
+const DARK_SCREENS = ['landing', 'loading', 'auth'];
+
+function AppWithBackground() {
+  const { state } = useApp();
+  const showBg = !DARK_SCREENS.includes(state.currentScreen);
+  return (
+    <>
+      {showBg && <AnimatedBackground />}
+      <div style={{ position: 'relative', zIndex: 1 }}>
+        <AppRouter />
+      </div>
+    </>
+  );
+}
+
 export default function App() {
   return (
     <AppProvider>
-      <AppRouter />
+      <AppWithBackground />
     </AppProvider>
   );
 }

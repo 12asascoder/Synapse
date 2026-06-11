@@ -1,3 +1,7 @@
+/**
+ * AdminDashboard
+ * Clean ElevenLabs aesthetic
+ */
 import { useState, useEffect } from 'react';
 import AdminSidebar from '../components/AdminSidebar';
 
@@ -20,28 +24,28 @@ export default function AdminDashboard() {
 
   const statCards = stats
     ? [
-        { label: 'Total Users', value: stats.totalUsers?.toLocaleString() || '0', trend: 'Registered', color: 'var(--cyan-400)' },
-        { label: 'Active (7d)', value: stats.activeUsers?.toLocaleString() || '0', trend: 'Active', color: 'var(--violet-400)' },
-        { label: 'Bootcamps', value: bootcampCount.toString(), trend: 'Programs', color: 'var(--amber-400)' },
-        { label: 'Assessments', value: stats.totalAssessments?.toLocaleString() || '0', trend: 'Completed', color: 'var(--rose-400)' },
-        { label: 'Avg Growth', value: stats.avgGrowthScore ? `${stats.avgGrowthScore}/100` : 'N/A', trend: 'Platform Avg', color: 'var(--fuchsia-400)' },
-        { label: 'Engagement', value: stats.totalUsers ? `${Math.round((stats.activeUsers / stats.totalUsers) * 100)}%` : 'N/A', trend: 'Active Rate', color: 'var(--emerald-400)' },
-        { label: 'Platform', value: 'Online', trend: 'Operational', color: 'var(--emerald-400)' },
-        { label: 'Database', value: 'Connected', trend: 'PostgreSQL', color: 'var(--indigo-400)' },
+        { label: 'Total Users', value: stats.totalUsers?.toLocaleString() || '0', trend: 'Registered' },
+        { label: 'Active (7d)', value: stats.activeUsers?.toLocaleString() || '0', trend: 'Active' },
+        { label: 'Bootcamps', value: bootcampCount.toString(), trend: 'Programs' },
+        { label: 'Assessments', value: stats.totalAssessments?.toLocaleString() || '0', trend: 'Completed' },
+        { label: 'Avg Growth', value: stats.avgGrowthScore ? `${stats.avgGrowthScore}/100` : 'N/A', trend: 'Platform Avg' },
+        { label: 'Engagement', value: stats.totalUsers ? `${Math.round((stats.activeUsers / stats.totalUsers) * 100)}%` : 'N/A', trend: 'Active Rate' },
+        { label: 'Platform', value: 'Online', trend: 'Operational' },
+        { label: 'Database', value: 'Connected', trend: 'PostgreSQL' },
       ]
     : Array.from({ length: 8 }, (_, i) => ({
-        label: 'Loading...', value: '—', trend: '', color: 'var(--text-muted)',
+        label: 'Loading...', value: '—', trend: '',
       }));
 
   return (
-    <div style={{ display: 'flex', minHeight: '100vh', background: 'var(--bg-void)' }}>
+    <div style={{ display: 'flex', minHeight: '100vh', background: '#FDFCFC' }}>
       <AdminSidebar />
-      <div style={{ flex: 1, padding: '40px', overflowY: 'auto' }}>
+      <div style={{ flex: 1, padding: '48px', overflowY: 'auto' }} className="scroll-area">
         <header style={{ marginBottom: '40px' }}>
-          <h1 style={{ fontSize: '28px', fontFamily: 'var(--font-display)', fontWeight: 800, color: 'var(--cyan-50)', marginBottom: '8px' }}>
+          <h1 style={{ fontSize: '36px', fontFamily: 'var(--font-display)', fontWeight: 700, color: '#000', marginBottom: '8px', letterSpacing: '-0.02em' }}>
             Enterprise Command Center
           </h1>
-          <p style={{ fontFamily: 'var(--font-mono)', fontSize: '13px', color: 'var(--cyan-400)', letterSpacing: '0.05em' }}>
+          <p style={{ fontSize: '15px', color: '#6B6B6B' }}>
             Global platform overview and real-time operations
           </p>
         </header>
@@ -49,22 +53,19 @@ export default function AdminDashboard() {
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '24px', marginBottom: '40px' }}>
           {statCards.map((stat, i) => (
             <div key={i} style={{
-              background: 'rgba(10, 15, 25, 0.7)',
-              border: '1px solid rgba(56, 189, 248, 0.15)',
-              borderRadius: '16px', padding: '24px',
+              background: '#FFFFFF',
+              border: '1px solid #E8E6E3',
+              borderRadius: '20px', padding: '24px',
               position: 'relative', overflow: 'hidden',
+              boxShadow: '0 4px 12px rgba(0,0,0,0.02)'
             }}>
-              <div style={{
-                position: 'absolute', top: 0, left: 0, width: '100%', height: '2px',
-                background: `linear-gradient(90deg, ${stat.color}, transparent)`
-              }} />
-              <div style={{ fontSize: '11px', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '12px' }}>
+              <div style={{ fontSize: '12px', color: '#A59F97', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '12px' }}>
                 {stat.label}
               </div>
-              <div style={{ fontSize: '32px', fontWeight: 800, fontFamily: 'var(--font-display)', color: 'var(--text-primary)', marginBottom: '8px' }}>
+              <div style={{ fontSize: '32px', fontWeight: 700, fontFamily: 'var(--font-display)', color: '#000', marginBottom: '8px' }}>
                 {stat.value}
               </div>
-              <div style={{ fontSize: '12px', fontFamily: 'var(--font-mono)', color: stat.color, fontWeight: 600 }}>
+              <div style={{ fontSize: '13px', color: '#6B6B6B', fontWeight: 500 }}>
                 {stat.trend}
               </div>
             </div>
@@ -73,33 +74,48 @@ export default function AdminDashboard() {
 
         <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: '24px' }}>
           <div style={{
-            background: 'rgba(10, 15, 25, 0.7)',
-            border: '1px solid rgba(56, 189, 248, 0.15)',
-            borderRadius: '16px', padding: '24px', minHeight: '400px',
-            fontFamily: 'var(--font-mono)', fontSize: '12px', color: 'var(--text-muted)',
-            display: 'flex', flexDirection: 'column', gap: '12px',
+            background: '#FFFFFF',
+            border: '1px solid #E8E6E3',
+            borderRadius: '24px', padding: '36px', minHeight: '400px',
+            fontSize: '14px', color: '#44403B',
+            display: 'flex', flexDirection: 'column', gap: '16px',
+            boxShadow: '0 8px 24px rgba(0,0,0,0.02)'
           }}>
-            <div style={{ fontWeight: 700, color: 'var(--cyan-400)', marginBottom: '8px' }}>PLATFORM OVERVIEW</div>
-            <div>● Database: PostgreSQL on Supabase</div>
-            <div>● Auth: bcrypt (12 rounds) + JWT</div>
-            <div>● AI: TruGen API</div>
-            <div>● Models: {bootcampCount} bootcamps, 10 tables</div>
-            {stats && <div>● Users: {stats.totalUsers} total / {stats.activeUsers} active</div>}
-            {stats && <div>● Assessments: {stats.totalAssessments} completed</div>}
-            {stats && <div>● Avg Growth Score: {stats.avgGrowthScore || 0}/100</div>}
+            <div style={{ fontWeight: 700, color: '#000', marginBottom: '12px', fontSize: '18px', fontFamily: 'var(--font-display)' }}>Platform Overview</div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}><div style={{ width: 6, height: 6, background: '#DCDCDC', borderRadius: '50%' }} /> Database: PostgreSQL on Supabase</div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}><div style={{ width: 6, height: 6, background: '#DCDCDC', borderRadius: '50%' }} /> Auth: bcrypt (12 rounds) + JWT</div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}><div style={{ width: 6, height: 6, background: '#DCDCDC', borderRadius: '50%' }} /> AI: TruGen API</div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}><div style={{ width: 6, height: 6, background: '#DCDCDC', borderRadius: '50%' }} /> Models: {bootcampCount} bootcamps, 10 tables</div>
+            {stats && <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}><div style={{ width: 6, height: 6, background: '#DCDCDC', borderRadius: '50%' }} /> Users: {stats.totalUsers} total / {stats.activeUsers} active</div>}
+            {stats && <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}><div style={{ width: 6, height: 6, background: '#DCDCDC', borderRadius: '50%' }} /> Assessments: {stats.totalAssessments} completed</div>}
+            {stats && <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}><div style={{ width: 6, height: 6, background: '#DCDCDC', borderRadius: '50%' }} /> Avg Growth Score: {stats.avgGrowthScore || 0}/100</div>}
           </div>
+          
           <div style={{
-            background: 'rgba(10, 15, 25, 0.7)',
-            border: '1px solid rgba(56, 189, 248, 0.15)',
-            borderRadius: '16px', padding: '24px', minHeight: '400px',
-            fontFamily: 'var(--font-mono)', fontSize: '12px', color: 'var(--text-muted)',
-            display: 'flex', flexDirection: 'column', gap: '12px',
+            background: '#FFFFFF',
+            border: '1px solid #E8E6E3',
+            borderRadius: '24px', padding: '36px', minHeight: '400px',
+            fontSize: '14px', color: '#44403B',
+            display: 'flex', flexDirection: 'column', gap: '16px',
+            boxShadow: '0 8px 24px rgba(0,0,0,0.02)'
           }}>
-            <div style={{ fontWeight: 700, color: 'var(--emerald-400)', marginBottom: '8px' }}>SYSTEM HEALTH</div>
-            <div>● API: <span style={{ color: 'var(--emerald-400)' }}>Online</span></div>
-            <div>● Database: <span style={{ color: 'var(--emerald-400)' }}>Connected</span></div>
-            <div>● AI Service: {stats ? <span style={{ color: 'var(--emerald-400)' }}>Configured</span> : 'Checking...'}</div>
-            <div>● Storage: <span style={{ color: 'var(--emerald-400)' }}>Active</span></div>
+            <div style={{ fontWeight: 700, color: '#000', marginBottom: '12px', fontSize: '18px', fontFamily: 'var(--font-display)' }}>System Health</div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '12px 16px', background: '#F5F3F1', borderRadius: '12px' }}>
+              <span>API</span>
+              <span style={{ color: '#10B981', fontWeight: 600 }}>Online</span>
+            </div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '12px 16px', background: '#F5F3F1', borderRadius: '12px' }}>
+              <span>Database</span>
+              <span style={{ color: '#10B981', fontWeight: 600 }}>Connected</span>
+            </div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '12px 16px', background: '#F5F3F1', borderRadius: '12px' }}>
+              <span>AI Service</span>
+              <span style={{ color: '#10B981', fontWeight: 600 }}>Configured</span>
+            </div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '12px 16px', background: '#F5F3F1', borderRadius: '12px' }}>
+              <span>Storage</span>
+              <span style={{ color: '#10B981', fontWeight: 600 }}>Active</span>
+            </div>
           </div>
         </div>
       </div>

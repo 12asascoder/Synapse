@@ -1,47 +1,51 @@
+/**
+ * AdminPlaceholder
+ * Clean ElevenLabs aesthetic
+ */
 import AdminSidebar from '../components/AdminSidebar';
 
 export default function AdminPlaceholder({ title, description }) {
   return (
-    <div style={{ display: 'flex', minHeight: '100vh', background: 'var(--bg-void)' }}>
+    <div style={{ display: 'flex', minHeight: '100vh', background: '#FDFCFC' }}>
       <AdminSidebar />
-      <div style={{ flex: 1, padding: '40px', overflowY: 'auto' }}>
-        <header style={{ marginBottom: '40px' }}>
+      <div style={{ flex: 1, padding: '48px', overflowY: 'auto' }} className="scroll-area">
+        <header style={{ marginBottom: '48px' }}>
           <h1 style={{
-            fontSize: '28px',
+            fontSize: '36px',
             fontFamily: 'var(--font-display)',
-            fontWeight: 800,
-            color: 'var(--cyan-50)',
-            marginBottom: '8px'
+            fontWeight: 700,
+            color: '#000',
+            marginBottom: '8px',
+            letterSpacing: '-0.02em'
           }}>
             {title}
           </h1>
           <p style={{
-            fontFamily: 'var(--font-mono)',
-            fontSize: '13px',
-            color: 'var(--cyan-400)',
-            letterSpacing: '0.05em'
+            fontSize: '15px',
+            color: '#6B6B6B'
           }}>
             {description}
           </p>
         </header>
 
         <div style={{
-          background: 'rgba(10, 15, 25, 0.7)',
-          border: '1px solid rgba(56, 189, 248, 0.15)',
-          borderRadius: '16px',
-          padding: '60px',
+          background: '#FFFFFF',
+          border: '1px solid #E8E6E3',
+          borderRadius: '24px',
+          padding: '64px',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          color: 'var(--cyan-400)',
-          fontFamily: 'var(--font-mono)',
+          color: '#6B6B6B',
           minHeight: '400px',
           textAlign: 'center',
           flexDirection: 'column',
-          gap: '16px'
+          gap: '20px',
+          boxShadow: '0 8px 24px rgba(0,0,0,0.02)'
         }}>
-          <div style={{ fontSize: '32px' }}>🚧</div>
-          <div>This module is currently under development for the Enterprise AI Operations Center.</div>
+          <div style={{ fontSize: '40px' }}>🚧</div>
+          <div style={{ fontSize: '16px', fontWeight: 500, color: '#000' }}>This module is currently under development</div>
+          <div style={{ fontSize: '14px' }}>Check back later for updates to the Enterprise Operations Center.</div>
         </div>
       </div>
     </div>

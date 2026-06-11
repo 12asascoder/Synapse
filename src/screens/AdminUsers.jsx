@@ -1,3 +1,7 @@
+/**
+ * AdminUsers
+ * Clean ElevenLabs aesthetic
+ */
 import { useState, useEffect } from 'react';
 import AdminSidebar from '../components/AdminSidebar';
 import { useApp } from '../context/AppContext';
@@ -32,74 +36,82 @@ export default function AdminUsers() {
   );
 
   return (
-    <div style={{ display: 'flex', minHeight: '100vh', background: 'var(--bg-void)' }}>
+    <div style={{ display: 'flex', minHeight: '100vh', background: '#FDFCFC' }}>
       <AdminSidebar />
       
-      <div style={{ flex: 1, padding: '40px', overflowY: 'auto' }}>
-        <header style={{ marginBottom: '32px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}>
+      <div style={{ flex: 1, padding: '48px', overflowY: 'auto' }} className="scroll-area">
+        <header style={{ marginBottom: '40px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}>
           <div>
-            <h1 style={{ fontSize: '28px', fontFamily: 'var(--font-display)', fontWeight: 800, color: 'var(--cyan-50)', marginBottom: '8px' }}>
+            <h1 style={{ fontSize: '36px', fontFamily: 'var(--font-display)', fontWeight: 700, color: '#000', marginBottom: '8px', letterSpacing: '-0.02em' }}>
               User Management
             </h1>
-            <p style={{ fontFamily: 'var(--font-mono)', fontSize: '13px', color: 'var(--cyan-400)', letterSpacing: '0.05em' }}>
+            <p style={{ fontSize: '15px', color: '#6B6B6B' }}>
               View, edit, and moderate all platform operatives
             </p>
           </div>
           
           <div style={{ display: 'flex', gap: '16px' }}>
             <div style={{ position: 'relative' }}>
-              <span style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', opacity: 0.5 }}>🔍</span>
+              <span style={{ position: 'absolute', left: '16px', top: '50%', transform: 'translateY(-50%)', opacity: 0.5 }}>🔍</span>
               <input 
                 type="text" 
                 placeholder="Search users..." 
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 style={{
-                  background: 'rgba(10, 15, 25, 0.7)',
-                  border: '1px solid rgba(56, 189, 248, 0.2)',
-                  borderRadius: '8px',
-                  padding: '10px 16px 10px 40px',
-                  color: 'white',
-                  fontFamily: 'var(--font-mono)',
-                  fontSize: '13px',
-                  width: '280px',
+                  background: '#FFFFFF',
+                  border: '1px solid #E8E6E3',
+                  borderRadius: '12px',
+                  padding: '12px 16px 12px 44px',
+                  color: '#000',
+                  fontSize: '14px',
+                  width: '320px',
                   outline: 'none',
+                  transition: 'border-color 0.2s ease',
+                  boxShadow: '0 2px 8px rgba(0,0,0,0.02)'
                 }}
+                onFocusCapture={(e) => { e.currentTarget.style.borderColor = '#000'; }}
+                onBlurCapture={(e) => { e.currentTarget.style.borderColor = '#E8E6E3'; }}
               />
             </div>
-            <button style={{
-              background: 'rgba(56, 189, 248, 0.1)',
-              border: '1px solid rgba(56, 189, 248, 0.3)',
-              color: 'var(--cyan-400)',
-              padding: '10px 20px',
-              borderRadius: '8px',
-              fontFamily: 'var(--font-mono)',
-              fontSize: '13px',
+            <button className="btn" style={{
+              background: '#FDFCFC',
+              border: '1px solid #E8E6E3',
+              color: '#000',
+              padding: '12px 24px',
+              borderRadius: '12px',
               cursor: 'pointer',
-              fontWeight: 600
-            }}>
+              fontWeight: 600,
+              fontSize: '14px',
+              display: 'flex', alignItems: 'center', gap: '8px',
+              transition: 'all 0.15s ease'
+            }}
+            onMouseEnter={(e) => { e.currentTarget.style.background = '#F5F3F1'; }}
+            onMouseLeave={(e) => { e.currentTarget.style.background = '#FDFCFC'; }}
+            >
               Filter Options ⚙
             </button>
           </div>
         </header>
 
-        <div style={{ display: 'flex', gap: '24px' }}>
+        <div style={{ display: 'flex', gap: '32px' }}>
           {/* User Table */}
           <div style={{
             flex: selectedUser ? 2 : 1,
-            background: 'rgba(10, 15, 25, 0.7)',
-            border: '1px solid rgba(56, 189, 248, 0.15)',
-            borderRadius: '16px',
+            background: '#FFFFFF',
+            border: '1px solid #E8E6E3',
+            borderRadius: '24px',
             overflow: 'hidden',
-            transition: 'all 0.3s ease'
+            transition: 'all 0.3s ease',
+            boxShadow: '0 8px 24px rgba(0,0,0,0.02)'
           }}>
-            <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontFamily: 'var(--font-mono)' }}>
+            <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
               <thead>
-                <tr style={{ background: 'rgba(56, 189, 248, 0.05)', borderBottom: '1px solid rgba(56, 189, 248, 0.15)' }}>
-                  <th style={{ padding: '16px 24px', fontSize: '11px', color: 'var(--cyan-400)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Operative</th>
-                  <th style={{ padding: '16px 24px', fontSize: '11px', color: 'var(--cyan-400)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Role</th>
-                  <th style={{ padding: '16px 24px', fontSize: '11px', color: 'var(--cyan-400)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Bootcamp</th>
-                  <th style={{ padding: '16px 24px', fontSize: '11px', color: 'var(--cyan-400)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Status</th>
+                <tr style={{ background: '#F5F3F1', borderBottom: '1px solid #E8E6E3' }}>
+                  <th style={{ padding: '20px 24px', fontSize: '12px', color: '#6B6B6B', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em' }}>Operative</th>
+                  <th style={{ padding: '20px 24px', fontSize: '12px', color: '#6B6B6B', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em' }}>Role</th>
+                  <th style={{ padding: '20px 24px', fontSize: '12px', color: '#6B6B6B', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em' }}>Bootcamp</th>
+                  <th style={{ padding: '20px 24px', fontSize: '12px', color: '#6B6B6B', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em' }}>Status</th>
                 </tr>
               </thead>
               <tbody>
@@ -108,34 +120,38 @@ export default function AdminUsers() {
                     key={u.id} 
                     onClick={() => setSelectedUser(u)}
                     style={{ 
-                      borderBottom: '1px solid rgba(255, 255, 255, 0.05)',
-                      background: selectedUser?.id === u.id ? 'rgba(56, 189, 248, 0.08)' : 'transparent',
+                      borderBottom: '1px solid #E8E6E3',
+                      background: selectedUser?.id === u.id ? '#F5F3F1' : 'transparent',
                       cursor: 'pointer',
                       transition: 'background 0.2s ease'
                     }}
+                    onMouseEnter={(e) => { if (selectedUser?.id !== u.id) e.currentTarget.style.background = '#FDFCFC'; }}
+                    onMouseLeave={(e) => { if (selectedUser?.id !== u.id) e.currentTarget.style.background = 'transparent'; }}
                   >
-                    <td style={{ padding: '16px 24px' }}>
-                      <div style={{ fontWeight: 600, color: 'white', fontSize: '14px', marginBottom: '4px' }}>{u.name}</div>
-                      <div style={{ color: 'var(--text-muted)', fontSize: '12px' }}>{u.email}</div>
+                    <td style={{ padding: '20px 24px' }}>
+                      <div style={{ fontWeight: 700, color: '#000', fontSize: '15px', marginBottom: '4px' }}>{u.name}</div>
+                      <div style={{ color: '#6B6B6B', fontSize: '13px' }}>{u.email}</div>
                     </td>
-                    <td style={{ padding: '16px 24px' }}>
+                    <td style={{ padding: '20px 24px' }}>
                       <span style={{ 
-                        background: u.role === 'SUPER_ADMIN' ? 'rgba(244, 63, 94, 0.1)' : 'rgba(56, 189, 248, 0.1)',
-                        color: u.role === 'SUPER_ADMIN' ? 'var(--rose-400)' : 'var(--cyan-400)',
-                        padding: '4px 8px', borderRadius: '4px', fontSize: '10px', fontWeight: 700
+                        background: u.role === 'SUPER_ADMIN' ? '#FFF0F0' : '#F5F3F1',
+                        color: u.role === 'SUPER_ADMIN' ? '#DC2626' : '#000',
+                        border: `1px solid ${u.role === 'SUPER_ADMIN' ? '#FECACA' : '#E8E6E3'}`,
+                        padding: '6px 10px', borderRadius: '6px', fontSize: '11px', fontWeight: 700
                       }}>
                         {u.role}
                       </span>
                     </td>
-                    <td style={{ padding: '16px 24px', fontSize: '13px', color: 'var(--text-primary)' }}>
+                    <td style={{ padding: '20px 24px', fontSize: '14px', color: '#44403B', fontWeight: 500 }}>
                       {u.bootcamp}
                     </td>
-                    <td style={{ padding: '16px 24px' }}>
+                    <td style={{ padding: '20px 24px' }}>
                       <span style={{
-                        color: u.status === 'Active' ? 'var(--emerald-400)' : 'var(--rose-400)',
-                        fontSize: '12px'
+                        color: u.status === 'Active' ? '#10B981' : '#DC2626',
+                        fontSize: '13px', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '6px'
                       }}>
-                        ● {u.status}
+                        <div style={{ width: 6, height: 6, borderRadius: '50%', background: u.status === 'Active' ? '#10B981' : '#DC2626' }} />
+                        {u.status}
                       </span>
                     </td>
                   </tr>
@@ -148,43 +164,51 @@ export default function AdminUsers() {
           {selectedUser && (
             <div style={{
               flex: 1,
-              background: 'rgba(10, 15, 25, 0.7)',
-              border: '1px solid rgba(56, 189, 248, 0.2)',
-              borderRadius: '16px',
-              padding: '24px',
+              background: '#FFFFFF',
+              border: '1px solid #E8E6E3',
+              borderRadius: '24px',
+              padding: '32px',
               position: 'sticky',
-              top: '40px',
-              height: 'fit-content'
+              top: '48px',
+              height: 'fit-content',
+              boxShadow: '0 8px 24px rgba(0,0,0,0.02)'
             }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
-                <h3 style={{ fontSize: '18px', fontFamily: 'var(--font-display)', fontWeight: 700, color: 'white' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '32px' }}>
+                <h3 style={{ fontSize: '20px', fontFamily: 'var(--font-display)', fontWeight: 700, color: '#000' }}>
                   Operative Profile
                 </h3>
-                <button onClick={() => setSelectedUser(null)} style={{ background: 'none', border: 'none', color: 'var(--text-muted)', cursor: 'pointer' }}>✕</button>
+                <button onClick={() => setSelectedUser(null)} style={{ background: '#F5F3F1', border: 'none', color: '#000', cursor: 'pointer', width: 32, height: 32, borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>✕</button>
               </div>
 
-              <div style={{ marginBottom: '24px' }}>
-                <div style={{ width: 64, height: 64, background: 'linear-gradient(135deg, var(--cyan-600), var(--cyan-800))', borderRadius: '16px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '24px', color: 'white', marginBottom: '16px', boxShadow: '0 0 20px rgba(6,182,212,0.3)' }}>
+              <div style={{ marginBottom: '32px', textAlign: 'center' }}>
+                <div style={{ width: 80, height: 80, background: '#000', borderRadius: '20px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '32px', fontWeight: 700, color: 'white', margin: '0 auto 20px', boxShadow: '0 8px 16px rgba(0,0,0,0.1)' }}>
                   {selectedUser.name.charAt(0)}
                 </div>
-                <div style={{ fontSize: '20px', fontWeight: 800, fontFamily: 'var(--font-display)', color: 'white' }}>{selectedUser.name}</div>
-                <div style={{ fontSize: '13px', fontFamily: 'var(--font-mono)', color: 'var(--cyan-400)' }}>{selectedUser.email}</div>
+                <div style={{ fontSize: '24px', fontWeight: 700, fontFamily: 'var(--font-display)', color: '#000', marginBottom: '8px' }}>{selectedUser.name}</div>
+                <div style={{ fontSize: '14px', color: '#6B6B6B' }}>{selectedUser.email}</div>
               </div>
 
-              <div style={{ display: 'grid', gap: '16px', fontFamily: 'var(--font-mono)', fontSize: '12px', marginBottom: '32px' }}>
+              <div style={{ display: 'grid', gap: '20px', fontSize: '14px', marginBottom: '40px', padding: '24px', background: '#FDFCFC', borderRadius: '16px', border: '1px solid #E8E6E3' }}>
                 <div>
-                  <div style={{ color: 'var(--text-muted)', marginBottom: '4px' }}>User ID</div>
-                  <div style={{ color: 'white', fontWeight: 600 }}>{selectedUser.id}</div>
+                  <div style={{ color: '#A59F97', marginBottom: '6px', fontSize: '12px', fontWeight: 700, textTransform: 'uppercase' }}>User ID</div>
+                  <div style={{ color: '#000', fontWeight: 600, fontFamily: 'var(--font-mono)' }}>{selectedUser.id}</div>
                 </div>
                 <div>
-                  <div style={{ color: 'var(--text-muted)', marginBottom: '4px' }}>Role</div>
-                  <div style={{ color: 'white', fontWeight: 600 }}>{selectedUser.role || 'USER'}</div>
+                  <div style={{ color: '#A59F97', marginBottom: '6px', fontSize: '12px', fontWeight: 700, textTransform: 'uppercase' }}>Role</div>
+                  <div style={{ color: '#000', fontWeight: 600 }}>{selectedUser.role || 'USER'}</div>
                 </div>
               </div>
 
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                <button className="btn btn-secondary" style={{ padding: '10px', fontSize: '12px', background: 'rgba(56, 189, 248, 0.1)', border: '1px solid rgba(56, 189, 248, 0.3)', color: 'var(--cyan-400)' }}>View Full Assessment History</button>
-                <button className="btn btn-secondary" style={{ padding: '10px', fontSize: '12px', background: 'rgba(244, 63, 94, 0.1)', border: '1px solid rgba(244, 63, 94, 0.3)', color: 'var(--rose-400)' }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                <button className="btn" style={{ width: '100%', padding: '14px', fontSize: '14px', background: '#FDFCFC', border: '1px solid #000', color: '#000', borderRadius: '12px', fontWeight: 600, cursor: 'pointer', transition: 'all 0.15s ease' }}
+                onMouseEnter={(e) => { e.currentTarget.style.background = '#000'; e.currentTarget.style.color = '#FFF'; }}
+                onMouseLeave={(e) => { e.currentTarget.style.background = '#FDFCFC'; e.currentTarget.style.color = '#000'; }}
+                >View Full Assessment History</button>
+                
+                <button className="btn" style={{ width: '100%', padding: '14px', fontSize: '14px', background: '#FFF0F0', border: '1px solid #FECACA', color: '#DC2626', borderRadius: '12px', fontWeight: 600, cursor: 'pointer', transition: 'all 0.15s ease' }}
+                onMouseEnter={(e) => { e.currentTarget.style.background = '#FEE2E2'; }}
+                onMouseLeave={(e) => { e.currentTarget.style.background = '#FFF0F0'; }}
+                >
                   {selectedUser.status === 'Active' ? 'Suspend User' : 'Restore User'}
                 </button>
               </div>

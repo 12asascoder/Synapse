@@ -1,7 +1,9 @@
 /**
  * BootcampInit — Vishesh generates personalized learning path
+ * Clean white aesthetic
  */
 import { useState, useEffect } from 'react';
+import ThemeContainer from '../components/ThemeContainer';
 import { useApp } from '../context/AppContext';
 
 const STEPS = [
@@ -10,7 +12,7 @@ const STEPS = [
   { label: 'Building personalized curriculum...', delay: 1600 },
   { label: 'Setting milestone checkpoints...', delay: 2400 },
   { label: 'Calibrating difficulty parameters...', delay: 3200 },
-  { label: 'Neural path initialized.', delay: 4000 },
+  { label: 'Learning path ready.', delay: 4000 },
 ];
 
 export default function BootcampInit() {
@@ -29,61 +31,64 @@ export default function BootcampInit() {
   }, []);
 
   const OBJECTIVES = [
-    { day: '1-7', title: 'Foundation Layer', desc: 'Core concepts, mental models, and vocabulary' },
-    { day: '8-14', title: 'Depth Expansion', desc: 'Advanced techniques and hands-on application' },
-    { day: '15', title: '★ Phase 1 Milestone', desc: 'Proctored validation — AI Interview + Technical Assessment', milestone: true },
-    { day: '16-22', title: 'Adaptive Phase', desc: 'Vishesh personalizes based on your Day 15 performance' },
-    { day: '23-29', title: 'Mastery Sprint', desc: 'Real-world projects and case study simulations' },
-    { day: '30', title: '🎓 Final Certification', desc: 'Full proctored validation + career readiness report', milestone: true },
+    { day: '1-7', title: 'Foundation', desc: 'Core concepts, mental models, and vocabulary' },
+    { day: '8-14', title: 'Depth', desc: 'Advanced techniques and hands-on application' },
+    { day: '15', title: 'Phase 1 Milestone', desc: 'Validation — AI Interview + Assessment', milestone: true },
+    { day: '16-22', title: 'Adaptive Phase', desc: 'Personalized based on your performance' },
+    { day: '23-29', title: 'Mastery Sprint', desc: 'Real-world projects and simulations' },
+    { day: '30', title: 'Final Certification', desc: 'Full validation + career readiness report', milestone: true },
   ];
 
   return (
-    <div style={{
-      minHeight: '100vh', background: 'var(--bg-void)',
-      display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
-      padding: '40px 24px', position: 'relative', overflow: 'hidden',
-    }}>
-      <div className="grid-bg" style={{ position: 'fixed', inset: 0, opacity: 0.3, pointerEvents: 'none' }} />
-      <div className="orb orb-violet" style={{ width: 500, height: 500, top: -100, left: '50%', transform: 'translateX(-50%)', opacity: 0.2 }} />
+    <ThemeContainer>
+      <div style={{
+        minHeight: '100vh', background: 'transparent',
+        display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
+        padding: '40px 24px', position: 'relative', overflow: 'hidden',
+      }}>
 
-      <div style={{ width: '100%', maxWidth: '720px', position: 'relative', zIndex: 1 }}>
+      <div style={{ width: '100%', maxWidth: '640px', position: 'relative', zIndex: 1 }}>
         {/* Header */}
         <div style={{ textAlign: 'center', marginBottom: '40px', animation: 'fadeInUp 0.5s ease' }}>
-          <div className="vishesh-avatar" style={{ width: 56, height: 56, fontSize: 20, margin: '0 auto 16px' }}>V</div>
-          <div className="badge badge-violet" style={{ marginBottom: '12px' }}>✦ Vishesh is building your path</div>
-          <h1 style={{ fontSize: '36px', fontFamily: 'var(--font-display)', fontWeight: 900, marginBottom: '8px' }}>
+          <div style={{
+            width: 48, height: 48, borderRadius: '12px', background: '#000', color: '#fff',
+            display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '20px',
+            margin: '0 auto 16px'
+          }}>V</div>
+          <h1 style={{ fontSize: '32px', fontFamily: 'var(--font-display)', fontWeight: 700, marginBottom: '8px', color: '#000' }}>
             {selectedBootcamp?.name || 'AI Engineering'}
           </h1>
-          <p style={{ color: 'var(--text-muted)', fontFamily: 'var(--font-mono)', fontSize: '13px' }}>30-Day Neural Bootcamp · Personal Learning Path</p>
+          <p style={{ color: '#6B6B6B', fontSize: '14px' }}>30-Day Personalized Learning Path</p>
         </div>
 
         {/* Initialization steps */}
         <div style={{
-          background: 'rgba(12,12,20,0.9)', border: '1px solid var(--border-subtle)',
-          borderRadius: '14px', padding: '24px', marginBottom: '28px',
+          background: '#FFFFFF', border: '1px solid #E8E6E3',
+          borderRadius: '16px', padding: '32px', marginBottom: '32px',
+          boxShadow: '0 8px 24px rgba(0,0,0,0.02)'
         }}>
-          <div style={{ fontSize: '11px', fontFamily: 'var(--font-mono)', color: 'var(--text-muted)', letterSpacing: '0.1em', marginBottom: '16px' }}>
-            INITIALIZING NEURAL PATH
+          <div style={{ fontSize: '11px', fontWeight: 600, color: '#A59F97', letterSpacing: '0.05em', marginBottom: '24px', textTransform: 'uppercase' }}>
+            Setup Progress
           </div>
           {STEPS.map((step, i) => (
             <div key={i} style={{
-              display: 'flex', alignItems: 'center', gap: '12px',
+              display: 'flex', alignItems: 'center', gap: '16px',
               padding: '8px 0',
-              opacity: doneSteps.includes(i) ? 1 : 0.2,
+              opacity: doneSteps.includes(i) ? 1 : 0.3,
               transition: 'opacity 0.4s ease, transform 0.3s ease',
               transform: doneSteps.includes(i) ? 'translateX(0)' : 'translateX(-8px)',
             }}>
               <div style={{
-                width: 20, height: 20, borderRadius: '50%',
-                background: doneSteps.includes(i) ? (i === STEPS.length - 1 ? 'var(--emerald-500)' : 'var(--violet-500)') : 'rgba(139,92,246,0.1)',
-                border: `1px solid ${doneSteps.includes(i) ? (i === STEPS.length - 1 ? 'var(--emerald-500)' : 'var(--violet-400)') : 'rgba(139,92,246,0.2)'}`,
-                display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '10px',
+                width: 24, height: 24, borderRadius: '50%',
+                background: doneSteps.includes(i) ? '#000' : '#F5F3F1',
+                border: `1px solid ${doneSteps.includes(i) ? '#000' : '#E8E6E3'}`,
+                display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '12px',
+                color: doneSteps.includes(i) ? '#fff' : 'transparent',
                 flexShrink: 0,
-                boxShadow: doneSteps.includes(i) ? `0 0 8px ${i === STEPS.length - 1 ? 'var(--emerald-400)' : 'var(--violet-400)'}` : 'none',
               }}>
-                {doneSteps.includes(i) ? '✓' : '○'}
+                ✓
               </div>
-              <span style={{ fontFamily: 'var(--font-mono)', fontSize: '13px', color: doneSteps.includes(i) ? 'var(--text-primary)' : 'var(--text-muted)' }}>
+              <span style={{ fontSize: '14px', color: doneSteps.includes(i) ? '#000' : '#6B6B6B', fontWeight: doneSteps.includes(i) ? 500 : 400 }}>
                 {step.label}
               </span>
             </div>
@@ -93,28 +98,30 @@ export default function BootcampInit() {
         {/* Learning objectives */}
         {ready && (
           <div style={{ animation: 'fadeInUp 0.5s ease' }}>
-            <div style={{ fontSize: '11px', fontFamily: 'var(--font-mono)', color: 'var(--text-muted)', letterSpacing: '0.1em', marginBottom: '16px' }}>
-              LEARNING OBJECTIVES
+            <div style={{ fontSize: '11px', fontWeight: 600, color: '#A59F97', letterSpacing: '0.05em', marginBottom: '16px', textTransform: 'uppercase' }}>
+              Curriculum Outline
             </div>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '32px' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginBottom: '40px' }}>
               {OBJECTIVES.map((obj, i) => (
                 <div key={i} style={{
-                  display: 'flex', gap: '16px', alignItems: 'flex-start',
-                  padding: '16px 20px', borderRadius: '10px',
-                  background: obj.milestone ? 'rgba(124,58,237,0.1)' : 'rgba(14,14,22,0.6)',
-                  border: `1px solid ${obj.milestone ? 'rgba(124,58,237,0.3)' : 'rgba(139,92,246,0.08)'}`,
+                  display: 'flex', gap: '20px', alignItems: 'flex-start',
+                  padding: '20px 24px', borderRadius: '12px',
+                  background: obj.milestone ? '#F9F8F7' : '#FFFFFF',
+                  border: `1px solid ${obj.milestone ? '#000' : '#E8E6E3'}`,
                   animation: `fadeInUp 0.4s ease ${i * 80}ms both`,
                 }}>
                   <div style={{
-                    fontFamily: 'var(--font-mono)', fontSize: '11px', fontWeight: 700,
-                    color: obj.milestone ? 'var(--violet-400)' : 'var(--text-muted)',
-                    minWidth: '50px', flexShrink: 0, paddingTop: '2px',
+                    fontSize: '12px', fontWeight: 700,
+                    color: obj.milestone ? '#000' : '#A59F97',
+                    minWidth: '40px', flexShrink: 0, paddingTop: '2px',
                   }}>
                     {obj.day.includes('-') ? `D${obj.day}` : `D${obj.day}`}
                   </div>
                   <div>
-                    <div style={{ fontWeight: 700, fontSize: '14px', marginBottom: '3px', color: obj.milestone ? 'var(--violet-300)' : 'var(--text-primary)', fontFamily: 'var(--font-display)' }}>{obj.title}</div>
-                    <div style={{ fontSize: '12px', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>{obj.desc}</div>
+                    <div style={{ fontWeight: 600, fontSize: '15px', marginBottom: '4px', color: '#000' }}>
+                      {obj.milestone && '★ '}{obj.title}
+                    </div>
+                    <div style={{ fontSize: '13px', color: '#6B6B6B' }}>{obj.desc}</div>
                   </div>
                 </div>
               ))}
@@ -122,19 +129,20 @@ export default function BootcampInit() {
 
             <button
               onClick={() => navigate('dashboard')}
-              className="btn btn-primary btn-lg"
+              className="btn btn-primary"
               id="bootcamp-init-start-btn"
               style={{
-                width: '100%', justifyContent: 'center', gap: '12px',
-                fontSize: '15px', fontFamily: 'var(--font-mono)',
-                letterSpacing: '0.04em', boxShadow: '0 8px 36px rgba(124,58,237,0.45)',
+                width: '100%', justifyContent: 'center',
+                padding: '16px', fontSize: '15px', fontWeight: 600,
+                borderRadius: '12px'
               }}
             >
-              Start Learning Journey →
+              Start Learning →
             </button>
           </div>
         )}
       </div>
     </div>
+    </ThemeContainer>
   );
 }

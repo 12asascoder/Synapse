@@ -9,6 +9,8 @@ const AppContext = createContext(null);
 const STORAGE_KEY = 'synapse_session_v1';
 
 const initialState = {
+  // Navigation stack for internal back navigation
+  navigationStack: [],
   // Auth
   user: null,
   isAuthenticated: false,
@@ -43,6 +45,13 @@ function reducer(state, action) {
   switch (action.type) {
     case 'SET_SCREEN':
       return { ...state, currentScreen: action.payload };
+    case 'PUSH_SCREEN':
+      return { ...state, navigationStack: [...state.navigationStack, action.payload] };
+    case 'POP_SCREEN': {
+      const newStack = state.navigationStack.slice(0, -1);
+      const newScreen = newStack.length ? newStack[newStack.length - 1] : 'landing';
+      return { ...state, navigationStack: newStack, currentScreen: newScreen };
+    }
     case 'SET_USER':
       return { ...state, user: action.payload, isAuthenticated: !!action.payload };
     case 'LOGOUT':
@@ -182,18 +191,47 @@ export function AppProvider({ children }) {
   }, [state.isAuthenticated, state.selectedBootcamp, state.currentDay, state.completedDays, state.scores]);
 
   const navigate = useCallback((screen) => {
+    // Update URL without reloading and push to navigation stack
+    const path = `/${screen}`;
+    window.history.pushState({}, '', path);
+    dispatch({ type: 'PUSH_SCREEN', payload: screen });
     dispatch({ type: 'SET_SCREEN', payload: screen });
+  }, []);
+
+  const goBack = useCallback(() => {
+    const newStack = state.navigationStack.slice(0, -1);
+    const newScreen = newStack.length ? newStack[newStack.length - 1] : 'landing';
+    dispatch({ type: 'POP_SCREEN' });
+    // Replace URL to reflect the new screen without adding to history
+    window.history.replaceState({}, '', `/${newScreen}`);
+  }, [state.navigationStack]);
+
+  // Set initial history
+  useEffect(() => {
+    if (window.location.pathname === '/') {
+      window.history.replaceState({}, '', '/landing');
+    }
+  }, []);
+
+  // Listen for browser back/forward navigation
+  useEffect(() => {
+    const onPopState = () => {
+      const screen = window.location.pathname.replace(/^\//, '') || 'landing';
+      dispatch({ type: 'SET_SCREEN', payload: screen });
+    };
+    window.addEventListener('popstate', onPopState);
+    return () => window.removeEventListener('popstate', onPopState);
   }, []);
 
   const logout = useCallback(() => {
     sessionStorage.removeItem(STORAGE_KEY);
     dispatch({ type: 'LOGOUT' });
     // Full page state clear
-    window.history.replaceState({}, '', '/');
+    window.history.pushState({}, '', '/');
   }, []);
 
   return (
-    <AppContext.Provider value={{ state, dispatch, navigate, logout }}>
+    <AppContext.Provider value={{ state, dispatch, navigate, goBack, logout }}>
       {children}
     </AppContext.Provider>
   );

@@ -1,6 +1,7 @@
 /**
  * ProctoringSetup — Pre-assessment system integrity checks
  * Required before Day 15 / Day 30 validations
+ * Clean ElevenLabs aesthetic
  */
 import { useState, useEffect } from 'react';
 import { useApp } from '../context/AppContext';
@@ -30,64 +31,74 @@ export default function ProctoringSetup() {
 
   return (
     <div style={{
-      minHeight: '100vh', background: 'var(--bg-void)', position: 'relative', overflow: 'hidden',
+      minHeight: '100vh', background: '#FDFCFC', position: 'relative', overflow: 'hidden',
       display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
       padding: '40px 24px',
     }}>
-      <div className="grid-bg" style={{ position: 'fixed', inset: 0, opacity: 0.3, pointerEvents: 'none' }} />
-      <div className="orb orb-cyan" style={{ width: 400, height: 400, top: -50, left: -50, opacity: 0.15 }} />
 
-      <div style={{ width: '100%', maxWidth: '800px', position: 'relative', zIndex: 1 }}>
+      <div style={{ width: '100%', maxWidth: '880px', position: 'relative', zIndex: 1 }}>
         {/* Header */}
-        <div style={{ textAlign: 'center', marginBottom: '40px', animation: 'fadeInUp 0.5s ease' }}>
-          <div className="badge badge-cyan" style={{ marginBottom: '16px' }}>🛡 SYNAPSE PROCTORING ENGINE</div>
-          <h1 style={{ fontSize: '36px', fontFamily: 'var(--font-display)', fontWeight: 900, marginBottom: '8px' }}>
-            Milestone Validation Integrity
+        <div style={{ textAlign: 'center', marginBottom: '48px', animation: 'fadeInUp 0.5s ease' }}>
+          <div style={{
+            display: 'inline-flex', alignItems: 'center', gap: '8px',
+            padding: '6px 16px', background: '#F5F3F1',
+            border: '1px solid #E8E6E3', borderRadius: '8px',
+            marginBottom: '20px',
+          }}>
+            <div style={{ width: 6, height: 6, borderRadius: '50%', background: '#000' }} />
+            <span style={{ fontSize: '11px', fontWeight: 700, letterSpacing: '0.05em', color: '#000', textTransform: 'uppercase' }}>
+              System Integrity Checks
+            </span>
+          </div>
+          <h1 style={{ fontSize: '48px', fontFamily: 'var(--font-display)', fontWeight: 700, marginBottom: '16px', color: '#000', letterSpacing: '-0.02em' }}>
+            Milestone Validation
           </h1>
-          <p style={{ color: 'var(--text-secondary)', fontSize: '14px', maxWidth: '520px', margin: '0 auto', lineHeight: 1.6 }}>
-            Establishing secure perimeter for Day 15 Oral Validation. Please maintain focus within the camera frame.
+          <p style={{ color: '#6B6B6B', fontSize: '16px', maxWidth: '560px', margin: '0 auto', lineHeight: 1.6 }}>
+            Establishing secure perimeter for your oral validation. Please maintain focus within the camera frame.
           </p>
         </div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '24px' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '32px' }}>
           
           {/* Camera Feed Mock */}
           <div style={{
-            background: 'rgba(12,12,20,0.9)', border: '1px solid var(--border-subtle)',
-            borderRadius: '16px', padding: '16px', display: 'flex', flexDirection: 'column',
+            background: '#FFFFFF', border: '1px solid #E8E6E3',
+            borderRadius: '24px', padding: '24px', display: 'flex', flexDirection: 'column',
             animation: 'fadeInLeft 0.5s ease 0.1s both',
+            boxShadow: '0 8px 24px rgba(0,0,0,0.02)'
           }}>
             <div style={{
-              flex: 1, minHeight: '280px', borderRadius: '10px',
-              background: 'linear-gradient(135deg, #1a1a2e, #16213e)',
-              border: '1px solid rgba(6,182,212,0.3)',
+              flex: 1, minHeight: '320px', borderRadius: '16px',
+              background: '#000',
+              border: '1px solid #000',
               position: 'relative', overflow: 'hidden',
               display: 'flex', alignItems: 'center', justifyContent: 'center',
             }}>
               <div style={{
-                position: 'absolute', inset: '10%', border: '1px dashed rgba(6,182,212,0.4)',
-                borderRadius: '50% 50% 20% 20%', display: 'flex', alignItems: 'center', justifyContent: 'center',
+                position: 'absolute', inset: '15%', border: '1px dashed rgba(255,255,255,0.3)',
+                borderRadius: '50% 50% 30% 30%', display: 'flex', alignItems: 'center', justifyContent: 'center',
               }}>
-                <div style={{ fontSize: '10px', color: 'var(--cyan-400)', fontFamily: 'var(--font-mono)', letterSpacing: '0.1em', animation: 'pulse-dot 2s infinite' }}>
-                  [ FACE ALIGNMENT ]
+                <div style={{ fontSize: '12px', color: 'rgba(255,255,255,0.7)', fontWeight: 600, letterSpacing: '0.05em' }}>
+                  FACE ALIGNMENT
                 </div>
               </div>
-              <div style={{ position: 'absolute', top: 12, left: 12, display: 'flex', gap: '6px', alignItems: 'center', background: 'rgba(5,5,10,0.8)', padding: '4px 8px', borderRadius: '6px' }}>
-                <div className="dot-live" style={{ width: 6, height: 6 }} />
-                <span style={{ fontSize: '9px', color: 'var(--cyan-400)', fontFamily: 'var(--font-mono)', fontWeight: 700 }}>FEED ACTIVE</span>
+              <div style={{ position: 'absolute', top: 16, left: 16, display: 'flex', gap: '8px', alignItems: 'center', background: 'rgba(255,255,255,0.9)', padding: '6px 12px', borderRadius: '8px' }}>
+                <div style={{ width: 8, height: 8, borderRadius: '50%', background: '#10B981' }} />
+                <span style={{ fontSize: '11px', color: '#000', fontWeight: 700, letterSpacing: '0.05em' }}>FEED ACTIVE</span>
               </div>
             </div>
           </div>
 
           {/* Checks */}
           <div style={{
-            background: 'rgba(12,12,20,0.9)', border: '1px solid var(--border-subtle)',
-            borderRadius: '16px', padding: '28px',
+            background: '#FFFFFF', border: '1px solid #E8E6E3',
+            borderRadius: '24px', padding: '36px',
             display: 'flex', flexDirection: 'column', justifyContent: 'center',
             animation: 'fadeInRight 0.5s ease 0.2s both',
+            boxShadow: '0 8px 24px rgba(0,0,0,0.02)'
           }}>
-            <div style={{ fontSize: '11px', fontFamily: 'var(--font-mono)', color: 'var(--text-muted)', letterSpacing: '0.1em', marginBottom: '24px' }}>
-              SYSTEM INTEGRITY CHECKS
+            <div style={{ fontSize: '12px', fontWeight: 700, color: '#A59F97', letterSpacing: '0.05em', marginBottom: '24px', textTransform: 'uppercase' }}>
+              Verification Status
             </div>
 
             <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
@@ -95,24 +106,25 @@ export default function ProctoringSetup() {
                 const isActive = activeChecks.includes(check.id);
                 return (
                   <div key={check.id} style={{
-                    display: 'flex', alignItems: 'center', gap: '14px',
-                    padding: '12px 16px', borderRadius: '10px',
-                    background: isActive ? 'rgba(16,185,129,0.1)' : 'rgba(14,14,22,0.6)',
-                    border: `1px solid ${isActive ? 'rgba(16,185,129,0.3)' : 'var(--border-subtle)'}`,
-                    transition: 'all 0.4s ease',
+                    display: 'flex', alignItems: 'center', gap: '16px',
+                    padding: '16px 20px', borderRadius: '16px',
+                    background: isActive ? '#F5F3F1' : '#FFFFFF',
+                    border: `1px solid ${isActive ? '#000' : '#E8E6E3'}`,
+                    transition: 'all 0.3s ease',
                   }}>
                     <div style={{
-                      width: 28, height: 28, borderRadius: '6px',
-                      background: isActive ? 'rgba(16,185,129,0.2)' : 'rgba(255,255,255,0.05)',
-                      display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '12px',
+                      width: 32, height: 32, borderRadius: '8px',
+                      background: isActive ? '#000' : '#F5F3F1',
+                      color: isActive ? '#FFF' : '#000',
+                      display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '14px', fontWeight: 700
                     }}>
                       {isActive ? '✓' : '⟳'}
                     </div>
                     <div>
-                      <div style={{ fontSize: '13px', fontWeight: 700, fontFamily: 'var(--font-mono)', color: isActive ? 'var(--emerald-400)' : 'var(--text-primary)' }}>
+                      <div style={{ fontSize: '15px', fontWeight: 700, color: '#000', marginBottom: '2px' }}>
                         {check.label}
                       </div>
-                      <div style={{ fontSize: '11px', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>
+                      <div style={{ fontSize: '13px', color: '#6B6B6B' }}>
                         {isActive ? 'Verified & Locked' : check.desc}
                       </div>
                     </div>
@@ -126,10 +138,13 @@ export default function ProctoringSetup() {
               disabled={!allReady}
               className="btn btn-primary"
               style={{
-                marginTop: '32px', width: '100%', justifyContent: 'center',
-                background: allReady ? 'linear-gradient(135deg, var(--cyan-600), var(--cyan-500))' : 'rgba(6,182,212,0.2)',
-                boxShadow: allReady ? '0 6px 28px rgba(6,182,212,0.4)' : 'none',
-                cursor: allReady ? 'pointer' : 'not-allowed', fontFamily: 'var(--font-mono)',
+                marginTop: '36px', width: '100%', justifyContent: 'center',
+                background: allReady ? '#000' : '#E8E6E3',
+                color: allReady ? '#FFF' : '#A59F97',
+                border: 'none',
+                padding: '16px', borderRadius: '12px',
+                cursor: allReady ? 'pointer' : 'not-allowed', fontSize: '15px', fontWeight: 600,
+                transition: 'all 0.2s ease'
               }}
             >
               {allReady ? 'Enter Secure Sandbox →' : 'Awaiting Verification...'}

@@ -1,10 +1,81 @@
 /**
- * AuthScreen — Glassmorphism login card matching reference image precisely
- * "Welcome to Vishesh" · dark glassmorphism · blurred orb background
+ * AuthScreen — Clean white minimalist login card
  */
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useApp } from '../context/AppContext';
 
+function CustomCursor() {
+  const dotRef = useRef(null);
+  const ringRef = useRef(null);
+  const pos = useRef({ x: -100, y: -100 });
+  const ring = useRef({ x: -100, y: -100 });
+  const rafRef = useRef(null);
+  const isHover = useRef(false);
+
+  useEffect(() => {
+    const onMove = (e) => {
+      pos.current = { x: e.clientX, y: e.clientY };
+    };
+    const onEnter = () => { isHover.current = true; };
+    const onLeave = () => { isHover.current = false; };
+    window.addEventListener('mousemove', onMove);
+    document.addEventListener('mouseenter', onEnter, true);
+    document.addEventListener('mouseleave', onLeave, true);
+    const loop = () => {
+      if (dotRef.current) {
+        dotRef.current.style.transform = `translate(${pos.current.x - 4}px, ${pos.current.y - 4}px)`;
+      }
+      ring.current.x += (pos.current.x - ring.current.x) * 0.1;
+      ring.current.y += (pos.current.y - ring.current.y) * 0.1;
+      if (ringRef.current) {
+        const r = isHover.current ? 36 : 24;
+        ringRef.current.style.transform = `translate(${ring.current.x - r}px, ${ring.current.y - r}px)`;
+        ringRef.current.style.width = `${r * 2}px`;
+        ringRef.current.style.height = `${r * 2}px`;
+      }
+      rafRef.current = requestAnimationFrame(loop);
+    };
+    rafRef.current = requestAnimationFrame(loop);
+    return () => {
+      window.removeEventListener('mousemove', onMove);
+      document.removeEventListener('mouseenter', onEnter, true);
+      document.removeEventListener('mouseleave', onLeave, true);
+      cancelAnimationFrame(rafRef.current);
+    };
+  }, []);
+
+  return (
+    <>
+      <div ref={dotRef} style={{
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        width: 8,
+        height: 8,
+        borderRadius: '50%',
+        background: '#CFFF00',
+        pointerEvents: 'none',
+        zIndex: 9999,
+        mixBlendMode: 'difference',
+        willChange: 'transform',
+      }} />
+      <div ref={ringRef} style={{
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        width: 48,
+        height: 48,
+        borderRadius: '50%',
+        border: '1.5px solid rgba(207, 255, 0, 0.7)',
+        pointerEvents: 'none',
+        zIndex: 9998,
+        mixBlendMode: 'difference',
+        willChange: 'transform, width, height',
+        transition: 'width 0.2s, height 0.2s',
+      }} />
+    </>
+  );
+}
 export default function AuthScreen() {
   const { dispatch, navigate } = useApp();
   const [mode, setMode] = useState('signin'); // signin | signup
@@ -29,11 +100,11 @@ export default function AuthScreen() {
       return;
     }
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      setError('Invalid identification string.');
+      setError('Invalid email address.');
       return;
     }
     if (password.length < 8) {
-      setError('Access cipher must be at least 8 characters.');
+      setError('Password must be at least 8 characters.');
       return;
     }
 
@@ -41,7 +112,6 @@ export default function AuthScreen() {
     try {
       const endpoint = mode === 'signup' ? '/auth/register' : '/auth/login';
       const body = mode === 'signup' ? { name, email, password } : { email, password };
-      
       
       const res = await fetch(`${import.meta.env.VITE_API_URL}${endpoint}`, {
         method: 'POST',
@@ -79,100 +149,72 @@ export default function AuthScreen() {
   return (
     <div style={{
       minHeight: '100vh',
-      background: 'var(--bg-void)',
+      background: '#010203',
+      color: '#f3f2ee',
+      fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, sans-serif',
+      overflowX: 'hidden',
+      position: 'relative',
+      cursor: 'none',
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
-      position: 'relative',
-      overflow: 'hidden',
     }}>
-      {/* Blurred orb background — exact match to reference */}
-      <div style={{
-        position: 'absolute',
-        top: '15%',
-        left: '15%',
-        width: '300px',
-        height: '300px',
-        background: 'radial-gradient(circle, rgba(6,182,212,0.25) 0%, transparent 70%)',
-        filter: 'blur(60px)',
-        borderRadius: '50%',
-        pointerEvents: 'none',
-      }} />
-      <div style={{
-        position: 'absolute',
-        bottom: '10%',
-        right: '12%',
-        width: '350px',
-        height: '350px',
-        background: 'radial-gradient(circle, rgba(124,58,237,0.3) 0%, transparent 70%)',
-        filter: 'blur(70px)',
-        borderRadius: '50%',
-        pointerEvents: 'none',
-      }} />
-
+      <CustomCursor />
       {/* Auth card */}
       <div style={{
         width: '100%',
-        maxWidth: '420px',
-        background: 'rgba(16, 16, 28, 0.85)',
-        backdropFilter: 'blur(24px)',
-        WebkitBackdropFilter: 'blur(24px)',
-        border: '1px solid rgba(139,92,246,0.2)',
-        borderRadius: '20px',
-        padding: '48px 40px',
+        maxWidth: '440px',
+        background: 'rgba(255,255,255,0.07)',
+        border: '1px solid rgba(255,255,255,0.2)',
+        backdropFilter: 'blur(12px)',
+        borderRadius: '24px',
+        padding: '56px 48px',
         position: 'relative',
         zIndex: 1,
         animation: 'fadeInUp 0.5s ease',
-        boxShadow: '0 24px 80px rgba(0,0,0,0.6), 0 0 60px rgba(139,92,246,0.08)',
+        boxShadow: '0 20px 40px rgba(0,0,0,0.6)',
       }}>
         {/* Synapse logo */}
-        <div style={{ textAlign: 'center', marginBottom: '32px' }}>
-          <div style={{ marginBottom: '12px', display: 'flex', justifyContent: 'center' }}>
+        <div style={{ textAlign: 'center', marginBottom: '40px' }}>
+          <div style={{ marginBottom: '16px', display: 'flex', justifyContent: 'center' }}>
             <div style={{
-              width: 44,
-              height: 44,
-              background: 'linear-gradient(135deg, var(--violet-600), var(--violet-400))',
+              width: 48,
+              height: 48,
+              background: '#000',
               borderRadius: '12px',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              fontSize: '22px',
-              boxShadow: '0 0 24px rgba(124,58,237,0.4)',
+              fontSize: '24px',
+              color: '#fff'
             }}>✦</div>
           </div>
-          <div style={{
-            fontFamily: 'var(--font-mono)',
-            fontSize: '11px',
-            letterSpacing: '0.25em',
-            color: 'var(--violet-400)',
-            marginBottom: '10px',
-            fontWeight: 600,
-          }}>SYNAPSE</div>
           <h1 style={{
-            fontSize: '30px',
+            fontSize: '32px',
             fontFamily: 'var(--font-display)',
-            fontWeight: 800,
-            marginBottom: '8px',
+            fontWeight: 700,
+            marginBottom: '10px',
+            letterSpacing: '-0.02em',
+            color: '#fff'
           }}>
-            Welcome to Vishesh
+            Welcome to Synapse
           </h1>
           <p style={{
-            fontSize: '13px',
-            color: 'var(--text-muted)',
-            fontFamily: 'var(--font-mono)',
+            fontSize: '15px',
+            color: '#A59F97',
           }}>
-            Authenticate to access the command center.
+            Sign in to continue to your learning hub.
           </p>
         </div>
 
         {/* Mode toggle */}
         <div style={{
           display: 'flex',
-          background: 'rgba(10,10,15,0.6)',
-          borderRadius: 'var(--radius-md)',
-          border: '1px solid var(--border-subtle)',
-          marginBottom: '28px',
-          padding: '3px',
+          background: 'rgba(255,255,255,0.05)',
+          border: '1px solid rgba(255,255,255,0.2)',
+          borderRadius: '10px',
+          marginBottom: '32px',
+          padding: '4px',
         }}>
           {['signin', 'signup'].map((m) => (
             <button
@@ -180,18 +222,17 @@ export default function AuthScreen() {
               onClick={() => { setMode(m); setError(''); }}
               style={{
                 flex: 1,
-                padding: '8px',
+                padding: '10px',
                 borderRadius: '8px',
                 border: 'none',
                 cursor: 'pointer',
-                fontFamily: 'var(--font-mono)',
-                fontSize: '12px',
+                fontFamily: 'var(--font-body)',
+                fontSize: '14px',
                 fontWeight: 600,
-                letterSpacing: '0.05em',
                 transition: 'all 0.2s ease',
-                background: mode === m ? 'rgba(124,58,237,0.3)' : 'transparent',
-                color: mode === m ? 'var(--violet-300)' : 'var(--text-muted)',
-                boxShadow: mode === m ? '0 0 12px rgba(124,58,237,0.2)' : 'none',
+                background: mode === m ? '#CFFF00' : 'transparent',
+                color: mode === m ? '#010203' : '#6B6B6B',
+                boxShadow: mode === m ? '0 1px 3px rgba(0,0,0,0.3)' : 'none',
               }}
             >
               {m === 'signin' ? 'Sign In' : 'Create Account'}
@@ -202,53 +243,52 @@ export default function AuthScreen() {
         <form onSubmit={handleAuth} noValidate>
           {/* Name (signup only) */}
           {mode === 'signup' && (
-            <div className="input-group" style={{ marginBottom: '16px' }}>
-              <label className="input-label">Operative Name</label>
+            <div className="input-group" style={{ marginBottom: '20px' }}>
+              <label className="input-label" style={{ marginBottom: '6px' }}>Name</label>
               <div style={{ position: 'relative' }}>
-                <span className="input-icon" style={{ top: '50%', transform: 'translateY(-50%)' }}>👤</span>
                 <input
                   className="input"
                   type="text"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  placeholder="Your name"
+                  placeholder="Your full name"
                   autoComplete="name"
                   id="auth-name"
+                  style={{ background: 'rgba(255,255,255,0.05)', color: '#f3f2ee', border: '1px solid rgba(255,255,255,0.2)', borderRadius: '6px', padding: '8px 12px' }}
                 />
               </div>
             </div>
           )}
 
           {/* Email */}
-          <div className="input-group" style={{ marginBottom: '16px' }}>
-            <label className="input-label">Identification String (Email)</label>
+          <div className="input-group" style={{ marginBottom: '20px' }}>
+            <label className="input-label" style={{ marginBottom: '6px' }}>Email</label>
             <div style={{ position: 'relative' }}>
-              <span className="input-icon" style={{ top: '50%', transform: 'translateY(-50%)' }}>✉</span>
               <input
                 className="input"
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="operator@synapse.net"
+                placeholder="name@example.com"
                 autoComplete="email"
                 id="auth-email"
                 required
+                style={{ background: 'rgba(255,255,255,0.05)', color: '#f3f2ee', border: '1px solid rgba(255,255,255,0.2)', borderRadius: '6px', padding: '8px 12px' }}
               />
             </div>
           </div>
 
           {/* Password */}
-          <div className="input-group" style={{ marginBottom: '24px' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <label className="input-label">Access Cipher (Password)</label>
+          <div className="input-group" style={{ marginBottom: '32px' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
+              <label className="input-label">Password</label>
               {mode === 'signin' && (
-                <span style={{ fontSize: '11px', color: 'var(--cyan-400)', cursor: 'pointer', fontFamily: 'var(--font-mono)' }}>
-                  Decrypt Access?
+                <span style={{ fontSize: '12px', color: '#44403B', cursor: 'pointer', fontWeight: 500 }}>
+                  Forgot password?
                 </span>
               )}
             </div>
             <div style={{ position: 'relative' }}>
-              <span className="input-icon" style={{ top: '50%', transform: 'translateY(-50%)' }}>🔒</span>
               <input
                 className="input"
                 type={showPass ? 'text' : 'password'}
@@ -259,25 +299,26 @@ export default function AuthScreen() {
                 id="auth-password"
                 required
                 minLength={8}
+                style={{ background: 'rgba(255,255,255,0.05)', color: '#f3f2ee', border: '1px solid rgba(255,255,255,0.2)', borderRadius: '6px', padding: '8px 12px' }}
               />
               <button
                 type="button"
                 onClick={() => setShowPass((s) => !s)}
                 style={{
                   position: 'absolute',
-                  right: '14px',
+                  right: '16px',
                   top: '50%',
                   transform: 'translateY(-50%)',
                   background: 'none',
                   border: 'none',
                   cursor: 'pointer',
-                  color: 'var(--text-muted)',
+                  color: '#A59F97',
                   fontSize: '14px',
                   padding: '4px',
                 }}
                 aria-label={showPass ? 'Hide password' : 'Show password'}
               >
-                {showPass ? '🙈' : '👁'}
+                {showPass ? 'Hide' : 'Show'}
               </button>
             </div>
           </div>
@@ -285,16 +326,15 @@ export default function AuthScreen() {
           {/* Error */}
           {error && (
             <div style={{
-              marginBottom: '16px',
-              padding: '10px 14px',
-              background: 'rgba(244,63,94,0.1)',
-              border: '1px solid rgba(244,63,94,0.25)',
-              borderRadius: 'var(--radius-md)',
-              fontSize: '12px',
-              color: 'var(--rose-400)',
-              fontFamily: 'var(--font-mono)',
+              marginBottom: '20px',
+              padding: '12px 16px',
+              background: '#FEF2F2',
+              border: '1px solid #FEE2E2',
+              borderRadius: '8px',
+              fontSize: '13px',
+              color: '#DC2626',
             }}>
-              ⚠ {error}
+              {error}
             </div>
           )}
 
@@ -306,44 +346,26 @@ export default function AuthScreen() {
             id="auth-submit"
             style={{
               width: '100%',
-              padding: '14px',
-              fontSize: '14px',
-              fontFamily: 'var(--font-mono)',
-              letterSpacing: '0.05em',
-              background: loading
-                ? 'rgba(124,58,237,0.4)'
-                : 'linear-gradient(135deg, var(--violet-600), var(--violet-500))',
+              padding: '16px',
+              fontSize: '15px',
+              fontWeight: 600,
               opacity: loading ? 0.7 : 1,
               cursor: loading ? 'not-allowed' : 'pointer',
+              borderRadius: '12px'
             }}
           >
-            {loading ? (
-              <span style={{ display: 'flex', alignItems: 'center', gap: '8px', justifyContent: 'center' }}>
-                <span style={{
-                  width: '14px', height: '14px',
-                  border: '2px solid rgba(255,255,255,0.3)',
-                  borderTopColor: 'white',
-                  borderRadius: '50%',
-                  animation: 'spin-slow 0.8s linear infinite',
-                  display: 'inline-block',
-                }} />
-                Authenticating...
-              </span>
-            ) : (
-              `Initialize Session →`
-            )}
+            {loading ? 'Authenticating...' : (mode === 'signin' ? 'Sign In' : 'Create Account')}
           </button>
         </form>
 
         <p style={{
           textAlign: 'center',
-          marginTop: '24px',
-          fontSize: '11px',
-          color: 'var(--text-muted)',
-          fontFamily: 'var(--font-mono)',
+          marginTop: '32px',
+          fontSize: '13px',
+          color: '#A59F97',
           lineHeight: 1.6,
         }}>
-          By proceeding, you agree to the Synapse Neural Privacy Ledger and Terms of Operation.
+          By continuing, you agree to Synapse's <br /> Terms of Service and Privacy Policy.
         </p>
       </div>
     </div>

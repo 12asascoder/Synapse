@@ -1,19 +1,17 @@
 /**
- * LoadingScreen — Animated neural sphere with rotating status messages
- * Auto-transitions to landing after initialization
+ * LoadingScreen — Clean white loading state
  */
 import { useEffect, useState } from 'react';
 import NeuralSphere from '../components/NeuralSphere';
+import ThemeContainer from '../components/ThemeContainer';
 import { useApp } from '../context/AppContext';
 
 const LOADING_MESSAGES = [
-  'Calibrating Vishesh...',
-  'Synchronizing Neural Nodes...',
-  'Building Learning Context...',
-  'Preparing Intelligence Layer...',
-  'Establishing Neural Link...',
-  'Mapping Growth Vectors...',
-  'Initializing Skill Matrix...',
+  'Preparing your learning environment...',
+  'Analyzing curriculum...',
+  'Loading resources...',
+  'Setting up workspace...',
+  'Almost ready...',
 ];
 
 export default function LoadingScreen() {
@@ -23,7 +21,6 @@ export default function LoadingScreen() {
   const [fadeMsg, setFadeMsg] = useState(true);
 
   useEffect(() => {
-
     // Cycle messages
     const msgInterval = setInterval(() => {
       setFadeMsg(false);
@@ -31,11 +28,11 @@ export default function LoadingScreen() {
         setMsgIdx((i) => (i + 1) % LOADING_MESSAGES.length);
         setFadeMsg(true);
       }, 300);
-    }, 900);
+    }, 1200);
 
     // Progress bar
     const progressInterval = setInterval(() => {
-      setProgress((p) => Math.min(p + Math.random() * 12, 100));
+      setProgress((p) => Math.min(p + Math.random() * 10, 100));
     }, 250);
 
     // Auto-navigate after ~3.5s
@@ -51,29 +48,14 @@ export default function LoadingScreen() {
   }, []);
 
   return (
-    <div style={{
-      minHeight: '100vh',
-      background: 'var(--bg-void)',
-      display: 'flex',
-      flexDirection: 'column',
-      alignItems: 'center',
-      justifyContent: 'center',
-      position: 'relative',
-      overflow: 'hidden',
-    }}>
-      {/* Background orbs */}
-      <div className="orb orb-violet" style={{ width: 500, height: 500, top: -100, left: -100, opacity: 0.4 }} />
-      <div className="orb orb-cyan" style={{ width: 400, height: 400, bottom: -80, right: -80, opacity: 0.3 }} />
-
-      {/* Subtle grid */}
-      <div className="grid-bg" style={{ position: 'absolute', inset: 0, opacity: 0.4 }} />
-
-      {/* Center content */}
+    <ThemeContainer>
       <div style={{
+        minHeight: '100vh',
+        background: '#010203',
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
-        gap: '32px',
+        justifyContent: 'center',
         position: 'relative',
         zIndex: 1,
         animation: 'fadeIn 0.5s ease',
@@ -81,35 +63,24 @@ export default function LoadingScreen() {
         {/* Neural sphere */}
         <div style={{ position: 'relative' }}>
           <div className="animate-float">
-            <NeuralSphere size={220} speed={0.6} />
+            <NeuralSphere size={200} speed={0.4} />
           </div>
-          {/* Outer glow ring */}
-          <div style={{
-            position: 'absolute',
-            inset: -20,
-            borderRadius: '50%',
-            background: 'radial-gradient(circle, rgba(139,92,246,0.15) 0%, transparent 70%)',
-            animation: 'neural-pulse 3s ease-in-out infinite',
-          }} />
         </div>
 
         {/* Brand */}
         <div style={{ textAlign: 'center' }}>
           <div style={{
-            fontFamily: 'var(--font-mono)',
-            fontSize: '13px',
-            letterSpacing: '0.4em',
-            color: 'var(--violet-400)',
-            marginBottom: '6px',
+            fontFamily: 'var(--font-display)',
+            fontSize: '18px',
+            color: '#CFFF00',
+            marginBottom: '12px',
             fontWeight: 700,
           }}>
-            SYNAPSE
+            Synapse
           </div>
           <div style={{
-            fontSize: '12px',
-            color: 'var(--text-muted)',
-            fontFamily: 'var(--font-mono)',
-            letterSpacing: '0.15em',
+            fontSize: '14px',
+            color: '#A59F97',
             transition: 'opacity 0.3s ease',
             opacity: fadeMsg ? 1 : 0,
             minWidth: '260px',
@@ -120,27 +91,15 @@ export default function LoadingScreen() {
         </div>
 
         {/* Progress */}
-        <div style={{ width: '200px' }}>
-          <div className="progress-bar" style={{ height: '2px' }}>
+        <div style={{ width: '240px' }}>
+          <div className="progress-bar" style={{ height: '3px', background: '#0A0A0A' }}>
             <div
               className="progress-fill"
-              style={{ width: `${Math.min(progress, 100)}%` }}
+              style={{ width: `${Math.min(progress, 100)}%`, background: '#CFFF00' }}
             />
           </div>
         </div>
       </div>
-
-      {/* Version tag */}
-      <div style={{
-        position: 'absolute',
-        bottom: '32px',
-        fontFamily: 'var(--font-mono)',
-        fontSize: '10px',
-        color: 'var(--text-muted)',
-        letterSpacing: '0.1em',
-      }}>
-        v1.0 · AI Growth Intelligence Layer
-      </div>
-    </div>
+    </ThemeContainer>
   );
 }

@@ -1,7 +1,6 @@
 /**
- * WelcomeHub — "Begin Your Neural Bootcamp Journey"
- * Reference: Robot mascot left, headline right, sync bar at bottom
- * Exact match to provided design reference
+ * WelcomeHub — "Begin Your Learning Journey"
+ * Hackorizon Dark Aesthetic Design
  */
 import { useState, useEffect } from 'react';
 import { useApp } from '../context/AppContext';
@@ -14,67 +13,63 @@ const ICON_MAP = {
   Cloud: '☁', Handshake: '📈',
 };
 
-const hexToRgb = (hex) => {
-  const c = hex.replace('#', '');
-  return `${parseInt(c.substring(0, 2), 16)},${parseInt(c.substring(2, 4), 16)},${parseInt(c.substring(4, 6), 16)}`;
-};
-
 function BootcampCard({ bootcamp, selected, onSelect }) {
-  const [hovered, setHovered] = useState(false);
   const isActive = selected?.id === bootcamp.id;
-  const rgb = bootcamp.color ? hexToRgb(bootcamp.color) : '124,58,237';
 
   return (
     <button
       onClick={() => onSelect(bootcamp)}
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
       id={`bootcamp-${bootcamp.id}`}
       style={{
-        background: isActive ? `rgba(${rgb}, 0.18)` : hovered ? 'rgba(139,92,246,0.08)' : 'var(--bg-card)',
-        border: `1px solid ${isActive ? bootcamp.color + '66' : hovered ? 'rgba(139,92,246,0.3)' : 'var(--border-subtle)'}`,
-        borderRadius: '14px',
-        padding: '20px',
+        background: isActive ? 'var(--bg-hover)' : 'var(--bg-card)',
+        border: `1px solid ${isActive ? 'var(--border-active)' : 'var(--border-subtle)'}`,
+        borderRadius: '16px',
+        padding: '24px',
         cursor: 'pointer',
-        transition: 'all 0.22s cubic-bezier(0.4,0,0.2,1)',
-        transform: isActive ? 'scale(1.02)' : hovered ? 'translateY(-2px)' : 'none',
-        boxShadow: isActive ? `0 0 24px ${bootcamp.color}33` : 'none',
+        transition: 'all 0.2s ease',
+        transform: isActive ? 'translateY(-2px)' : 'none',
+        boxShadow: isActive ? '0 12px 24px rgba(207,255,0,0.05)' : 'none',
         textAlign: 'left',
         width: '100%',
+        display: 'flex',
+        alignItems: 'flex-start',
+        gap: '16px'
       }}
     >
-      <div style={{ display: 'flex', alignItems: 'flex-start', gap: '12px' }}>
-        <div style={{
-          width: 40, height: 40, borderRadius: '10px', flexShrink: 0,
-          background: `${bootcamp.color}22`,
-          border: `1px solid ${bootcamp.color}44`,
-          display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '18px',
-        }}>{ICON_MAP[bootcamp.icon] || '🧠'}</div>
-        <div style={{ flex: 1, minWidth: 0 }}>
-          <div style={{ fontWeight: 700, fontSize: '13px', color: isActive ? bootcamp.color : 'var(--text-primary)', fontFamily: 'var(--font-display)', marginBottom: '4px' }}>
-            {bootcamp.name}
-          </div>
-          <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
-            <span style={{ fontSize: '10px', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>{bootcamp.duration}</span>
-            <span style={{ fontSize: '10px', color: 'var(--text-muted)' }}>·</span>
-            <span style={{ fontSize: '10px', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>{bootcamp.level}</span>
-          </div>
-          {isActive && (
-            <div style={{ marginTop: '10px', display: 'flex', gap: '4px', flexWrap: 'wrap' }}>
-              {(bootcamp.outcomes || []).map((o) => (
-                <span key={o} style={{
-                  fontSize: '10px', padding: '2px 8px',
-                  background: `${bootcamp.color}22`, color: bootcamp.color,
-                  border: `1px solid ${bootcamp.color}33`, borderRadius: '4px', fontFamily: 'var(--font-mono)',
-                }}>{o}</span>
-              ))}
-            </div>
-          )}
+      <div style={{
+        width: 48, height: 48, borderRadius: '12px', flexShrink: 0,
+        background: isActive ? 'var(--border-active)' : 'var(--bg-surface)',
+        color: isActive ? '#010203' : 'var(--text-primary)',
+        display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '20px',
+        transition: 'all 0.2s ease',
+      }}>
+        {ICON_MAP[bootcamp.icon] || '🧠'}
+      </div>
+      <div style={{ flex: 1, minWidth: 0 }}>
+        <div style={{ fontWeight: 600, fontSize: '15px', color: 'var(--text-primary)', marginBottom: '6px' }}>
+          {bootcamp.name}
+        </div>
+        <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', marginBottom: '12px' }}>
+          <span style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>{bootcamp.duration}</span>
+          <span style={{ fontSize: '12px', color: 'var(--border-subtle)' }}>·</span>
+          <span style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>{bootcamp.level}</span>
         </div>
         {isActive && (
-          <div style={{ color: bootcamp.color, fontSize: '16px', flexShrink: 0 }}>✓</div>
+          <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
+            {(bootcamp.outcomes || []).map((o) => (
+              <span key={o} style={{
+                fontSize: '11px', padding: '4px 8px',
+                background: 'var(--bg-surface)', color: 'var(--text-primary)',
+                border: '1px solid var(--border-subtle)', borderRadius: '6px',
+                fontWeight: 500,
+              }}>{o}</span>
+            ))}
+          </div>
         )}
       </div>
+      {isActive && (
+        <div style={{ color: 'var(--text-accent)', fontSize: '18px', flexShrink: 0, fontWeight: 700 }}>✓</div>
+      )}
     </button>
   );
 }
@@ -84,9 +79,7 @@ export default function WelcomeHub() {
   const [bootcamps, setBootcamps] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selected, setSelected] = useState(null);
-  const [syncProgress] = useState(98);
   const [phase, setPhase] = useState('select');
-  const [robotFloatY, setRobotFloatY] = useState(0);
 
   useEffect(() => {
     fetch(`${API}/bootcamps`)
@@ -94,19 +87,6 @@ export default function WelcomeHub() {
       .then((data) => setBootcamps(data))
       .catch(() => setBootcamps([]))
       .finally(() => setLoading(false));
-  }, []);
-
-  // Float animation for robot
-  useEffect(() => {
-    let frame;
-    let t = 0;
-    const animate = () => {
-      t += 0.02;
-      setRobotFloatY(Math.sin(t) * 10);
-      frame = requestAnimationFrame(animate);
-    };
-    frame = requestAnimationFrame(animate);
-    return () => cancelAnimationFrame(frame);
   }, []);
 
   const handleBegin = () => {
@@ -120,158 +100,78 @@ export default function WelcomeHub() {
     return (
       <div style={{
         minHeight: '100vh',
-        background: 'var(--bg-void)',
+        background: 'transparent',
         position: 'relative',
         overflow: 'hidden',
         display: 'flex',
         flexDirection: 'column',
       }}>
-        {/* Grid BG */}
-        <div className="grid-bg" style={{ position: 'absolute', inset: 0, opacity: 0.3 }} />
-
-        {/* Purple glow behind robot */}
-        <div style={{
-          position: 'absolute', left: 0, top: '20%',
-          width: '480px', height: '480px',
-          background: 'radial-gradient(circle, rgba(124,58,237,0.25) 0%, transparent 65%)',
-          filter: 'blur(40px)', pointerEvents: 'none',
-        }} />
-
         {/* Top Nav */}
         <nav style={{
           position: 'fixed', top: 0, left: 0, right: 0, zIndex: 100,
-          background: 'rgba(5,5,8,0.9)', backdropFilter: 'blur(20px)',
+          background: 'rgba(1,2,3,0.85)', backdropFilter: 'blur(20px)',
           borderBottom: '1px solid var(--border-subtle)',
-          height: '56px', display: 'flex', alignItems: 'center',
+          height: '64px', display: 'flex', alignItems: 'center',
           justifyContent: 'space-between', padding: '0 40px',
         }}>
-          <div style={{ fontFamily: 'var(--font-display)', fontWeight: 900, fontSize: '22px', letterSpacing: '-0.02em' }}>
-            SYNAPSE
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+            <div style={{ width: 28, height: 28, background: 'var(--border-active)', borderRadius: '6px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '14px', color: '#010203', fontWeight: 800 }}>✦</div>
+            <span style={{ fontWeight: 800, fontSize: '16px', color: 'var(--text-primary)', letterSpacing: '0.05em' }}>SYNAPSE</span>
           </div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontFamily: 'var(--font-mono)', fontSize: '11px', color: 'var(--cyan-400)' }}>
-            <div style={{ width: 8, height: 8, borderRadius: '50%', background: 'var(--cyan-400)', boxShadow: '0 0 8px var(--cyan-400)', animation: 'pulse-dot 2s ease-in-out infinite' }} />
-            NEURAL LINK ACTIVE
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '12px', color: 'var(--text-secondary)', fontWeight: 500 }}>
+            <div style={{ width: 8, height: 8, borderRadius: '50%', background: 'var(--border-active)' }} />
+            System Ready
           </div>
         </nav>
 
-        {/* Main split layout */}
+        {/* Main layout */}
         <div style={{
-          flex: 1, display: 'flex', alignItems: 'center',
-          paddingTop: '56px', minHeight: '100vh',
+          flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center',
+          paddingTop: '64px', minHeight: '100vh',
         }}>
-          {/* LEFT — Robot mascot */}
-          <div style={{
-            width: '48%', display: 'flex', alignItems: 'center', justifyContent: 'center',
-            padding: '40px',
-          }}>
-            <div style={{
-              width: '100%', maxWidth: '440px', aspectRatio: '1',
-              background: 'linear-gradient(135deg, rgba(124,58,237,0.12) 0%, rgba(10,10,20,0.4) 100%)',
-              border: '1px solid rgba(124,58,237,0.2)',
-              borderRadius: '20px',
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-              position: 'relative', overflow: 'hidden',
-            }}>
-              {/* Inner glow */}
-              <div style={{
-                position: 'absolute', bottom: 0, left: '50%', transform: 'translateX(-50%)',
-                width: '70%', height: '40%',
-                background: 'radial-gradient(ellipse, rgba(124,58,237,0.35) 0%, transparent 70%)',
-              }} />
-              <img
-                src="/vishesh-mascot.png"
-                alt="Vishesh AI Mascot"
-                style={{
-                  width: '85%', height: '85%', objectFit: 'contain',
-                  transform: `translateY(${robotFloatY}px)`,
-                  filter: 'drop-shadow(0 0 30px rgba(124,58,237,0.5))',
-                  position: 'relative', zIndex: 1,
-                }}
-              />
-            </div>
-          </div>
-
-          {/* RIGHT — Content */}
-          <div style={{ width: '52%', padding: '60px 60px 60px 20px' }}>
+          <div style={{ maxWidth: '640px', textAlign: 'center', padding: '40px' }}>
             <div style={{ animation: 'fadeInUp 0.5s ease both' }}>
+              <div style={{
+                width: 64, height: 64, borderRadius: '16px', background: 'var(--border-active)', color: '#010203',
+                display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '24px',
+                margin: '0 auto 32px', fontWeight: 800
+              }}>
+                ✦
+              </div>
               <h1 style={{
-                fontSize: 'clamp(40px, 4.5vw, 64px)',
+                fontSize: '48px',
                 fontFamily: 'var(--font-display)',
-                fontWeight: 900,
-                lineHeight: 1.1,
+                fontWeight: 800,
+                lineHeight: 1.15,
                 marginBottom: '24px',
+                letterSpacing: '-0.02em',
+                color: 'var(--text-primary)'
               }}>
                 Begin Your<br />
-                <span style={{ color: 'var(--violet-300)' }}>Neural</span>{' '}
-                <span style={{
-                  background: 'linear-gradient(90deg, var(--violet-300), var(--cyan-400))',
-                  WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent',
-                }}>Bootcamp</span><br />
-                <span style={{ color: 'var(--cyan-400)' }}>Journey.</span>
+                Learning Journey.
               </h1>
 
               <p style={{
-                fontSize: '16px', color: 'var(--text-secondary)', lineHeight: 1.7,
-                marginBottom: '40px', maxWidth: '440px',
+                fontSize: '16px', color: 'var(--text-secondary)', lineHeight: 1.6,
+                marginBottom: '48px', margin: '0 auto 48px',
               }}>
-                Your neural interface is optimized for the AI Engineering Bootcamp. Access advanced curriculum modules and immersive laboratory environments now.
+                Your workspace is ready. Select a bootcamp path to configure your curriculum and begin.
               </p>
 
               <button
                 className="btn btn-primary btn-lg"
                 onClick={() => setPhase('catalog')}
                 style={{
-                  marginBottom: '24px', gap: '12px', fontSize: '14px',
-                  background: 'linear-gradient(135deg, var(--violet-600), var(--violet-500))',
-                  boxShadow: '0 6px 32px rgba(124,58,237,0.4)',
-                  minWidth: '280px', justifyContent: 'space-between',
-                  fontFamily: 'var(--font-mono)', letterSpacing: '0.03em',
+                  gap: '8px', fontSize: '15px', padding: '16px 32px',
+                  borderRadius: '12px', minWidth: '240px',
+                  background: 'var(--border-active)', color: '#010203',
+                  border: 'none', fontWeight: 700, cursor: 'pointer'
                 }}
                 id="hub-continue-btn"
               >
-                Continue to Learning Path <span style={{ fontSize: '18px' }}>→</span>
+                Browse Catalog →
               </button>
-
-              <div style={{ display: 'flex', gap: '20px', alignItems: 'center' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '12px', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>
-                  <span>⚙</span> Kernel v2.4.0
-                </div>
-                <span style={{ color: 'var(--border-default)' }}>·</span>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '12px', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>
-                  <span>◎</span> Pro Tier
-                </div>
-              </div>
             </div>
-          </div>
-        </div>
-
-        {/* Bottom sync bar */}
-        <div style={{
-          position: 'fixed', bottom: 0, left: 0, right: 0,
-          background: 'rgba(5,5,8,0.95)', borderTop: '1px solid var(--border-subtle)',
-          padding: '12px 40px', display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-        }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-            <div style={{ fontSize: '10px', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)', letterSpacing: '0.1em' }}>SYNC STATUS</div>
-            <div style={{ width: '120px', height: '2px', background: 'rgba(124,58,237,0.2)', borderRadius: '1px' }}>
-              <div style={{ width: `${syncProgress}%`, height: '100%', background: 'linear-gradient(90deg, var(--violet-500), var(--cyan-400))', borderRadius: '1px', transition: 'width 1s ease' }} />
-            </div>
-            <div style={{ fontSize: '10px', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>{syncProgress}%</div>
-          </div>
-          <div style={{
-            display: 'flex', alignItems: 'center', gap: '6px',
-            padding: '5px 14px',
-            background: 'rgba(124,58,237,0.15)',
-            border: '1px solid rgba(124,58,237,0.3)',
-            borderRadius: '20px',
-            fontSize: '10px', fontFamily: 'var(--font-mono)', fontWeight: 700,
-            color: 'var(--violet-300)', letterSpacing: '0.12em',
-          }}>
-            <div className="dot-live" style={{ width: 6, height: 6 }} />
-            AWAITING COMMAND
-          </div>
-          <div style={{ fontSize: '10px', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)', letterSpacing: '0.06em' }}>
-            © 2026 SYNAPSE NEURAL LEARNING SYSTEMS. ALL RIGHTS RESERVED.
           </div>
         </div>
       </div>
@@ -280,32 +180,32 @@ export default function WelcomeHub() {
 
   // Bootcamp catalog selection
   return (
-    <div style={{ minHeight: '100vh', background: 'var(--bg-void)', paddingTop: '56px' }}>
-      <div className="grid-bg" style={{ position: 'fixed', inset: 0, opacity: 0.3, pointerEvents: 'none' }} />
-
+    <div style={{ minHeight: '100vh', background: 'transparent', paddingTop: '64px' }}>
       {/* Nav */}
       <nav style={{
         position: 'fixed', top: 0, left: 0, right: 0, zIndex: 100,
-        background: 'rgba(5,5,8,0.9)', backdropFilter: 'blur(20px)',
+        background: 'rgba(1,2,3,0.85)', backdropFilter: 'blur(20px)',
         borderBottom: '1px solid var(--border-subtle)',
-        height: '56px', display: 'flex', alignItems: 'center',
+        height: '64px', display: 'flex', alignItems: 'center',
         justifyContent: 'space-between', padding: '0 40px',
       }}>
-        <div style={{ fontFamily: 'var(--font-display)', fontWeight: 900, fontSize: '22px' }}>SYNAPSE</div>
-        <div style={{ display: 'flex', gap: '8px', alignItems: 'center', fontFamily: 'var(--font-mono)', fontSize: '11px', color: 'var(--cyan-400)' }}>
-          <div className="dot-live" style={{ width: 7, height: 7 }} /> NEURAL LINK ACTIVE
+        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+          <div style={{ width: 28, height: 28, background: 'var(--border-active)', borderRadius: '6px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '14px', color: '#010203', fontWeight: 800 }}>✦</div>
+          <span style={{ fontWeight: 800, fontSize: '16px', color: 'var(--text-primary)', letterSpacing: '0.05em' }}>SYNAPSE</span>
+        </div>
+        <div style={{ display: 'flex', gap: '8px', alignItems: 'center', fontSize: '12px', color: 'var(--text-secondary)', fontWeight: 500 }}>
+          <div style={{ width: 8, height: 8, borderRadius: '50%', background: 'var(--border-active)' }} /> System Ready
         </div>
       </nav>
 
-      <div style={{ maxWidth: '1100px', margin: '0 auto', padding: '60px 40px 120px' }}>
+      <div style={{ maxWidth: '1000px', margin: '0 auto', padding: '60px 40px 120px' }}>
         {/* Header */}
         <div style={{ textAlign: 'center', marginBottom: '60px', animation: 'fadeInUp 0.5s ease' }}>
-          <div className="badge badge-violet" style={{ marginBottom: '16px' }}>✦ Select Your Path</div>
-          <h1 style={{ fontSize: '48px', fontFamily: 'var(--font-display)', fontWeight: 900, marginBottom: '16px' }}>
-            Choose Your <span style={{ background: 'linear-gradient(90deg, var(--violet-300), var(--cyan-400))', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>Neural Path</span>
+          <h1 style={{ fontSize: '40px', fontFamily: 'var(--font-display)', fontWeight: 800, marginBottom: '16px', color: 'var(--text-primary)', letterSpacing: '-0.02em' }}>
+            Choose Your Path
           </h1>
-          <p style={{ color: 'var(--text-secondary)', fontSize: '15px', maxWidth: '500px', margin: '0 auto', lineHeight: 1.6 }}>
-            Vishesh will generate your personalized 30-day learning journey once you select a bootcamp.
+          <p style={{ color: 'var(--text-secondary)', fontSize: '16px', maxWidth: '500px', margin: '0 auto', lineHeight: 1.6 }}>
+            Select a bootcamp to generate your personalized learning journey.
           </p>
         </div>
 
@@ -313,11 +213,11 @@ export default function WelcomeHub() {
         <div style={{
           display: 'grid',
           gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))',
-          gap: '14px',
+          gap: '20px',
           marginBottom: '48px',
         }}>
           {loading ? (
-            <div style={{ gridColumn: '1 / -1', textAlign: 'center', padding: '60px', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)', fontSize: '12px' }}>Loading bootcamps...</div>
+            <div style={{ gridColumn: '1 / -1', textAlign: 'center', padding: '60px', color: 'var(--text-muted)', fontSize: '14px' }}>Loading bootcamps...</div>
           ) : bootcamps.map((b, i) => (
             <div key={b.id} style={{ animation: `fadeInUp 0.4s ease ${i * 60}ms both` }}>
               <BootcampCard bootcamp={b} selected={selected} onSelect={setSelected} />
@@ -329,33 +229,34 @@ export default function WelcomeHub() {
         {selected && (
           <div style={{
             position: 'fixed', bottom: 0, left: 0, right: 0,
-            background: 'rgba(5,5,8,0.97)', backdropFilter: 'blur(20px)',
-            borderTop: '1px solid rgba(124,58,237,0.3)',
-            padding: '20px 40px',
+            background: 'rgba(10,10,12,0.95)', backdropFilter: 'blur(20px)',
+            borderTop: '1px solid var(--border-subtle)',
+            padding: '24px 40px',
             display: 'flex', alignItems: 'center', justifyContent: 'space-between',
             animation: 'fadeInUp 0.3s ease',
             zIndex: 200,
+            boxShadow: '0 -10px 40px rgba(0,0,0,0.3)'
           }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
               <div style={{
-                width: 44, height: 44, borderRadius: '10px',
-                background: `${selected.color}22`, border: `1px solid ${selected.color}44`,
+                width: 48, height: 48, borderRadius: '12px',
+                background: 'var(--border-active)', color: '#010203',
                 display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '20px',
-              }}>{selected.icon}</div>
+              }}>{ICON_MAP[selected.icon] || '🧠'}</div>
               <div>
-                <div style={{ fontWeight: 700, fontSize: '15px', fontFamily: 'var(--font-display)' }}>{selected.name}</div>
-                <div style={{ fontSize: '12px', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>{selected.duration} · {selected.cert ? 'Certified' : 'Certificate Not Available'}</div>
+                <div style={{ fontWeight: 600, fontSize: '16px', color: 'var(--text-primary)' }}>{selected.name}</div>
+                <div style={{ fontSize: '13px', color: 'var(--text-secondary)', marginTop: '4px' }}>{selected.duration} · {selected.cert ? 'Certified' : 'Certificate Not Available'}</div>
               </div>
             </div>
-            <div style={{ display: 'flex', gap: '12px' }}>
-              <button className="btn btn-secondary btn-sm" onClick={() => setSelected(null)}>Change Selection</button>
+            <div style={{ display: 'flex', gap: '16px' }}>
+              <button className="btn" style={{ background: 'var(--bg-surface)', border: '1px solid var(--border-subtle)', padding: '12px 20px', borderRadius: '10px', fontSize: '14px', fontWeight: 500, color: 'var(--text-primary)', cursor: 'pointer' }} onClick={() => setSelected(null)}>Cancel</button>
               <button
                 className="btn btn-primary"
                 onClick={handleBegin}
                 id="hub-start-btn"
-                style={{ gap: '10px', minWidth: '220px', justifyContent: 'center', boxShadow: `0 6px 28px ${selected.color}44` }}
+                style={{ padding: '12px 24px', borderRadius: '10px', fontSize: '14px', fontWeight: 700, background: 'var(--border-active)', color: '#010203', border: 'none', cursor: 'pointer' }}
               >
-                Initialize Bootcamp →
+                Start Bootcamp →
               </button>
             </div>
           </div>

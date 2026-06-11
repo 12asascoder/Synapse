@@ -1,10 +1,31 @@
 /**
  * MilestoneInterview — Oral Validation / AI Interview
  * Live two-way communication UI with proctoring active
+ * Clean ElevenLabs aesthetic
  */
 import { useState, useRef, useEffect, useCallback } from 'react';
 import { useApp } from '../context/AppContext';
 import { streamVisheshResponse } from '../lib/vishesh';
+
+function AnimatedWaveform({ active }) {
+  const heights = [0.4, 0.7, 1, 0.6, 0.9, 0.5, 0.8, 1, 0.7, 0.5, 0.9, 0.6, 0.8, 0.4, 0.7, 1, 0.6, 0.5];
+  return (
+    <div style={{ display: 'flex', alignItems: 'center', gap: '3px', height: '40px' }}>
+      {heights.map((h, i) => (
+        <div key={i} style={{
+          width: '3px', height: '40px', borderRadius: '2px',
+          background: active
+            ? '#000000'
+            : '#E8E6E3',
+          transform: `scaleY(${active ? h : 0.2})`,
+          animation: active ? `waveform 1.3s ease-in-out infinite` : 'none',
+          animationDelay: `${i * 80}ms`,
+          transition: 'transform 0.3s ease',
+        }} />
+      ))}
+    </div>
+  );
+}
 
 export default function MilestoneInterview() {
   const { state, dispatch, navigate } = useApp();
@@ -25,10 +46,11 @@ export default function MilestoneInterview() {
   const [timeLeft, setTimeLeft] = useState(15 * 60); // 15 min interview
   const abortRef = useRef(null);
   const bottomRef = useRef(null);
+  const inputRef = useRef(null);
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, [messages]);
+  }, [messages, isThinking, isStreaming]);
 
   useEffect(() => {
     const t = setInterval(() => {
@@ -98,47 +120,56 @@ export default function MilestoneInterview() {
   };
 
   return (
-    <div style={{ display: 'flex', height: '100vh', background: 'var(--bg-void)', overflow: 'hidden' }}>
+    <div style={{ display: 'flex', height: '100vh', background: '#FDFCFC', overflow: 'hidden' }}>
       
       {/* LEFT — User Camera / Integrity Feed */}
-      <div style={{ width: '320px', background: 'rgba(8,8,14,0.98)', borderRight: '1px solid var(--border-subtle)', display: 'flex', flexDirection: 'column' }}>
-        <div style={{ padding: '20px', borderBottom: '1px solid var(--border-subtle)' }}>
-          <div className="badge badge-cyan" style={{ marginBottom: '12px' }}>🔒 PROCTORING ACTIVE</div>
-          <div style={{ fontSize: '18px', fontWeight: 900, fontFamily: 'var(--font-display)', marginBottom: '4px' }}>AI Interview</div>
-          <div style={{ fontSize: '11px', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>{isFinal ? 'Day 30 Final Validation' : 'Day 15 Milestone'}</div>
+      <div style={{ width: '380px', background: '#FFFFFF', borderRight: '1px solid #E8E6E3', display: 'flex', flexDirection: 'column' }}>
+        <div style={{ padding: '32px 32px 24px', borderBottom: '1px solid #E8E6E3' }}>
+          <div style={{
+            display: 'inline-flex', alignItems: 'center', gap: '8px',
+            padding: '6px 12px', background: '#F5F3F1',
+            border: '1px solid #000', borderRadius: '8px',
+            marginBottom: '16px',
+          }}>
+            <span style={{ fontSize: '11px', fontWeight: 700, letterSpacing: '0.05em', color: '#000', textTransform: 'uppercase' }}>
+              🔒 Proctoring Active
+            </span>
+          </div>
+          <div style={{ fontSize: '24px', fontWeight: 700, fontFamily: 'var(--font-display)', marginBottom: '8px', color: '#000' }}>AI Interview</div>
+          <div style={{ fontSize: '13px', color: '#6B6B6B' }}>{isFinal ? 'Day 30 Final Validation' : 'Day 15 Milestone'}</div>
         </div>
 
-        <div style={{ padding: '20px', flex: 1 }}>
+        <div style={{ padding: '32px', flex: 1 }}>
           <div style={{
-            height: '240px', borderRadius: '12px', background: 'linear-gradient(135deg, #1a1a2e, #16213e)',
-            border: '1px solid rgba(6,182,212,0.4)', position: 'relative', overflow: 'hidden',
-            marginBottom: '20px',
+            height: '240px', borderRadius: '16px', background: '#000',
+            position: 'relative', overflow: 'hidden',
+            marginBottom: '24px', boxShadow: '0 12px 32px rgba(0,0,0,0.08)'
           }}>
-             <div style={{ position: 'absolute', top: 12, left: 12, display: 'flex', gap: '6px', alignItems: 'center', background: 'rgba(5,5,10,0.8)', padding: '4px 8px', borderRadius: '6px' }}>
-                <div className="dot-live" style={{ width: 6, height: 6 }} />
-                <span style={{ fontSize: '9px', color: 'var(--cyan-400)', fontFamily: 'var(--font-mono)', fontWeight: 700 }}>LIVE</span>
+             <div style={{ position: 'absolute', top: 16, left: 16, display: 'flex', gap: '8px', alignItems: 'center', background: 'rgba(255,255,255,0.9)', padding: '6px 12px', borderRadius: '8px' }}>
+                <div style={{ width: 8, height: 8, borderRadius: '50%', background: '#10B981' }} />
+                <span style={{ fontSize: '11px', color: '#000', fontWeight: 700, letterSpacing: '0.05em' }}>LIVE</span>
              </div>
-             <div style={{ position: 'absolute', bottom: 12, left: 12, fontSize: '11px', color: 'rgba(255,255,255,0.7)', fontFamily: 'var(--font-mono)' }}>Operative Feed</div>
+             <div style={{ position: 'absolute', bottom: 16, left: 16, fontSize: '12px', color: 'rgba(255,255,255,0.7)', fontWeight: 600 }}>Operative Feed</div>
           </div>
 
-          <div style={{ padding: '16px', background: 'rgba(10,10,18,0.6)', border: '1px solid var(--border-subtle)', borderRadius: '12px' }}>
-            <div style={{ fontSize: '11px', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)', letterSpacing: '0.1em', marginBottom: '12px' }}>TELEMETRY</div>
+          <div style={{ padding: '24px', background: '#F5F3F1', border: '1px solid #E8E6E3', borderRadius: '16px' }}>
+            <div style={{ fontSize: '12px', color: '#A59F97', fontWeight: 700, letterSpacing: '0.05em', marginBottom: '16px', textTransform: 'uppercase' }}>Telemetry</div>
             {[
-              { l: 'Gaze Tracking', v: 'Stable', c: 'var(--emerald-400)' },
-              { l: 'Audio Environment', v: 'Clear', c: 'var(--emerald-400)' },
-              { l: 'Window Focus', v: 'Locked', c: 'var(--cyan-400)' },
+              { l: 'Gaze Tracking', v: 'Stable', c: '#10B981' },
+              { l: 'Audio Environment', v: 'Clear', c: '#10B981' },
+              { l: 'Window Focus', v: 'Locked', c: '#000' },
             ].map(t => (
-              <div key={t.l} style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px', fontSize: '12px', fontFamily: 'var(--font-mono)' }}>
-                <span style={{ color: 'var(--text-secondary)' }}>{t.l}</span>
+              <div key={t.l} style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '12px', fontSize: '14px' }}>
+                <span style={{ color: '#6B6B6B', fontWeight: 500 }}>{t.l}</span>
                 <span style={{ color: t.c, fontWeight: 700 }}>{t.v}</span>
               </div>
             ))}
           </div>
         </div>
 
-        <div style={{ padding: '20px', borderTop: '1px solid var(--border-subtle)', textAlign: 'center' }}>
-          <div style={{ fontSize: '11px', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)', letterSpacing: '0.1em', marginBottom: '8px' }}>REMAINING TIME</div>
-          <div style={{ fontSize: '32px', fontWeight: 900, fontFamily: 'var(--font-mono)', color: timeLeft < 180 ? 'var(--rose-400)' : 'var(--cyan-400)' }}>
+        <div style={{ padding: '32px', borderTop: '1px solid #E8E6E3', textAlign: 'center', background: '#FDFCFC' }}>
+          <div style={{ fontSize: '12px', color: '#A59F97', fontWeight: 700, letterSpacing: '0.05em', marginBottom: '12px', textTransform: 'uppercase' }}>Remaining Time</div>
+          <div style={{ fontSize: '48px', fontWeight: 700, fontFamily: 'var(--font-mono)', color: timeLeft < 180 ? '#DC2626' : '#000', lineHeight: 1 }}>
             {formatTime(timeLeft)}
           </div>
         </div>
@@ -148,66 +179,130 @@ export default function MilestoneInterview() {
       <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
         
         {/* Header */}
-        <div style={{ height: '64px', borderBottom: '1px solid var(--border-subtle)', display: 'flex', alignItems: 'center', padding: '0 32px', background: 'rgba(10,10,15,0.95)' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-            <div className="vishesh-avatar" style={{ width: 32, height: 32, fontSize: 12 }}>V</div>
+        <div style={{ height: '80px', borderBottom: '1px solid #E8E6E3', display: 'flex', alignItems: 'center', padding: '0 40px', background: '#FFFFFF' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+            <div style={{ width: 40, height: 40, borderRadius: '12px', background: '#000', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '16px', fontWeight: 700 }}>V</div>
             <div>
-              <div style={{ fontSize: '13px', fontWeight: 700, fontFamily: 'var(--font-display)' }}>Vishesh AI</div>
-              <div style={{ fontSize: '11px', color: 'var(--violet-400)', fontFamily: 'var(--font-mono)' }}>Chief Evaluator</div>
+              <div style={{ fontSize: '16px', fontWeight: 700, color: '#000' }}>Vishesh AI</div>
+              <div style={{ fontSize: '13px', color: '#6B6B6B' }}>Chief Evaluator</div>
             </div>
           </div>
-          <button onClick={finishInterview} style={{ marginLeft: 'auto', padding: '8px 16px', background: 'rgba(244,63,94,0.1)', border: '1px solid rgba(244,63,94,0.3)', borderRadius: '6px', color: 'var(--rose-400)', fontFamily: 'var(--font-mono)', fontSize: '11px', fontWeight: 700, cursor: 'pointer' }}>End Validation</button>
+          <button 
+            onClick={finishInterview} 
+            className="btn"
+            style={{ marginLeft: 'auto', padding: '12px 20px', background: '#FFF0F0', border: '1px solid #FECACA', borderRadius: '10px', color: '#DC2626', fontSize: '14px', fontWeight: 600, cursor: 'pointer', transition: 'all 0.15s ease' }}
+            onMouseEnter={(e) => { e.currentTarget.style.background = '#FEE2E2'; }}
+            onMouseLeave={(e) => { e.currentTarget.style.background = '#FFF0F0'; }}
+          >End Validation</button>
         </div>
 
         {/* Chat Log */}
-        <div style={{ flex: 1, overflowY: 'auto', padding: '32px' }} className="scroll-area">
-          {messages.map((msg) => (
-            <div key={msg.id} style={{ display: 'flex', gap: '16px', marginBottom: '24px', animation: 'fadeInUp 0.3s ease both' }}>
-              {msg.role === 'assistant' && (
-                 <div className="vishesh-avatar" style={{ width: 36, height: 36, fontSize: 14, flexShrink: 0 }}>V</div>
-              )}
-              <div style={{
-                background: msg.role === 'assistant' ? 'transparent' : 'rgba(124,58,237,0.15)',
-                border: msg.role === 'assistant' ? 'none' : '1px solid rgba(124,58,237,0.3)',
-                padding: msg.role === 'assistant' ? '0' : '16px 20px',
-                borderRadius: msg.role === 'assistant' ? '0' : '8px 16px 16px 16px',
-                fontSize: '15px', lineHeight: 1.6, color: 'var(--text-primary)',
+        <div style={{ flex: 1, overflowY: 'auto', padding: '40px 10%', background: '#FDFCFC' }} className="scroll-area">
+          {messages.map((msg) => {
+            const isVishesh = msg.role === 'assistant';
+            return (
+              <div key={msg.id} style={{
+                display: 'flex', gap: '16px', marginBottom: '32px',
+                flexDirection: isVishesh ? 'row' : 'row-reverse',
+                animation: 'fadeInUp 0.35s ease both',
               }}>
-                {msg.content}
-                {msg.streaming && <span style={{ display: 'inline-block', width: '2px', height: '15px', background: 'var(--violet-400)', marginLeft: '4px', animation: 'pulse-dot 0.7s infinite' }} />}
+                {isVishesh && (
+                  <div style={{
+                    width: 36, height: 36, borderRadius: '50%', flexShrink: 0,
+                    background: '#000', color: 'white',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    fontSize: '14px', fontWeight: 700, marginTop: '4px'
+                  }}>V</div>
+                )}
+                <div style={{ maxWidth: '85%' }}>
+                  <div style={{
+                    fontSize: '16px', color: '#000',
+                    lineHeight: 1.6, whiteSpace: 'pre-wrap',
+                    padding: isVishesh ? '16px 20px' : '16px 24px',
+                    background: isVishesh ? '#F5F3F1' : '#FFFFFF',
+                    border: '1px solid #E8E6E3',
+                    borderRadius: isVishesh ? '8px 24px 24px 24px' : '24px 8px 24px 24px',
+                    boxShadow: '0 4px 12px rgba(0,0,0,0.02)'
+                  }}>
+                    {msg.content}
+                    {msg.streaming && (
+                      <span style={{
+                        display: 'inline-block', width: '3px', height: '16px',
+                        background: '#000', marginLeft: '6px',
+                        verticalAlign: 'middle', animation: 'pulse-dot 0.7s infinite',
+                      }} />
+                    )}
+                  </div>
+                </div>
+              </div>
+            );
+          })}
+          
+          {/* Waveform / Thinking states */}
+          {isStreaming && (
+            <div style={{ display: 'flex', justifyContent: 'center', padding: '16px' }}>
+              <AnimatedWaveform active={true} />
+            </div>
+          )}
+          {isThinking && messages.length > 0 && (
+            <div style={{ display: 'flex', gap: '16px', alignItems: 'center', marginBottom: '32px' }}>
+              <div style={{ width: 36, height: 36, borderRadius: '50%', background: '#000', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '14px', color: '#fff', fontWeight: 700 }}>V</div>
+              <div style={{ display: 'flex', gap: '6px' }}>
+                {[0,1,2].map((i) => (
+                  <div key={i} style={{ width: 8, height: 8, borderRadius: '50%', background: '#A59F97', animation: 'pulse-dot 1.2s infinite', animationDelay: `${i * 200}ms` }} />
+                ))}
               </div>
             </div>
-          ))}
-          {isThinking && (
-             <div style={{ display: 'flex', gap: '16px', alignItems: 'center' }}>
-                <div className="vishesh-avatar" style={{ width: 36, height: 36, fontSize: 14 }}>V</div>
-                <div style={{ display: 'flex', gap: '5px' }}>
-                  {[0,1,2].map((i) => <div key={i} style={{ width: 7, height: 7, borderRadius: '50%', background: 'var(--violet-400)', animation: `pulse-dot 1s infinite ${i*0.2}s` }} />)}
-                </div>
-             </div>
           )}
           <div ref={bottomRef} />
         </div>
 
         {/* Voice / Text Input */}
-        <div style={{ padding: '24px 32px', background: 'rgba(8,8,14,0.9)', borderTop: '1px solid var(--border-subtle)' }}>
-           <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-              <button style={{ width: 48, height: 48, borderRadius: '50%', background: 'rgba(16,185,129,0.15)', border: '1px solid rgba(16,185,129,0.4)', color: 'var(--emerald-400)', fontSize: '20px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}>🎙</button>
-              <input 
-                type="text" 
-                value={input}
-                onChange={(e) => setInput(e.target.value)}
-                onKeyDown={(e) => { if (e.key === 'Enter') sendMessage(); }}
-                disabled={isStreaming}
-                placeholder="Type or speak your response..."
-                style={{ flex: 1, padding: '16px 20px', background: 'rgba(14,14,22,0.8)', border: '1px solid var(--border-default)', borderRadius: '12px', color: 'white', fontFamily: 'var(--font-mono)', fontSize: '14px', outline: 'none' }}
-              />
-              <button 
-                onClick={sendMessage}
-                disabled={isStreaming || !input.trim()}
-                style={{ width: 48, height: 48, borderRadius: '12px', background: input.trim() ? 'linear-gradient(135deg, var(--violet-600), var(--violet-500))' : 'rgba(124,58,237,0.2)', border: 'none', color: 'white', fontSize: '18px', cursor: input.trim() ? 'pointer' : 'default' }}
-              >▷</button>
-           </div>
+        <div style={{ padding: '0 10% 40px', background: '#FDFCFC' }}>
+          {!isStreaming && !isThinking && messages.length > 0 && (
+            <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '16px' }}>
+              <AnimatedWaveform active={false} />
+            </div>
+          )}
+          <div style={{
+            display: 'flex', alignItems: 'center', gap: '16px',
+            background: '#FFFFFF',
+            border: '1px solid #E8E6E3',
+            borderRadius: '20px', padding: '12px 16px',
+            boxShadow: '0 8px 24px rgba(0,0,0,0.03)',
+            transition: 'border-color 0.2s ease'
+          }}
+          onFocusCapture={(e) => { e.currentTarget.style.borderColor = '#000'; }}
+          onBlurCapture={(e) => { e.currentTarget.style.borderColor = '#E8E6E3'; }}
+          >
+            <button style={{ width: 44, height: 44, borderRadius: '12px', background: '#F5F3F1', border: '1px solid #E8E6E3', color: '#000', fontSize: '20px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', transition: 'all 0.15s ease' }}
+            onMouseEnter={(e) => { e.currentTarget.style.background = '#E8E6E3'; }}
+            onMouseLeave={(e) => { e.currentTarget.style.background = '#F5F3F1'; }}
+            >🎙</button>
+            <input 
+              ref={inputRef}
+              type="text" 
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              onKeyDown={(e) => { if (e.key === 'Enter') sendMessage(); }}
+              disabled={isStreaming}
+              placeholder="Type or speak your response..."
+              style={{ flex: 1, padding: '12px 0', background: 'transparent', border: 'none', color: '#000', fontSize: '16px', outline: 'none' }}
+            />
+            <button 
+              onClick={isStreaming ? () => abortRef.current?.abort() : sendMessage}
+              disabled={!isStreaming && !input.trim()}
+              style={{
+                width: 44, height: 44, borderRadius: '12px',
+                background: input.trim() ? '#000' : '#F5F3F1',
+                border: 'none', color: input.trim() ? '#fff' : '#A59F97',
+                fontSize: '18px', cursor: input.trim() ? 'pointer' : 'default',
+                transition: 'all 0.2s ease'
+              }}
+            >
+              {isStreaming ? '■' : '▶'}
+            </button>
+          </div>
         </div>
       </div>
     </div>

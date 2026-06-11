@@ -41,7 +41,10 @@ export default function LoadingScreen() {
         await new Promise((r) => setTimeout(r, 600));
         if (!dead) {
           doneRef.current = true;
-          navigate(user?.role === 'SUPER_ADMIN' ? 'admin-dashboard' : (state.selectedBootcamp ? 'dashboard' : 'hub'));
+          const target = user?.onboardingComplete === false ? 'profile-setup'
+            : user?.role === 'SUPER_ADMIN' ? 'admin-dashboard'
+            : state.selectedBootcamp ? 'dashboard' : 'hub';
+          navigate(target);
           return;
         }
       }

@@ -18,7 +18,14 @@ router.post('/stream', async (req, res) => {
     const stream = await trugenStream(prompt, contextHistory);
     if (!stream) {
       const response = await trugenGenerate(prompt, contextHistory);
-      return res.json({ response });
+      res.writeHead(200, {
+        'Content-Type': 'text/event-stream',
+        'Cache-Control': 'no-cache',
+        Connection: 'keep-alive',
+      });
+      res.write(`data: ${JSON.stringify({ content: response })}\n\n`);
+      res.write('data: [DONE]\n\n');
+      return res.end();
     }
     const reader = stream.getReader();
     res.writeHead(200, {

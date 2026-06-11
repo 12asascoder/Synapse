@@ -113,8 +113,9 @@ const trugenStream = async (prompt, contextHistory = []) => {
     const messages = buildMessages(prompt, contextHistory);
     const res = await aiFetch({ model: MODEL, messages, temperature: 0.7, max_tokens: 1024, stream: true });
     return res.body;
-  } catch {
-    return null;
+  } catch (err) {
+    if (process.env.AI_FALLBACK_ON_ERROR === 'true') return null;
+    throw err;
   }
 };
 

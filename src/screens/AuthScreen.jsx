@@ -127,12 +127,13 @@ export default function AuthScreen() {
 
       const user = {
         name: data.user.name,
-        email: data.user.email.replace(/(.{2}).+(@.+)/, '$1***$2'), // Mask email for display
+        email: data.user.email.replace(/(.{2}).+(@.+)/, '$1***$2'),
         role: data.user.role,
-        joinedAt: new Date().toISOString(),
+        token: data.token,
       };
 
       dispatch({ type: 'SET_USER', payload: user });
+      dispatch({ type: 'SET_TOKEN', payload: data.token });
       setLoading(false);
       
       if (user.role === 'SUPER_ADMIN') {

@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
 import AdminSidebar from '../components/AdminSidebar';
 
-const API = import.meta.env.VITE_API_URL || 'http://localhost:5001/api';
+import { useApp } from '../context/AppContext';
+const API = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
 
 const CARD = { background: 'rgba(10, 15, 25, 0.7)', border: '1px solid rgba(56, 189, 248, 0.15)', borderRadius: '16px' };
 const INPUT = { background: 'rgba(10, 15, 25, 0.7)', border: '1px solid rgba(56, 189, 248, 0.2)', borderRadius: '8px', padding: '10px 14px', color: 'white', fontFamily: 'var(--font-mono)', fontSize: '13px', outline: 'none', width: '220px' };
@@ -9,20 +10,16 @@ const BTN_DANGER = { background: 'rgba(244,63,94,0.1)', border: '1px solid rgba(
 const TH = { padding: '16px 20px', fontSize: '11px', color: 'var(--cyan-400)', textTransform: 'uppercase', letterSpacing: '0.05em', fontWeight: 600 };
 const TD = { padding: '14px 20px', fontSize: '13px', color: 'var(--text-primary)' };
 
-function getToken() {
-  try { const s = sessionStorage.getItem('synapse_session_v1'); return s ? (JSON.parse(s).token || '') : ''; }
-  catch { return ''; }
-}
-
 export default function AdminCommunity() {
+  const { state } = useApp();
+  const token = state.token;
+  const headers = { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` };
   const [discussions, setDiscussions] = useState([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
   const [catFilter, setCatFilter] = useState('');
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
-  const token = getToken();
-  const headers = { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` };
 
   const fetchDiscussions = () => {
     fetch(`${API}/admin/community/discussions`, { headers })

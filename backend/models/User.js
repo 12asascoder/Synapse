@@ -34,5 +34,9 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       defaultValue: null,
     },
+    preferences: {
+      type: DataTypes.JSON,
+      defaultValue: { streaming: true, animations: true, sound: false },
+    },
   });
 };

@@ -2,13 +2,14 @@
  * Community — Cohorts, leaderboard, challenges, peer learning
  * Clean ElevenLabs aesthetic
  */
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
+import { io } from 'socket.io-client';
 import { useApp } from '../context/AppContext';
 import Sidebar from '../components/Sidebar';
-
-
+import ThemeContainer from '../components/ThemeContainer';
 
 const API = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+const WS_URL = import.meta.env.VITE_WS_URL || 'http://localhost:5000';
 
 const tabs = ['leaderboard', 'challenges', 'discussions', 'cohorts'];
 
@@ -18,6 +19,7 @@ export default function Community() {
   const [leaderboard, setLeaderboard] = useState([]);
   const [discussions, setDiscussions] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [newPost, setNewPost] = useState('');
 
   useEffect(() => {
     Promise.all([
@@ -27,7 +29,33 @@ export default function Community() {
       setLeaderboard(lb);
       setDiscussions(ds);
     }).finally(() => setLoading(false));
+
+    const socket = io(WS_URL);
+    socket.on('new-discussion', (d) => {
+      setDiscussions((prev) => [d, ...prev]);
+    });
+    return () => { socket.disconnect(); };
   }, []);
+
+  const userRank = leaderboard.findIndex((u) => u.isYou) + 1;
+  const totalOperatives = leaderboard.length;
+  const tierMap = ['Novice', 'Apprentice', 'Architect I', 'Architect II', 'Architect III', 'Master'];
+  const userTier = tierMap[Math.min(Math.floor((state.totalPoints || 0) / 1000), tierMap.length - 1)];
+
+  const submitPost = async () => {
+    if (!newPost.trim()) return;
+    try {
+      const res = await fetch(`${API}/community/discussions`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${state.token}` },
+        body: JSON.stringify({ title: newPost.trim(), content: newPost.trim() }),
+      });
+      if (res.ok) {
+        setDiscussions((prev) => [{ id: Date.now(), title: newPost.trim(), content: newPost.trim(), User: { name: state.user?.name }, createdAt: new Date().toISOString(), replies: 0, likes: 0 }, ...prev]);
+        setNewPost('');
+      }
+    } catch {}
+  };
 
   return (
     <ThemeContainer>
@@ -121,13 +149,10 @@ export default function Community() {
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
                   <div style={{ background: 'rgba(255,255,255,0.07)', border: '1px solid rgba(255,255,255,0.2)', borderRadius: '24px', padding: '32px', textAlign: 'center', boxShadow: '0 8px 24px rgba(0,0,0,0.02)' }}>
                     <div style={{ fontSize: '12px', fontWeight: 700, color: '#A59F97', letterSpacing: '0.05em', marginBottom: '16px', textTransform: 'uppercase' }}>Your Ranking</div>
-                    <div style={{ fontSize: '64px', fontWeight: 700, fontFamily: 'var(--font-display)', color: '#000', lineHeight: 1 }}>#14</div>
-                    <div style={{ fontSize: '14px', color: '#6B6B6B', marginTop: '12px' }}>of 2,847 operatives</div>
-                    <div style={{ marginTop: '24px', padding: '12px', background: '#F5F3F1', borderRadius: '12px' }}>
-                      <div style={{ fontSize: '13px', color: '#000', fontWeight: 600 }}>+2,730 to reach #12</div>
-                    </div>
+                    <div style={{ fontSize: '64px', fontWeight: 700, fontFamily: 'var(--font-display)', color: '#000', lineHeight: 1 }}>{userRank > 0 ? `#${userRank}` : '—'}</div>
+                    <div style={{ fontSize: '14px', color: '#6B6B6B', marginTop: '12px' }}>{totalOperatives > 0 ? `of ${totalOperatives} operatives` : 'No data'}</div>
                   </div>
-                  {[{ label: 'Points', val: '4,150' }, { label: 'Tier', val: 'Architect II' }, { label: 'Streak', val: `${state.streak}🔥` }].map((s) => (
+                  {[{ label: 'Points', val: (state.totalPoints || 0).toLocaleString() }, { label: 'Tier', val: userTier }, { label: 'Streak', val: `${state.streak || 0}🔥` }].map((s) => (
                     <div key={s.label} style={{ background: 'rgba(255,255,255,0.07)', border: '1px solid rgba(255,255,255,0.2)', borderRadius: '16px', padding: '20px 24px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', boxShadow: '0 4px 12px rgba(0,0,0,0.01)' }}>
                       <span style={{ fontSize: '13px', color: '#6B6B6B', fontWeight: 500 }}>{s.label}</span>
                       <span style={{ fontSize: '16px', fontWeight: 700, color: '#000' }}>{s.val}</span>
@@ -183,7 +208,20 @@ export default function Community() {
                     <div style={{ width: 40, height: 40, borderRadius: '12px', background: '#000', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '14px', fontWeight: 700, flexShrink: 0 }}>
                       {(state.user?.name || 'Y')[0]}
                     </div>
-                    <input style={{ flex: 1, background: 'transparent', border: 'none', color: '#f3f2ee', fontSize: '15px', outline: 'none' }} placeholder="Share an insight with your cohort..." />
+                    <input
+                      value={newPost}
+                      onChange={(e) => setNewPost(e.target.value)}
+                      onKeyDown={(e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); submitPost(); } }}
+                      style={{ flex: 1, background: 'transparent', border: 'none', color: '#000', fontSize: '15px', outline: 'none' }}
+                      placeholder="Share an insight with your cohort..."
+                    />
+                    <button
+                      onClick={submitPost}
+                      disabled={!newPost.trim()}
+                      style={{ padding: '8px 16px', borderRadius: '8px', border: 'none', background: newPost.trim() ? '#000' : '#ccc', color: '#fff', fontSize: '13px', fontWeight: 600, cursor: newPost.trim() ? 'pointer' : 'not-allowed' }}
+                    >
+                      Post
+                    </button>
                   </div>
                 </div>
               </div>
@@ -192,22 +230,10 @@ export default function Community() {
 
           {/* COHORTS */}
           {activeTab === 'cohorts' && (
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '24px', animation: 'fadeIn 0.3s ease' }}>
-              {['AI Engineering · Cohort 7', 'Backend Engineering · Cohort 3', 'Data Science · Cohort 5', 'Product Management · Cohort 2'].map((c, i) => (
-                <div key={c} style={{ background: '#FFFFFF', border: '1px solid #E8E6E3', borderRadius: '24px', padding: '32px', animation: `fadeInUp 0.4s ease ${i * 80}ms both`, cursor: 'pointer', transition: 'all 0.2s ease', boxShadow: '0 4px 12px rgba(0,0,0,0.02)' }}
-                onMouseEnter={(e) => { e.currentTarget.style.borderColor = '#000'; e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = '0 12px 32px rgba(0,0,0,0.06)'; }}
-                onMouseLeave={(e) => { e.currentTarget.style.borderColor = '#E8E6E3'; e.currentTarget.style.transform = 'none'; e.currentTarget.style.boxShadow = '0 4px 12px rgba(0,0,0,0.02)'; }}
-                >
-                  <div style={{ width: 48, height: 48, borderRadius: '16px', background: '#F5F3F1', border: '1px solid #E8E6E3', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '20px', marginBottom: '20px' }}>
-                    {['🧠', '⚙', '📊', '🎯'][i]}
-                  </div>
-                  <div style={{ fontWeight: 700, fontSize: '16px', fontFamily: 'var(--font-display)', marginBottom: '8px', color: '#000' }}>{c}</div>
-                  <div style={{ fontSize: '13px', color: '#6B6B6B', marginBottom: '24px' }}>{[24, 18, 31, 12][i]} members · Active</div>
-                  <button className="btn" style={{ width: '100%', padding: '12px', background: '#FDFCFC', border: '1px solid #E8E6E3', borderRadius: '10px', cursor: 'pointer', color: '#000', fontSize: '14px', fontWeight: 600, transition: 'all 0.15s ease' }}>
-                    View Cohort →
-                  </button>
-                </div>
-              ))}
+            <div style={{ padding: '60px', textAlign: 'center', color: '#6B6B6B', fontSize: '15px', animation: 'fadeIn 0.3s ease' }}>
+              <div style={{ fontSize: '36px', marginBottom: '16px' }}>📚</div>
+              <div style={{ fontWeight: 600, marginBottom: '8px' }}>Cohorts feature coming soon</div>
+              <div style={{ fontSize: '13px' }}>Learning cohorts with peer groups will be available in the next release.</div>
             </div>
           )}
         </div>

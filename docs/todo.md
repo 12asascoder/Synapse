@@ -1,7 +1,7 @@
 # SYNAPSE — PRD Progress Tracker
 
-**Last updated:** June 11, 2026  
-**Overall completion:** ~38%
+**Last updated:** June 12, 2026  
+**Overall completion:** ~42%
 
 ---
 
@@ -10,7 +10,7 @@
 | Task | Status | Notes |
 |------|--------|-------|
 | PostgreSQL on Supabase | ✅ | Connected, SSL enabled |
-| User model (id, name, email, password, role, tier, points, avatar) | ✅ | 10 columns |
+| User model (id, name, email, password, role, tier, points, avatar, preferences) | ✅ | 11 columns, preferences JSON |
 | Progress model (currentDay, streak, 7 scores, history) | ✅ | JSON history |
 | Bootcamp model | ✅ | 10 bootcamps seeded |
 | CurriculumDay model | ✅ | 30 days for AI Engineering |
@@ -76,7 +76,7 @@
 
 ---
 
-## 🔷 Layer 4: Proctoring Engine (15%)
+## 🔷 Layer 4: Proctoring Engine (20%)
 
 | Task | Status | Notes |
 |------|--------|-------|
@@ -85,16 +85,16 @@
 | Camera permission flow | ✅ | SessionStartModal |
 | Microphone permission flow | ✅ | SessionStartModal |
 | Screen monitoring | ❌ | Not implemented |
-| Browser / tab-switch detection | ❌ | Not implemented |
+| Browser / tab-switch detection | ✅ | visibilitychange listener in ProctoringSetup |
 | Voice analysis | ❌ | Mic used for STT only |
 | Multi-person detection | ❌ | Not implemented |
 | Identity verification | ❌ | Not implemented |
 | Integrity score generation | ❌ | Not calculated |
-| Proctoring setup screen | ⚠️ | UI exists, checks are hardcoded |
+| Proctoring setup screen | ⚠️ | setTimeout animation flow (reverted to original UX) |
 
 ---
 
-## 🔷 Layer 5: Growth Analytics (60%)
+## 🔷 Layer 5: Growth Analytics (65%)
 
 | Task | Status | Notes |
 |------|--------|-------|
@@ -107,7 +107,7 @@
 | Growth score (composite) | ✅ | Average of all scores |
 | Radar chart visualization | ✅ | Recharts in multiple screens |
 | Progress history chart | ✅ | From `history` JSON field |
-| Monthly analytics | ⚠️ | AnalyticsCenter uses hardcoded generator |
+| Monthly analytics | ⚠️ | AnalyticsCenter uses real progressHistory |
 | Career readiness metrics | ⚠️ | Basic implementation |
 
 ---
@@ -153,14 +153,14 @@
 
 ---
 
-## 🔷 Community Layer (15%)
+## 🔷 Community Layer (20%)
 
 | Task | Status | Notes |
 |------|--------|-------|
 | Leaderboard (top users by points) | ✅ | From User.points |
 | Discussions / forum posts | ✅ | API + frontend UI |
 | Create discussion | ✅ | POST endpoint |
-| Learning cohorts | ❌ | Tab exists, hardcoded data |
+| Learning cohorts | ❌ | Tab shows placeholder "coming soon" |
 | Weekly challenges | ❌ | Placeholder only |
 | Hackathons | ❌ | Not implemented |
 | Peer reviews | ❌ | Not implemented |
@@ -168,7 +168,7 @@
 
 ---
 
-## 🔷 Skill Passport (30%)
+## 🔷 Skill Passport (35%)
 
 | Task | Status | Notes |
 |------|--------|-------|
@@ -179,12 +179,12 @@
 | Projects showcase | ❌ | Not implemented |
 | Challenges completed | ❌ | Not implemented |
 | Integrity score | ❌ | Not tracked |
-| Recruiter verification | ❌ | Not implemented |
-| Public shareable link | ❌ | Not implemented |
+| Recruiter verification | ⚠️ | GET /api/passport/verify/:userId endpoint exists |
+| Public shareable link | ⚠️ | Copy link button in SkillPassport |
 
 ---
 
-## 🔷 Tech Infrastructure (20%)
+## 🔷 Tech Infrastructure (25%)
 
 | Task | Status | Notes |
 |------|--------|-------|
@@ -193,7 +193,7 @@
 | JWT auth middleware | ✅ | Bearer token pattern |
 | CORS configured | ✅ | All origins open (dev) |
 | AI integration (TruGen) | ✅ | Real API calls |
-| WebSockets | ❌ | HTTP polling only |
+| WebSockets | ✅ | socket.io for real-time community updates |
 | WebRTC | ❌ | Not implemented |
 | Redis / caching | ❌ | Not implemented |
 | Vector database (Qdrant) | ❌ | Not implemented |
@@ -205,20 +205,20 @@
 
 ---
 
-## 🔷 Admin Dashboard (10%)
+## 🔷 Admin Dashboard (15%)
 
 | Task | Status | Notes |
 |------|--------|-------|
 | User management | ⚠️ | AdminUsers with real data from DB |
-| Platform overview stats | ⚠️ | AdminDashboard with some real metrics |
-| Bootcamp management | ❌ | Placeholder |
-| Curriculum management | ❌ | Placeholder |
-| Assessment management | ❌ | Placeholder |
-| Certificate management | ❌ | Placeholder |
-| Community management | ❌ | Placeholder |
-| AI control center | ❌ | Placeholder |
-| Analytics panel | ❌ | Placeholder |
-| Real-time charts | ❌ | Placeholder divs |
+| Platform overview stats | ⚠️ | AdminDashboard with real metrics + bootcamp count |
+| Bootcamp management | ⚠️ | AdminBootcamps with CRUD |
+| Curriculum management | ⚠️ | AdminCurriculum |
+| Assessment management | ⚠️ | AdminAssessments |
+| Certificate management | ⚠️ | AdminCertificates |
+| Community management | ⚠️ | AdminCommunity with discussions |
+| AI control center | ⚠️ | AdminVishesh with TruGen config |
+| Analytics panel | ⚠️ | AdminAnalytics |
+| Dead placeholder file deleted | ✅ | AdminPlaceholder.jsx removed |
 
 ---
 
@@ -227,13 +227,12 @@
 | Priority | Task | Effort |
 |----------|------|--------|
 | P0 | Adaptive curriculum logic (differentiated paths) | Large |
-| P0 | Full proctoring (tab-switch, screen monitoring) | Medium |
+| P0 | Full proctoring (real screen monitoring, voice analysis) | Large |
 | P1 | Practice/Exercise session screen | Large |
-| P1 | Remove remaining hardcoded frontend data | Medium |
 | P1 | Challenges feature (API + UI) | Medium |
-| P2 | WebSocket real-time chat | Medium |
-| P2 | Skill Passport — full verified growth record | Large |
-| P2 | Final validation report generation | Medium |
-| P3 | Admin screens (replace all 7 placeholders) | Large |
+| P1 | Real-time chat with WebSocket + message history | Medium |
+| P2 | Skill Passport — full verified growth record + projects | Large |
+| P2 | Final validation report generation (PDF) | Medium |
+| P2 | Settings — persist profile preferences (sound, theme) | Small |
 | P3 | File upload (S3/R2) for profile avatars | Small |
 | P3 | CI/CD pipeline setup | Small |

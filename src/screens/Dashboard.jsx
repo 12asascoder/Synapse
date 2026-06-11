@@ -6,7 +6,6 @@ import { useState, useEffect } from 'react';
 import { useApp } from '../context/AppContext';
 import Sidebar from '../components/Sidebar';
 import { RadarChart, PolarGrid, PolarAngleAxis, Radar, ResponsiveContainer, AreaChart, Area, XAxis, YAxis, Tooltip } from 'recharts';
-import ThemeContainer from '../components/ThemeContainer';
 import { motion } from 'framer-motion';
 
 const API = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
@@ -77,7 +76,7 @@ export default function Dashboard() {
   const progressData = progressHistory?.length > 0 ? progressHistory : [{ day: 1, score: 0 }];
 
   return (
-    <ThemeContainer>
+    <div style={{ minHeight: '100vh', background: '#010203', display: 'flex', color: '#f3f2ee' }}>
       <Sidebar />
 
       <div style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
@@ -329,6 +328,6 @@ export default function Dashboard() {
           </div>
         </div>
       </div>
-    </ThemeContainer>
+    </div>
   );
 }

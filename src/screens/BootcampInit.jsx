@@ -6,6 +6,8 @@ import { useState, useEffect } from 'react';
 import ThemeContainer from '../components/ThemeContainer';
 import { useApp } from '../context/AppContext';
 
+const API = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+
 const STEPS = [
   { label: 'Analyzing your background...', delay: 0 },
   { label: 'Mapping skill graph...', delay: 800 },
@@ -16,10 +18,45 @@ const STEPS = [
 ];
 
 export default function BootcampInit() {
-  const { state, navigate } = useApp();
+  const { state, navigate, dispatch } = useApp();
   const { selectedBootcamp } = state;
   const [doneSteps, setDoneSteps] = useState([]);
   const [ready, setReady] = useState(false);
+  const [objectives, setObjectives] = useState(null);
+
+  useEffect(() => {
+    if (selectedBootcamp?.id) {
+      fetch(`${API}/curriculum/${state.user?.id}?bootcampId=${selectedBootcamp.id}`)
+        .then((r) => r.json())
+        .then((data) => {
+          if (Array.isArray(data) && data.length > 0) {
+            const grouped = [];
+            const totalDays = data.length;
+            if (totalDays > 15) {
+              grouped.push({ day: '1-7', title: 'Foundation', desc: data[0]?.topic || 'Core concepts' });
+              grouped.push({ day: '8-14', title: 'Depth', desc: data[7]?.topic || 'Advanced techniques' });
+              grouped.push({ day: '15', title: 'Phase 1 Milestone', desc: 'Validation — AI Interview + Assessment', milestone: true });
+              grouped.push({ day: '16-22', title: 'Adaptive Phase', desc: data[15]?.topic || 'Personalized learning' });
+              grouped.push({ day: '23-29', title: 'Mastery Sprint', desc: data[22]?.topic || 'Real-world projects' });
+              grouped.push({ day: '30', title: 'Final Certification', desc: 'Full validation + career readiness report', milestone: true });
+            } else {
+              data.forEach((d, i) => grouped.push({ day: `${i + 1}`, title: `Day ${i + 1}`, desc: d.topic }));
+            }
+            setObjectives(grouped);
+          } else {
+            setObjectives([
+              { day: '1-7', title: 'Foundation', desc: 'Core concepts, mental models, and vocabulary' },
+              { day: '8-14', title: 'Depth', desc: 'Advanced techniques and hands-on application' },
+              { day: '15', title: 'Phase 1 Milestone', desc: 'Validation — AI Interview + Assessment', milestone: true },
+              { day: '16-22', title: 'Adaptive Phase', desc: 'Personalized based on your performance' },
+              { day: '23-29', title: 'Mastery Sprint', desc: 'Real-world projects and simulations' },
+              { day: '30', title: 'Final Certification', desc: 'Full validation + career readiness report', milestone: true },
+            ]);
+          }
+        })
+        .catch(() => setObjectives([]));
+    }
+  }, [selectedBootcamp?.id, state.user?.id]);
 
   useEffect(() => {
     STEPS.forEach((step, i) => {
@@ -30,14 +67,7 @@ export default function BootcampInit() {
     });
   }, []);
 
-  const OBJECTIVES = [
-    { day: '1-7', title: 'Foundation', desc: 'Core concepts, mental models, and vocabulary' },
-    { day: '8-14', title: 'Depth', desc: 'Advanced techniques and hands-on application' },
-    { day: '15', title: 'Phase 1 Milestone', desc: 'Validation — AI Interview + Assessment', milestone: true },
-    { day: '16-22', title: 'Adaptive Phase', desc: 'Personalized based on your performance' },
-    { day: '23-29', title: 'Mastery Sprint', desc: 'Real-world projects and simulations' },
-    { day: '30', title: 'Final Certification', desc: 'Full validation + career readiness report', milestone: true },
-  ];
+  const displayObjectives = objectives || [];
 
   return (
     <ThemeContainer>
@@ -102,7 +132,7 @@ export default function BootcampInit() {
               Curriculum Outline
             </div>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginBottom: '40px' }}>
-              {OBJECTIVES.map((obj, i) => (
+              {displayObjectives.map((obj, i) => (
                 <div key={i} style={{
                   display: 'flex', gap: '20px', alignItems: 'flex-start',
                   padding: '20px 24px', borderRadius: '12px',

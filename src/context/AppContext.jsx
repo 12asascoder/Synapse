@@ -2,17 +2,16 @@
  * Synapse — Application State Management
  * Central context for user session, bootcamp progress, and Vishesh state
  */
-import { createContext, useContext, useReducer, useEffect, useCallback } from 'react';
+import { createContext, useContext, useReducer, useEffect, useCallback, useRef } from 'react';
 
 const AppContext = createContext(null);
 
 const STORAGE_KEY = 'synapse_session_v1';
 
 const initialState = {
-  // Navigation stack for internal back navigation
-  navigationStack: [],
   // Auth
   user: null,
+  token: null,
   isAuthenticated: false,
   // Bootcamp
   selectedBootcamp: null,
@@ -45,15 +44,10 @@ function reducer(state, action) {
   switch (action.type) {
     case 'SET_SCREEN':
       return { ...state, currentScreen: action.payload };
-    case 'PUSH_SCREEN':
-      return { ...state, navigationStack: [...state.navigationStack, action.payload] };
-    case 'POP_SCREEN': {
-      const newStack = state.navigationStack.slice(0, -1);
-      const newScreen = newStack.length ? newStack[newStack.length - 1] : 'landing';
-      return { ...state, navigationStack: newStack, currentScreen: newScreen };
-    }
     case 'SET_USER':
-      return { ...state, user: action.payload, isAuthenticated: !!action.payload };
+      return { ...state, user: action.payload, token: action.payload?.token || state.token, isAuthenticated: !!action.payload };
+    case 'SET_TOKEN':
+      return { ...state, token: action.payload };
     case 'LOGOUT':
       // Clear all client-side state on logout
       return { ...initialState, currentScreen: 'landing' };
@@ -121,6 +115,7 @@ function reducer(state, action) {
 
 export function AppProvider({ children }) {
   const [state, dispatch] = useReducer(reducer, initialState);
+  const navStackRef = useRef([]);
 
   // Restore session from sessionStorage
   useEffect(() => {
@@ -129,9 +124,14 @@ export function AppProvider({ children }) {
       if (saved) {
         const parsed = JSON.parse(saved);
         dispatch({
+          type: 'SET_TOKEN',
+          payload: parsed.token || parsed.user?.token || '',
+        });
+        dispatch({
           type: 'RESTORE_SESSION',
           payload: {
             user: parsed.user,
+            token: parsed.token || parsed.user?.token || '',
             isAuthenticated: !!parsed.user,
             selectedBootcamp: parsed.selectedBootcamp,
             currentDay: parsed.currentDay || 1,
@@ -171,7 +171,8 @@ export function AppProvider({ children }) {
     if (state.isAuthenticated) {
       try {
         const toSave = {
-          user: { name: state.user?.name, email: state.user?.email, role: state.user?.role },
+          user: { name: state.user?.name, email: state.user?.email, role: state.user?.role, token: state.token },
+          token: state.token,
           isAuthenticated: state.isAuthenticated,
           selectedBootcamp: state.selectedBootcamp,
           currentDay: state.currentDay,
@@ -191,36 +192,24 @@ export function AppProvider({ children }) {
   }, [state.isAuthenticated, state.selectedBootcamp, state.currentDay, state.completedDays, state.scores]);
 
   const navigate = useCallback((screen) => {
-    // Update URL without reloading and push to navigation stack
-    const path = `/${screen}`;
-    window.history.pushState({}, '', path);
-    dispatch({ type: 'PUSH_SCREEN', payload: screen });
+    const prev = navStackRef.current[navStackRef.current.length - 1];
+    if (prev !== screen) navStackRef.current.push(screen);
     dispatch({ type: 'SET_SCREEN', payload: screen });
+    window.history.pushState({}, '', `/${screen}`);
   }, []);
 
   const goBack = useCallback(() => {
-    const newStack = state.navigationStack.slice(0, -1);
-    const newScreen = newStack.length ? newStack[newStack.length - 1] : 'landing';
-    dispatch({ type: 'POP_SCREEN' });
-    // Replace URL to reflect the new screen without adding to history
-    window.history.replaceState({}, '', `/${newScreen}`);
-  }, [state.navigationStack]);
-
-  // Set initial history
-  useEffect(() => {
-    if (window.location.pathname === '/') {
-      window.history.replaceState({}, '', '/landing');
-    }
+    if (navStackRef.current.length <= 1) return;
+    navStackRef.current.pop();
+    const prev = navStackRef.current[navStackRef.current.length - 1];
+    dispatch({ type: 'SET_SCREEN', payload: prev });
+    window.history.replaceState({}, '', `/${prev}`);
   }, []);
 
-  // Listen for browser back/forward navigation
+  // Initialize nav stack
   useEffect(() => {
-    const onPopState = () => {
-      const screen = window.location.pathname.replace(/^\//, '') || 'landing';
-      dispatch({ type: 'SET_SCREEN', payload: screen });
-    };
-    window.addEventListener('popstate', onPopState);
-    return () => window.removeEventListener('popstate', onPopState);
+    navStackRef.current = ['landing'];
+    window.history.replaceState({}, '', '/landing');
   }, []);
 
   const logout = useCallback(() => {

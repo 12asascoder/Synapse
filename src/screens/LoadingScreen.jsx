@@ -1,10 +1,9 @@
-/**
- * LoadingScreen — Clean white loading state
- */
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import NeuralSphere from '../components/NeuralSphere';
 import ThemeContainer from '../components/ThemeContainer';
 import { useApp } from '../context/AppContext';
+
+const API = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
 
 const LOADING_MESSAGES = [
   'Preparing your learning environment...',
@@ -15,13 +14,16 @@ const LOADING_MESSAGES = [
 ];
 
 export default function LoadingScreen() {
-  const { navigate } = useApp();
+  const { state, navigate } = useApp();
+  const { isAuthenticated, user, token } = state;
   const [msgIdx, setMsgIdx] = useState(0);
   const [progress, setProgress] = useState(0);
   const [fadeMsg, setFadeMsg] = useState(true);
+  const doneRef = useRef(false);
 
   useEffect(() => {
-    // Cycle messages
+    let dead = false;
+
     const msgInterval = setInterval(() => {
       setFadeMsg(false);
       setTimeout(() => {
@@ -30,20 +32,49 @@ export default function LoadingScreen() {
       }, 300);
     }, 1200);
 
-    // Progress bar
     const progressInterval = setInterval(() => {
       setProgress((p) => Math.min(p + Math.random() * 10, 100));
     }, 250);
 
-    // Auto-navigate after ~3.5s
-    const navTimer = setTimeout(() => {
-      navigate('landing');
-    }, 3500);
+    const run = async () => {
+      if (isAuthenticated && user && token) {
+        await new Promise((r) => setTimeout(r, 600));
+        if (!dead) {
+          doneRef.current = true;
+          navigate(user?.role === 'SUPER_ADMIN' ? 'admin-dashboard' : (state.selectedBootcamp ? 'dashboard' : 'hub'));
+          return;
+        }
+      }
+
+      try {
+        await fetch(`${API.replace('/api', '')}/health`, { signal: AbortSignal.timeout(3000) });
+      } catch {
+        // Backend not reachable — still let user through to landing
+      }
+
+      if (!dead) {
+        await new Promise((r) => setTimeout(r, 800));
+        if (!dead) {
+          doneRef.current = true;
+          navigate('landing');
+        }
+      }
+    };
+
+    run();
+
+    const navFallback = setTimeout(() => {
+      if (!doneRef.current) {
+        doneRef.current = true;
+        navigate(isAuthenticated ? 'hub' : 'landing');
+      }
+    }, 5000);
 
     return () => {
+      dead = true;
       clearInterval(msgInterval);
       clearInterval(progressInterval);
-      clearTimeout(navTimer);
+      clearTimeout(navFallback);
     };
   }, []);
 
@@ -60,14 +91,12 @@ export default function LoadingScreen() {
         zIndex: 1,
         animation: 'fadeIn 0.5s ease',
       }}>
-        {/* Neural sphere */}
         <div style={{ position: 'relative' }}>
           <div className="animate-float">
             <NeuralSphere size={200} speed={0.4} />
           </div>
         </div>
 
-        {/* Brand */}
         <div style={{ textAlign: 'center' }}>
           <div style={{
             fontFamily: 'var(--font-display)',
@@ -90,7 +119,6 @@ export default function LoadingScreen() {
           </div>
         </div>
 
-        {/* Progress */}
         <div style={{ width: '240px' }}>
           <div className="progress-bar" style={{ height: '3px', background: '#0A0A0A' }}>
             <div

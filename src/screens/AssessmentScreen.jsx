@@ -74,25 +74,54 @@ export default function AssessmentScreen() {
     }
   };
 
-  const handleFinalSubmit = (finalAnswers = answers) => {
+  const handleFinalSubmit = async (finalAnswers = answers) => {
     clearInterval(timerRef.current);
     const correct = finalAnswers.filter((a) => a.correct).length;
     const accuracy = Math.round((correct / questions.length) * 100);
     const avgConf = Math.round(finalAnswers.reduce((s, a) => s + a.confidence, 0) / (finalAnswers.length || 1));
 
-    dispatch({
-      type: 'COMPLETE_ASSESSMENT',
-      payload: {
-        day: currentDay,
-        scores: {
-          knowledge: accuracy,
-          accuracy,
-          confidence: avgConf,
-          retention: Math.round(accuracy * (avgConf / 100)),
-          velocity: Math.round(Math.min(100, accuracy * 0.85 + 15)),
-        },
-      },
-    });
+    const scores = {
+      knowledge: accuracy,
+      accuracy,
+      confidence: avgConf,
+      retention: Math.round(accuracy * (avgConf / 100)),
+      velocity: Math.round(Math.min(100, accuracy * 0.85 + 15)),
+    };
+
+    dispatch({ type: 'COMPLETE_ASSESSMENT', payload: { day: currentDay, scores } });
+
+    if (state.user?.id) {
+      try {
+        await fetch(`${API}/assessments/submit`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            userId: state.user.id,
+            day: currentDay,
+            bootcamp: state.selectedBootcamp?.name || 'General',
+            totalQuestions: questions.length,
+            correctAnswers: correct,
+            scores,
+          }),
+        });
+        await fetch(`${API}/progress/${state.user.id}/assessment`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            knowledge: accuracy,
+            accuracy,
+            confidence: avgConf,
+            retention: scores.retention,
+            velocity: scores.velocity,
+            technical: scores.accuracy,
+            problemSolving: scores.accuracy,
+            communication: avgConf,
+            consistency: scores.retention,
+          }),
+        });
+      } catch {}
+    }
+
     setSubmitted(true);
     setTimeout(() => navigate('lesson-analytics'), 1200);
   };
@@ -195,7 +224,7 @@ export default function AssessmentScreen() {
                 &nbsp;&nbsp;&nbsp;&nbsp;<span style={{ color: '#2563EB' }}>pass</span>
               </div>
               <button 
-                onClick={() => setSelected(true)}
+                onClick={() => navigate('milestone')}
                 className="btn btn-primary"
                 style={{ marginTop: '32px', padding: '14px 28px', fontSize: '14px', fontWeight: 600, borderRadius: '10px' }}
               >
@@ -220,7 +249,7 @@ export default function AssessmentScreen() {
                     This is your final assessment. You will engage in a live voice/text conversation where Vishesh will probe your architectural decisions, system design capabilities, and core ML fundamentals.
                   </div>
                   <button 
-                    onClick={() => setSelected(true)}
+                    onClick={() => navigate('interview')}
                     className="btn btn-primary"
                     style={{ padding: '16px 32px', fontSize: '15px', fontWeight: 600, borderRadius: '12px' }}
                   >

@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
 import AdminSidebar from '../components/AdminSidebar';
 
-const API = import.meta.env.VITE_API_URL || 'http://localhost:5001/api';
+import { useApp } from '../context/AppContext';
+const API = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
 
 const CARD = { background: 'rgba(10, 15, 25, 0.7)', border: '1px solid rgba(56, 189, 248, 0.15)', borderRadius: '16px' };
 const INPUT = { background: 'rgba(10, 15, 25, 0.7)', border: '1px solid rgba(56, 189, 248, 0.2)', borderRadius: '8px', padding: '10px 14px', color: 'white', fontFamily: 'var(--font-mono)', fontSize: '13px', outline: 'none', width: '100%' };
@@ -16,14 +17,11 @@ const TAB = (active) => ({
   borderBottom: active ? '2px solid var(--cyan-400)' : '2px solid transparent',
 });
 
-function getToken() {
-  try { const s = sessionStorage.getItem('synapse_session_v1'); return s ? (JSON.parse(s).token || '') : ''; }
-  catch { return ''; }
-}
-
 const emptyQ = { question: '', options: ['', '', '', ''], correctAnswer: 0, explanation: '', topic: 'general', difficulty: 'medium' };
 
 export default function AdminAssessments() {
+  const { state } = useApp();
+  const token = state.token;
   const [tab, setTab] = useState('questions');
   const [questions, setQuestions] = useState([]);
   const [submissions, setSubmissions] = useState([]);
@@ -33,7 +31,6 @@ export default function AdminAssessments() {
   const [form, setForm] = useState({ ...emptyQ });
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
-  const token = getToken();
   const headers = { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` };
 
   const fetchQuestions = () => {

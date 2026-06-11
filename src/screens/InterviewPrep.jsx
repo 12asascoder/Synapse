@@ -120,37 +120,72 @@ function StarterSetup({ onPlanCreated }) {
     }
   };
 
+  const inputStyle = {
+    width: '100%', padding: '12px 16px', borderRadius: '10px',
+    border: '1px solid var(--border-subtle)',
+    background: 'var(--bg-card)', color: 'var(--text-primary)',
+    fontSize: '14px', fontFamily: 'inherit', outline: 'none',
+  };
+
   return (
-    <div>
-      <h2 style={{ fontSize: 20, fontWeight: 600, color: '#f1f5f9', marginBottom: 16 }}>Start Interview Prep</h2>
-      <div style={{ marginBottom: 16 }}>
-        <label style={{ fontSize: 12, color: '#94a3b8', display: 'block', marginBottom: 6 }}>Target Role</label>
-        <input value={targetRole} onChange={e => setTargetRole(e.target.value)} placeholder="e.g. Senior ML Engineer" style={{ ...STYLES.textarea, minHeight: 40 }} />
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+      <div style={{ background: 'var(--bg-surface)', border: '1px solid var(--border-subtle)', borderRadius: '24px', padding: '32px', boxShadow: '0 8px 24px rgba(0,0,0,0.3)' }}>
+        <div style={{ fontSize: '18px', fontWeight: 800, fontFamily: 'var(--font-display)', marginBottom: '24px', color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: '12px' }}>
+          <span>🎯</span> Interview Setup
+        </div>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+          <div style={{ display: 'flex', gap: '16px' }}>
+            <div style={{ flex: 1 }}>
+              <label style={{ fontSize: '12px', color: 'var(--text-secondary)', fontWeight: 600, display: 'block', marginBottom: '6px', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Target Role</label>
+              <input value={targetRole} onChange={e => setTargetRole(e.target.value)} placeholder="e.g. Senior ML Engineer" style={inputStyle} />
+            </div>
+            <div style={{ flex: 1 }}>
+              <label style={{ fontSize: '12px', color: 'var(--text-secondary)', fontWeight: 600, display: 'block', marginBottom: '6px', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Target Company</label>
+              <input value={targetCompany} onChange={e => setTargetCompany(e.target.value)} placeholder="e.g. Google" style={inputStyle} />
+            </div>
+          </div>
+          <div>
+            <label style={{ fontSize: '12px', color: 'var(--text-secondary)', fontWeight: 600, display: 'block', marginBottom: '6px', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Job Description</label>
+            <textarea value={jdText} onChange={e => setJdText(e.target.value)} placeholder="Paste the job description here..." rows={8} style={{ ...inputStyle, resize: 'vertical', fontFamily: 'var(--font-mono)', fontSize: '13px' }} />
+          </div>
+          <div>
+            <label style={{ fontSize: '12px', color: 'var(--text-secondary)', fontWeight: 600, display: 'block', marginBottom: '6px', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Interview Deadline</label>
+            <input type="date" value={deadline} onChange={e => setDeadline(e.target.value)} style={{ ...inputStyle, maxWidth: 240 }} />
+          </div>
+        </div>
       </div>
-      <div style={{ marginBottom: 16 }}>
-        <label style={{ fontSize: 12, color: '#94a3b8', display: 'block', marginBottom: 6 }}>Target Company</label>
-        <input value={targetCompany} onChange={e => setTargetCompany(e.target.value)} placeholder="e.g. Google" style={{ ...STYLES.textarea, minHeight: 40 }} />
-      </div>
-      <div style={{ marginBottom: 16 }}>
-        <label style={{ fontSize: 12, color: '#94a3b8', display: 'block', marginBottom: 6 }}>Job Description</label>
-        <textarea value={jdText} onChange={e => setJdText(e.target.value)} placeholder="Paste the job description here..." style={STYLES.textarea} />
-      </div>
-      <div style={{ marginBottom: 20 }}>
-        <label style={{ fontSize: 12, color: '#94a3b8', display: 'block', marginBottom: 6 }}>Interview Deadline</label>
-        <input type="date" value={deadline} onChange={e => setDeadline(e.target.value)} style={{ ...STYLES.textarea, minHeight: 40, width: 240 }} />
-      </div>
-      {error && <p style={{ color: '#fca5a5', fontSize: 13, marginBottom: 12 }}>{error}</p>}
+
+      {error && <div style={{ padding: '12px 16px', background: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.2)', borderRadius: '12px', color: '#fca5a5', fontSize: '13px' }}>{error}</div>}
+
       {analysis && (
-        <div style={{ ...STYLES.statCard, marginBottom: 16 }}>
-          <p style={{ color: '#a5b4fc', fontWeight: 600, marginBottom: 8 }}>Gap Score: {analysis.data?.gapScore}/100</p>
-          <p style={{ color: '#94a3b8', fontSize: 13, margin: 0 }}>{analysis.data?.recommendedFocus?.join(', ')}</p>
+        <div style={{ background: 'var(--bg-surface)', border: '1px solid var(--border-subtle)', borderRadius: '24px', padding: '24px 32px', boxShadow: '0 8px 24px rgba(0,0,0,0.3)' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
+            <span style={{ fontSize: '14px', fontWeight: 700, color: 'var(--text-primary)' }}>JD Analysis</span>
+            <span style={{ padding: '4px 12px', borderRadius: '8px', background: analysis.data?.gapScore < 30 ? 'rgba(16,185,129,0.1)' : analysis.data?.gapScore < 60 ? 'rgba(245,158,11,0.1)' : 'rgba(239,68,68,0.1)', color: analysis.data?.gapScore < 30 ? '#6ee7b7' : analysis.data?.gapScore < 60 ? '#fcd34d' : '#fca5a5', fontWeight: 700, fontSize: '13px' }}>
+              Gap: {analysis.data?.gapScore}/100
+            </span>
+          </div>
+          <div style={{ fontSize: '13px', color: 'var(--text-secondary)', lineHeight: 1.6 }}>
+            {analysis.data?.recommendedFocus?.join(' &middot; ')}
+          </div>
+          <div style={{ marginTop: '12px', display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+            {(analysis.data?.matchedSkills || []).slice(0, 5).map(s => (
+              <span key={s.name} style={{ padding: '4px 10px', borderRadius: '6px', background: 'rgba(16,185,129,0.1)', color: '#6ee7b7', fontSize: '12px', fontWeight: 500 }}>✓ {s.name}</span>
+            ))}
+            {(analysis.data?.missingSkills || []).slice(0, 5).map(s => (
+              <span key={s.name} style={{ padding: '4px 10px', borderRadius: '6px', background: 'rgba(239,68,68,0.1)', color: '#fca5a5', fontSize: '12px', fontWeight: 500 }}>✗ {s.name}</span>
+            ))}
+          </div>
         </div>
       )}
-      <div style={{ display: 'flex', gap: 12 }}>
-        <button onClick={handleAnalyze} disabled={loading} style={{ ...STYLES.button, ...STYLES.buttonSecondary }}>
+
+      <div style={{ display: 'flex', gap: '12px', justifyContent: 'flex-end' }}>
+        <button onClick={handleAnalyze} disabled={loading}
+          style={{ padding: '12px 24px', borderRadius: '10px', border: '1px solid var(--border-subtle)', background: 'var(--bg-card)', color: 'var(--text-primary)', fontWeight: 600, fontSize: '14px', cursor: loading ? 'not-allowed' : 'pointer', opacity: loading ? 0.5 : 1 }}>
           {loading ? 'Analyzing...' : 'Analyze JD'}
         </button>
-        <button onClick={handleCreate} disabled={loading} style={{ ...STYLES.button, ...STYLES.buttonPrimary }}>
+        <button onClick={handleCreate} disabled={loading}
+          style={{ padding: '12px 24px', borderRadius: '10px', border: 'none', background: 'var(--border-active)', color: '#010203', fontWeight: 700, fontSize: '14px', cursor: loading ? 'not-allowed' : 'pointer', opacity: loading ? 0.5 : 1 }}>
           {loading ? 'Creating...' : 'Create Prep Plan'}
         </button>
       </div>

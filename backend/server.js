@@ -28,7 +28,9 @@ app.get('/health', (req, res) => {
   res.json({ status: 'Synapse Backend Online' });
 });
 
-db.sequelize.sync({ alter: true }).then(() => {
+db.sequelize.query('PRAGMA foreign_keys = OFF').then(() => {
+  return db.sequelize.sync({ alter: true });
+}).then(() => {
   const dialect = process.env.DB_DIALECT || 'sqlite';
   console.log(`[DB] ${dialect.toUpperCase()} database synced successfully.`);
   const http = require('http');

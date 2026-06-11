@@ -330,7 +330,7 @@ export default function LearningSession() {
           gap: '0', flexShrink: 0, position: 'relative', zIndex: 10,
         }}>
           <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: '18px', marginRight: '40px', color: '#000' }}>
-            Synapse
+            <span style={{ cursor: 'pointer' }} onClick={() => navigate('dashboard')}>Synapse</span>
           </div>
           {['Curriculum', 'Network', 'Simulations'].map((item, i) => (
             <button key={item} style={{
@@ -585,7 +585,16 @@ export default function LearningSession() {
               </div>
 
               <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                {loadingCurriculum && <div style={{ color: '#A59F97', fontSize: '13px', textAlign: 'center' }}>Loading curriculum...</div>}
+                {loadingCurriculum && <div style={{ color: '#A59F97', fontSize: '13px', textAlign: 'center', padding: '20px' }}>Loading curriculum...</div>}
+                
+                {!loadingCurriculum && curriculum.length === 0 && (
+                  <div style={{ padding: '24px', textAlign: 'center', color: '#A59F97' }}>
+                    <div style={{ fontSize: '32px', marginBottom: '12px' }}>📚</div>
+                    <div style={{ fontSize: '14px', fontWeight: 600, color: '#44403B', marginBottom: '8px' }}>No active bootcamp</div>
+                    <div style={{ fontSize: '12px', lineHeight: 1.5, marginBottom: '16px' }}>Select a bootcamp from the Dashboard to see your curriculum here.</div>
+                    <button onClick={() => navigate('dashboard')} style={{ padding: '10px 20px', background: '#000', color: '#fff', border: 'none', borderRadius: '8px', fontSize: '13px', cursor: 'pointer', fontWeight: 600 }}>Go to Dashboard</button>
+                  </div>
+                )}
                 
                 {curriculum.map((item) => {
                   const isActive = item.status === 'active';

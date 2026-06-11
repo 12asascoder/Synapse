@@ -92,7 +92,7 @@ export default function Dashboard() {
             <div style={{ fontWeight: 800, fontSize: '18px', color: 'var(--text-primary)', letterSpacing: '0.05em' }}>SYNAPSE</div>
             <div style={{ display: 'flex', gap: '8px' }}>
               {['Curriculum', 'Network', 'Simulations'].map((item, i) => (
-                <button key={item} style={{
+                <button key={item} onClick={() => { if (i === 0) navigate('hub'); }} style={{
                   background: 'rgba(255,255,255,0.07)', border: '1px solid rgba(255,255,255,0.2)', color: '#f3f2ee', cursor: 'pointer',
                   fontSize: '14px', fontWeight: i === 0 ? 700 : 500,
                   padding: '8px 16px', borderRadius: '8px',

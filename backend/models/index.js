@@ -13,6 +13,7 @@ if (dialect === 'sqlite') {
     dialect: 'sqlite',
     storage: storagePath,
     logging: false,
+    dialectOptions: { foreignKeys: false },
   });
 } else {
   // PostgreSQL via DATABASE_URL (e.g. Supabase)

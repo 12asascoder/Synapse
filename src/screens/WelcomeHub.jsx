@@ -119,8 +119,6 @@ export default function WelcomeHub() {
             <span style={{ fontWeight: 800, fontSize: '16px', color: 'var(--text-primary)', letterSpacing: '0.05em' }}>SYNAPSE</span>
           </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '12px', fontWeight: 500 }}>
-            <button onClick={() => navigate('interview-prep')} style={{ padding: '6px 14px', borderRadius: '8px', border: '1px solid rgba(207,255,0,0.2)', background: 'transparent', color: '#CFFF00', cursor: 'pointer', fontSize: '12px', fontWeight: 600 }}>Interview Prep</button>
-            <button onClick={() => navigate('curriculum-planner')} style={{ padding: '6px 14px', borderRadius: '8px', border: '1px solid rgba(207,255,0,0.2)', background: 'transparent', color: '#CFFF00', cursor: 'pointer', fontSize: '12px', fontWeight: 600 }}>Curriculum</button>
             <div style={{ width: 8, height: 8, borderRadius: '50%', background: 'var(--border-active)' }} />
             System Ready
           </div>
@@ -131,7 +129,7 @@ export default function WelcomeHub() {
           flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center',
           paddingTop: '64px', minHeight: '100vh',
         }}>
-          <div style={{ maxWidth: '640px', textAlign: 'center', padding: '40px' }}>
+          <div style={{ maxWidth: '800px', textAlign: 'center', padding: '40px' }}>
             <div style={{ animation: 'fadeInUp 0.5s ease both' }}>
               <div style={{
                 width: 64, height: 64, borderRadius: '16px', background: 'var(--border-active)', color: '#010203',
@@ -141,38 +139,60 @@ export default function WelcomeHub() {
                 ✦
               </div>
               <h1 style={{
-                fontSize: '48px',
+                fontSize: '44px',
                 fontFamily: 'var(--font-display)',
                 fontWeight: 800,
                 lineHeight: 1.15,
-                marginBottom: '24px',
+                marginBottom: '12px',
                 letterSpacing: '-0.02em',
                 color: 'var(--text-primary)'
               }}>
-                Begin Your<br />
-                Learning Journey.
+                Choose Your Path.
               </h1>
-
               <p style={{
                 fontSize: '16px', color: 'var(--text-secondary)', lineHeight: 1.6,
-                marginBottom: '48px', margin: '0 auto 48px',
+                marginBottom: '48px',
               }}>
-                Your workspace is ready. Select a bootcamp path to configure your curriculum and begin.
+                Pick a bootcamp curriculum or prepare for an interview.
               </p>
 
-              <button
-                className="btn btn-primary btn-lg"
-                onClick={() => setPhase('catalog')}
-                style={{
-                  gap: '8px', fontSize: '15px', padding: '16px 32px',
-                  borderRadius: '12px', minWidth: '240px',
-                  background: 'var(--border-active)', color: '#010203',
-                  border: 'none', fontWeight: 700, cursor: 'pointer'
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '24px', maxWidth: '640px', margin: '0 auto' }}>
+                <button onClick={() => setPhase('catalog')} style={{
+                  padding: '36px 24px', borderRadius: '16px', border: '1px solid var(--border-subtle)',
+                  background: 'var(--bg-card)', cursor: 'pointer', textAlign: 'center',
+                  transition: 'all 0.2s', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '16px',
                 }}
-                id="hub-continue-btn"
-              >
-                Browse Catalog →
-              </button>
+                  onMouseEnter={e => { e.currentTarget.style.borderColor = 'var(--border-active)'; e.currentTarget.style.transform = 'translateY(-4px)'; e.currentTarget.style.boxShadow = '0 12px 24px rgba(207,255,0,0.05)'; }}
+                  onMouseLeave={e => { e.currentTarget.style.borderColor = 'var(--border-subtle)'; e.currentTarget.style.transform = 'none'; e.currentTarget.style.boxShadow = 'none'; }}
+                >
+                  <div style={{ fontSize: '40px' }}>📚</div>
+                  <div style={{ fontWeight: 700, fontSize: '18px', color: 'var(--text-primary)' }}>Bootcamp Curriculum</div>
+                  <div style={{ fontSize: '14px', color: 'var(--text-secondary)', lineHeight: 1.5 }}>
+                    Follow a structured 30-day learning path with lessons, exercises, and assessments.
+                  </div>
+                  <div style={{ marginTop: '8px', padding: '8px 20px', borderRadius: '8px', background: 'var(--border-active)', color: '#010203', fontWeight: 700, fontSize: '14px' }}>
+                    Browse Bootcamps →
+                  </div>
+                </button>
+
+                <button onClick={() => navigate('interview-prep')} style={{
+                  padding: '36px 24px', borderRadius: '16px', border: '1px solid var(--border-subtle)',
+                  background: 'var(--bg-card)', cursor: 'pointer', textAlign: 'center',
+                  transition: 'all 0.2s', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '16px',
+                }}
+                  onMouseEnter={e => { e.currentTarget.style.borderColor = 'var(--border-active)'; e.currentTarget.style.transform = 'translateY(-4px)'; e.currentTarget.style.boxShadow = '0 12px 24px rgba(207,255,0,0.05)'; }}
+                  onMouseLeave={e => { e.currentTarget.style.borderColor = 'var(--border-subtle)'; e.currentTarget.style.transform = 'none'; e.currentTarget.style.boxShadow = 'none'; }}
+                >
+                  <div style={{ fontSize: '40px' }}>🎯</div>
+                  <div style={{ fontWeight: 700, fontSize: '18px', color: 'var(--text-primary)' }}>Interview Preparation</div>
+                  <div style={{ fontSize: '14px', color: 'var(--text-secondary)', lineHeight: 1.5 }}>
+                    Submit a job description, practice STAR questions, and get AI-powered feedback.
+                  </div>
+                  <div style={{ marginTop: '8px', padding: '8px 20px', borderRadius: '8px', background: 'var(--border-active)', color: '#010203', fontWeight: 700, fontSize: '14px' }}>
+                    Start Prep →
+                  </div>
+                </button>
+              </div>
             </div>
           </div>
         </div>
@@ -196,8 +216,6 @@ export default function WelcomeHub() {
           <span style={{ fontWeight: 800, fontSize: '16px', color: 'var(--text-primary)', letterSpacing: '0.05em' }}>SYNAPSE</span>
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '12px', fontWeight: 500 }}>
-          <button onClick={() => navigate('interview-prep')} style={{ padding: '6px 14px', borderRadius: '8px', border: '1px solid rgba(207,255,0,0.2)', background: 'transparent', color: '#CFFF00', cursor: 'pointer', fontSize: '12px', fontWeight: 600 }}>Interview Prep</button>
-          <button onClick={() => navigate('curriculum-planner')} style={{ padding: '6px 14px', borderRadius: '8px', border: '1px solid rgba(207,255,0,0.2)', background: 'transparent', color: '#CFFF00', cursor: 'pointer', fontSize: '12px', fontWeight: 600 }}>Curriculum</button>
           <div style={{ width: 8, height: 8, borderRadius: '50%', background: 'var(--border-active)' }} /> System Ready
         </div>
       </nav>

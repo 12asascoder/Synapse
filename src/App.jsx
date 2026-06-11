@@ -19,7 +19,6 @@ import ProctoringSetup from './screens/ProctoringSetup';
 import MilestoneInterview from './screens/MilestoneInterview';
 import ProfileSetup from './screens/ProfileSetup';
 import InterviewPrep from './screens/InterviewPrep';
-import CurriculumPlanner from './screens/CurriculumPlanner';
 
 // Admin Screens
 import AdminDashboard from './screens/AdminDashboard';
@@ -39,7 +38,7 @@ function AppRouter() {
 
   const isAdmin = user?.role === 'SUPER_ADMIN';
   const isUser = user?.role === 'USER';
-  const userOnlyScreens = ['profile-setup', 'hub', 'bootcamp-init', 'dashboard', 'lesson', 'assessment', 'lesson-analytics', 'skill-passport', 'milestone', 'interview', 'interview-prep', 'curriculum-planner', 'analytics', 'community', 'settings'];
+  const userOnlyScreens = ['profile-setup', 'hub', 'bootcamp-init', 'dashboard', 'lesson', 'assessment', 'lesson-analytics', 'skill-passport', 'milestone', 'interview', 'interview-prep', 'analytics', 'community', 'settings'];
 
   useEffect(() => {
     if (isAdmin && userOnlyScreens.includes(currentScreen)) {
@@ -68,7 +67,6 @@ function AppRouter() {
     case 'milestone': return <ProctoringSetup />;
     case 'interview': return <MilestoneInterview />;
     case 'interview-prep': return <InterviewPrep />;
-    case 'curriculum-planner': return <CurriculumPlanner />;
     case 'analytics': return <AnalyticsCenter />;
     case 'community': return <Community />;
     case 'settings': return <Settings />;

@@ -19,6 +19,7 @@ app.use('/api/achievements', require('./routes/achievements'));
 app.use('/api/community', require('./routes/community'));
 app.use('/api/users', require('./routes/users'));
 app.use('/api/analytics', require('./routes/analytics'));
+app.use('/api/admin', require('./routes/admin'));
 
 app.get('/health', (req, res) => {
   res.json({ status: 'Synapse Backend Online' });

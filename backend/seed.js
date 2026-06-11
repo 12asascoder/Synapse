@@ -1,4 +1,4 @@
-require('dotenv').config({ path: require('path').join(__dirname, '..', '.env') });
+require('dotenv').config({ path: require('path').join(__dirname, '.env') });
 const bcrypt = require('bcryptjs');
 const db = require('./models');
 
@@ -144,7 +144,7 @@ const achievements = [
 
 async function seed() {
   try {
-    await db.sequelize.sync({ alter: true });
+    await db.sequelize.sync({ force: true });
     console.log('[Seed] Database synced.');
 
     const existingBootcamps = await db.Bootcamp.count();

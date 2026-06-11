@@ -21,7 +21,7 @@ router.post('/register', async (req, res) => {
     res.json({
       message: 'User created successfully',
       token,
-      user: { id: user.id, name: user.name, email: user.email, role: user.role, tier: user.tier },
+      user: { id: user.id, name: user.name, email: user.email, role: user.role, tier: user.tier, onboardingComplete: user.onboardingComplete },
     });
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -46,7 +46,7 @@ router.post('/login', async (req, res) => {
     res.json({
       message: 'Login successful',
       token,
-      user: { id: user.id, name: user.name, email: user.email, role: user.role, tier: user.tier },
+      user: { id: user.id, name: user.name, email: user.email, role: user.role, tier: user.tier, onboardingComplete: user.onboardingComplete },
     });
   } catch (error) {
     res.status(500).json({ error: error.message });

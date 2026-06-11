@@ -21,6 +21,7 @@ app.use('/api/users', require('./routes/users'));
 app.use('/api/analytics', require('./routes/analytics'));
 app.use('/api/admin', require('./routes/admin'));
 app.use('/api/passport', require('./routes/passport'));
+app.use('/api/profile', require('./routes/profile'));
 
 app.get('/health', (req, res) => {
   res.json({ status: 'Synapse Backend Online' });

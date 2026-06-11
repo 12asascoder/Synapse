@@ -48,9 +48,13 @@ db.Achievement = require('./Achievement')(sequelize, DataTypes);
 db.UserAchievement = require('./UserAchievement')(sequelize, DataTypes);
 db.CommunityDiscussion = require('./CommunityDiscussion')(sequelize, DataTypes);
 db.ChatMessage = require('./ChatMessage')(sequelize, DataTypes);
+db.UserProfile = require('./UserProfile')(sequelize, DataTypes);
 
 db.User.hasOne(db.Progress, { foreignKey: 'userId' });
 db.Progress.belongsTo(db.User, { foreignKey: 'userId' });
+
+db.User.hasOne(db.UserProfile, { foreignKey: 'userId' });
+db.UserProfile.belongsTo(db.User, { foreignKey: 'userId' });
 
 db.Bootcamp.hasMany(db.CurriculumDay, { foreignKey: 'bootcampId' });
 db.CurriculumDay.belongsTo(db.Bootcamp, { foreignKey: 'bootcampId' });

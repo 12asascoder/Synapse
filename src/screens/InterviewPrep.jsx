@@ -767,7 +767,11 @@ export default function InterviewPrep() {
               {prep.mode && ` \u00B7 ${prep.mode === 'crash' ? '\uD83D\uDE80 Crash Mode' : '\uD83D\uDCC5 Structured Mode'}`}
             </p>
           </div>
-          <StatusBadge status={prep.status} />
+          <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+            <button onClick={() => navigate('hub')} style={{ ...STYLES.button, ...STYLES.buttonSecondary, fontSize: 12, padding: '6px 14px' }}>Hub</button>
+            <button onClick={() => navigate('dashboard')} style={{ ...STYLES.button, ...STYLES.buttonSecondary, fontSize: 12, padding: '6px 14px' }}>Dashboard</button>
+            <StatusBadge status={prep.status} />
+          </div>
         </div>
 
         <div style={STYLES.statsRow}>

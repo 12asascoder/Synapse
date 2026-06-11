@@ -45,7 +45,7 @@ const difficultyColors = {
 };
 
 export default function CurriculumPlanner() {
-  const { state } = useApp();
+  const { state, navigate } = useApp();
   const [plan, setPlan] = useState(null);
   const [loading, setLoading] = useState(true);
   const [generating, setGenerating] = useState(false);
@@ -162,7 +162,11 @@ export default function CurriculumPlanner() {
               <h1 style={STYLES.title}>Learning Path</h1>
               <p style={STYLES.subtitle}>{plan.targetRole || 'Curriculum'} &middot; Target: {plan.targetMastery || 92}% mastery</p>
             </div>
-            <span style={{ ...STYLES.badge, background: 'rgba(16,185,129,0.1)', color: '#6ee7b7' }}>{plan.status}</span>
+            <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+              <button onClick={() => navigate('hub')} style={{ ...STYLES.button, ...STYLES.buttonSecondary, fontSize: 12, padding: '6px 14px' }}>Hub</button>
+              <button onClick={() => navigate('dashboard')} style={{ ...STYLES.button, ...STYLES.buttonSecondary, fontSize: 12, padding: '6px 14px' }}>Dashboard</button>
+              <span style={{ ...STYLES.badge, background: 'rgba(16,185,129,0.1)', color: '#6ee7b7' }}>{plan.status}</span>
+            </div>
           </div>
         </div>
 

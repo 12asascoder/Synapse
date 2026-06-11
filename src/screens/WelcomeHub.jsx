@@ -118,7 +118,9 @@ export default function WelcomeHub() {
             <div style={{ width: 28, height: 28, background: 'var(--border-active)', borderRadius: '6px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '14px', color: '#010203', fontWeight: 800 }}>✦</div>
             <span style={{ fontWeight: 800, fontSize: '16px', color: 'var(--text-primary)', letterSpacing: '0.05em' }}>SYNAPSE</span>
           </div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '12px', color: 'var(--text-secondary)', fontWeight: 500 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '12px', fontWeight: 500 }}>
+            <button onClick={() => navigate('interview-prep')} style={{ padding: '6px 14px', borderRadius: '8px', border: '1px solid rgba(207,255,0,0.2)', background: 'transparent', color: '#CFFF00', cursor: 'pointer', fontSize: '12px', fontWeight: 600 }}>Interview Prep</button>
+            <button onClick={() => navigate('curriculum-planner')} style={{ padding: '6px 14px', borderRadius: '8px', border: '1px solid rgba(207,255,0,0.2)', background: 'transparent', color: '#CFFF00', cursor: 'pointer', fontSize: '12px', fontWeight: 600 }}>Curriculum</button>
             <div style={{ width: 8, height: 8, borderRadius: '50%', background: 'var(--border-active)' }} />
             System Ready
           </div>
@@ -193,7 +195,9 @@ export default function WelcomeHub() {
           <div style={{ width: 28, height: 28, background: 'var(--border-active)', borderRadius: '6px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '14px', color: '#010203', fontWeight: 800 }}>✦</div>
           <span style={{ fontWeight: 800, fontSize: '16px', color: 'var(--text-primary)', letterSpacing: '0.05em' }}>SYNAPSE</span>
         </div>
-        <div style={{ display: 'flex', gap: '8px', alignItems: 'center', fontSize: '12px', color: 'var(--text-secondary)', fontWeight: 500 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '12px', fontWeight: 500 }}>
+          <button onClick={() => navigate('interview-prep')} style={{ padding: '6px 14px', borderRadius: '8px', border: '1px solid rgba(207,255,0,0.2)', background: 'transparent', color: '#CFFF00', cursor: 'pointer', fontSize: '12px', fontWeight: 600 }}>Interview Prep</button>
+          <button onClick={() => navigate('curriculum-planner')} style={{ padding: '6px 14px', borderRadius: '8px', border: '1px solid rgba(207,255,0,0.2)', background: 'transparent', color: '#CFFF00', cursor: 'pointer', fontSize: '12px', fontWeight: 600 }}>Curriculum</button>
           <div style={{ width: 8, height: 8, borderRadius: '50%', background: 'var(--border-active)' }} /> System Ready
         </div>
       </nav>

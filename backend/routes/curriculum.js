@@ -159,6 +159,105 @@ router.get('/:userId', async (req, res) => {
   }
 });
 
+router.post('/remedial', authenticate, async (req, res) => {
+  try {
+    const { planId, moduleId, score } = req.body;
+    const plan = await CurriculumPlan.findOne({ where: { id: planId, userId: req.user.id } });
+    if (!plan) return res.status(404).json({ error: 'Curriculum plan not found' });
+
+    const mod = (plan.modules || []).find(m => m.id === moduleId);
+    if (!mod) return res.status(404).json({ error: 'Module not found' });
+
+    const needsRemedial = score < (mod.remedialTrigger || 80);
+    if (!needsRemedial) {
+      return res.json({ needsRemedial: false, message: 'Score meets threshold. No remedial needed.' });
+    }
+
+    const remedialContent = {
+      moduleId: mod.id,
+      moduleTitle: mod.title,
+      triggeredAt: new Date().toISOString(),
+      score,
+      threshold: mod.remedialTrigger || 80,
+      gap: (mod.remedialTrigger || 80) - score,
+      recommendedActions: [
+        `Review ${mod.title} fundamentals — focus on weak areas identified in your assessment`,
+        `Complete ${Math.min(3, mod.exercises || 1)} additional practice exercises`,
+        `Re-attempt the module assessment after practice`,
+      ],
+      resources: (mod.competencies || []).map(c => ({
+        topic: c,
+        type: 'review',
+        description: `Review core concepts in ${c}`,
+        estimatedTime: '30-45 minutes',
+      })),
+      reinforcementPlan: {
+        extraDays: Math.ceil(mod.days / 3),
+        exercises: Math.min(3, mod.exercises || 1),
+        reassessmentRequired: true,
+      },
+    };
+
+    const modules = [...(plan.modules || [])];
+    const idx = modules.findIndex(m => m.id === moduleId);
+    if (idx >= 0) {
+      modules[idx] = { ...modules[idx], remedial: remedialContent };
+      await plan.update({ modules });
+    }
+
+    res.json({ needsRemedial: true, remedial: remedialContent });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+router.post('/adjust-difficulty', authenticate, async (req, res) => {
+  try {
+    const { planId, recentScores } = req.body;
+    const plan = await CurriculumPlan.findOne({ where: { id: planId, userId: req.user.id } });
+    if (!plan) return res.status(404).json({ error: 'Curriculum plan not found' });
+
+    const scores = recentScores || [];
+    const avgRecent = scores.length > 0 ? scores.reduce((a, b) => a + b, 0) / scores.length : 0;
+
+    const adjustments = [];
+    const modules = [...(plan.modules || [])];
+
+    modules.forEach((mod, i) => {
+      const adjustment = { moduleId: mod.id, title: mod.title };
+      if (avgRecent >= 92) {
+        adjustment.difficulty = 'advanced';
+        adjustment.change = 'accelerated';
+        adjustment.days = Math.max(2, Math.floor((mod.days || 5) * 0.75));
+        adjustment.note = 'Performing well — accelerated pace with advanced material';
+      } else if (avgRecent >= 80) {
+        adjustment.difficulty = 'standard';
+        adjustment.change = 'maintained';
+        adjustment.days = mod.days;
+        adjustment.note = 'On track — maintain current pace';
+      } else if (avgRecent >= 60) {
+        adjustment.difficulty = 'supported';
+        adjustment.change = 'extended';
+        adjustment.days = Math.floor((mod.days || 5) * 1.25);
+        adjustment.note = 'Needs reinforcement — extended time with additional practice';
+      } else {
+        adjustment.difficulty = 'foundational';
+        adjustment.change = 'slowed';
+        adjustment.days = Math.floor((mod.days || 5) * 1.5);
+        adjustment.note = 'Foundational gaps detected — slower pace with core concepts';
+      }
+      adjustments.push(adjustment);
+      modules[i] = { ...modules[i], ...adjustment };
+    });
+
+    await plan.update({ modules });
+
+    res.json({ adjustments, totalDays: modules.reduce((a, m) => a + (m.days || 5), 0) });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
 router.get('/', async (req, res) => {
   try {
     const days = await CurriculumDay.findAll({

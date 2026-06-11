@@ -87,15 +87,36 @@ import AnimatedBackground from './components/AnimatedBackground';
 
 // Screens that manage their own backgrounds
 const DARK_SCREENS = ['landing', 'loading', 'auth'];
+const NO_BACK_SCREENS = ['landing', 'loading', 'auth'];
 
 function AppWithBackground() {
-  const { state } = useApp();
+  const { state, goBack } = useApp();
   const showBg = !DARK_SCREENS.includes(state.currentScreen);
+  const showBack = !NO_BACK_SCREENS.includes(state.currentScreen);
   return (
     <>
       {showBg && <AnimatedBackground />}
       <div style={{ position: 'relative', zIndex: 1 }}>
         <AppRouter />
+        {showBack && (
+          <button
+            onClick={goBack}
+            aria-label="Go back"
+            style={{
+              position: 'fixed', top: '16px', left: '16px', zIndex: 9999,
+              width: 40, height: 40, borderRadius: '10px', border: '1px solid rgba(139,92,246,0.3)',
+              background: 'rgba(14,14,22,0.85)', backdropFilter: 'blur(8px)',
+              color: 'var(--violet-300)', fontSize: '18px', cursor: 'pointer',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              boxShadow: '0 4px 16px rgba(0,0,0,0.4)',
+              transition: 'all 0.15s ease',
+            }}
+            onMouseEnter={(e) => { e.currentTarget.style.borderColor = 'rgba(139,92,246,0.6)'; e.currentTarget.style.background = 'rgba(139,92,246,0.15)'; }}
+            onMouseLeave={(e) => { e.currentTarget.style.borderColor = 'rgba(139,92,246,0.3)'; e.currentTarget.style.background = 'rgba(14,14,22,0.85)'; }}
+          >
+            ←
+          </button>
+        )}
       </div>
     </>
   );

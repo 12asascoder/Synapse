@@ -10,12 +10,6 @@ import {
   PolarGrid, PolarAngleAxis, Radar
 } from 'recharts';
 
-const monthlyData = Array.from({ length: 14 }, (_, i) => ({
-  day: i + 1,
-  growth: 20 + i * 3.5 + Math.sin(i) * 4,
-  consistency: 60 + i * 1.8,
-}));
-
 const CustomTooltip = ({ active, payload, label }) => {
   if (!active || !payload?.length) return null;
   return (
@@ -61,12 +55,19 @@ export default function AnalyticsCenter() {
     { skill: 'Consistency', value: scores.consistency || 10 },
   ];
 
-  // Map progressHistory to the format expected by the LineChart
-  const weeklyData = (progressHistory?.length > 0 ? progressHistory : [{ day: 1, score: 0 }]).map(p => ({
+  const chartHistory = progressHistory?.length > 0 ? progressHistory : [{ day: 1, score: 0 }];
+
+  const weeklyData = chartHistory.map(p => ({
     day: `Day ${p.day}`,
     score: p.score,
-    velocity: scores.velocity || 0, // Using static velocity for now
-    retention: scores.retention || 0, // Using static retention for now
+    velocity: scores.velocity || 0,
+    retention: scores.retention || 0,
+  }));
+
+  const growthData = chartHistory.map(p => ({
+    day: p.day,
+    growth: p.score,
+    consistency: scores.consistency || 0,
   }));
 
   return (
@@ -111,9 +112,9 @@ export default function AnalyticsCenter() {
 
           {/* Top metrics */}
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '24px', marginBottom: '32px' }}>
-            <MetricCard label="GROWTH SCORE" value={`${state.growthScore || 72}%`} color="#000" delta={8} />
-            <MetricCard label="LEARNING VELOCITY" value={`${scores.velocity || 78}`} sub="pts/day" color="#44403B" delta={5} />
-            <MetricCard label="CONSISTENCY" value={`${scores.accuracy || 90}%`} color="#000" delta={3} />
+            <MetricCard label="GROWTH SCORE" value={`${state.growthScore || 0}%`} color="#000" delta={state.growthScore > 0 ? 8 : 0} />
+            <MetricCard label="LEARNING VELOCITY" value={`${scores.velocity || 0}`} sub="pts/day" color="#44403B" delta={scores.velocity > 0 ? 5 : 0} />
+            <MetricCard label="CONSISTENCY" value={`${scores.consistency || scores.accuracy || 0}%`} color="#000" delta={scores.consistency > 0 ? 3 : 0} />
             <MetricCard label="STREAK" value={`${streak}🔥`} sub="days active" color="#000" />
           </div>
 
@@ -148,7 +149,7 @@ export default function AnalyticsCenter() {
               <div style={{ fontWeight: 700, fontSize: '20px', fontFamily: 'var(--font-display)', marginBottom: '8px', color: '#000' }}>30-Day Growth Arc</div>
               <div style={{ fontSize: '13px', color: '#6B6B6B', marginBottom: '32px' }}>Knowledge accumulation over time</div>
               <ResponsiveContainer width="100%" height={240}>
-                <AreaChart data={monthlyData}>
+                <AreaChart data={growthData}>
                   <defs>
                     <linearGradient id="growthGrad" x1="0" y1="0" x2="0" y2="1">
                       <stop offset="0%" stopColor="#000" stopOpacity={0.1} />

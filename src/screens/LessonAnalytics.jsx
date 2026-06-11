@@ -128,10 +128,10 @@ export default function LessonAnalytics() {
 
             <div>
               <div style={{ fontSize: '24px', fontWeight: 700, color: '#000', marginBottom: '8px' }}>
-                Architect Tier II
+                {state.totalPoints > 2000 ? 'Architect' : state.totalPoints > 500 ? 'Apprentice' : 'Novice'}
               </div>
               <div style={{ fontSize: '14px', color: '#000', fontWeight: 600, padding: '6px 16px', background: '#F5F3F1', borderRadius: '20px', display: 'inline-block' }}>
-                +500 Points
+                {state.totalPoints ? `+${state.totalPoints} Points` : 'No points yet'}
               </div>
             </div>
 

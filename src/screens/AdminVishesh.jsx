@@ -1,22 +1,19 @@
 import { useState } from 'react';
 import AdminSidebar from '../components/AdminSidebar';
 
-const API = import.meta.env.VITE_API_URL || 'http://localhost:5001/api';
+import { useApp } from '../context/AppContext';
+const API = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
 
 const CARD = { background: 'rgba(10, 15, 25, 0.7)', border: '1px solid rgba(56, 189, 248, 0.15)', borderRadius: '16px' };
 const INPUT = { background: 'rgba(10, 15, 25, 0.7)', border: '1px solid rgba(56, 189, 248, 0.2)', borderRadius: '8px', padding: '10px 14px', color: 'white', fontFamily: 'var(--font-mono)', fontSize: '13px', outline: 'none', width: '100%' };
 
-function getToken() {
-  try { const s = sessionStorage.getItem('synapse_session_v1'); return s ? (JSON.parse(s).token || '') : ''; }
-  catch { return ''; }
-}
-
 export default function AdminVishesh() {
+  const { state } = useApp();
+  const token = state.token;
   const [testPrompt, setTestPrompt] = useState('');
   const [testResponse, setTestResponse] = useState('');
   const [testing, setTesting] = useState(false);
   const [testError, setTestError] = useState('');
-  const token = getToken();
 
   const handleTest = async () => {
     if (!testPrompt.trim()) return;

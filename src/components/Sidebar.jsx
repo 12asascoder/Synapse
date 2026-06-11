@@ -135,7 +135,7 @@ export default function Sidebar() {
           ].map((m) => (
             <button
               key={m.label}
-              onClick={() => navigate(m.day === 15 ? 'milestone' : 'results')}
+              onClick={() => navigate(m.day === 15 ? 'milestone' : 'interview')}
               style={{
                 width: '100%', display: 'flex', alignItems: 'center', gap: '10px',
                 padding: '8px 12px', borderRadius: '8px', border: 'none',

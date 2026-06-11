@@ -7,6 +7,8 @@ import { useState, useRef, useEffect, useCallback } from 'react';
 import { useApp } from '../context/AppContext';
 import { streamVisheshResponse } from '../lib/vishesh';
 
+const API = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+
 function AnimatedWaveform({ active }) {
   const heights = [0.4, 0.7, 1, 0.6, 0.9, 0.5, 0.8, 1, 0.7, 0.5, 0.9, 0.6, 0.8, 0.4, 0.7, 1, 0.6, 0.5];
   return (
@@ -100,22 +102,48 @@ export default function MilestoneInterview() {
     });
   }, [input, isStreaming, messages]);
 
-  const finishInterview = () => {
+  const finishInterview = async () => {
     const totalMessages = messages.filter((m) => m.role === 'user').length;
     const qualityScore = Math.min(100, 60 + totalMessages * 5);
-    dispatch({
-      type: 'COMPLETE_ASSESSMENT',
-      payload: {
-        day: currentDay,
-        scores: {
-          knowledge: qualityScore,
-          accuracy: qualityScore - 5,
-          confidence: qualityScore - 3,
-          communication: Math.min(100, qualityScore + 2),
-          problemSolving: qualityScore - 2,
-        },
-      },
-    });
+    const scores = {
+      knowledge: qualityScore,
+      accuracy: qualityScore - 5,
+      confidence: qualityScore - 3,
+      communication: Math.min(100, qualityScore + 2),
+      problemSolving: qualityScore - 2,
+    };
+
+    dispatch({ type: 'COMPLETE_ASSESSMENT', payload: { day: currentDay, scores } });
+
+    if (state.user?.id) {
+      try {
+        await fetch(`${API}/assessments/submit`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            userId: state.user.id,
+            day: currentDay,
+            bootcamp: 'General',
+            totalQuestions: totalMessages,
+            correctAnswers: Math.round(totalMessages * 0.8),
+            scores,
+          }),
+        });
+        await fetch(`${API}/progress/${state.user.id}/assessment`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            knowledge: scores.knowledge,
+            accuracy: scores.accuracy,
+            confidence: scores.confidence,
+            communication: scores.communication,
+            problemSolving: scores.problemSolving,
+            consistency: qualityScore,
+          }),
+        });
+      } catch {}
+    }
+
     navigate('lesson-analytics');
   };
 

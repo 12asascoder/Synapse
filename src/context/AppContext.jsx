@@ -11,6 +11,7 @@ const STORAGE_KEY = 'synapse_session_v1';
 const initialState = {
   // Auth
   user: null,
+  token: null,
   isAuthenticated: false,
   // Bootcamp
   selectedBootcamp: null,
@@ -44,7 +45,9 @@ function reducer(state, action) {
     case 'SET_SCREEN':
       return { ...state, currentScreen: action.payload };
     case 'SET_USER':
-      return { ...state, user: action.payload, isAuthenticated: !!action.payload };
+      return { ...state, user: action.payload, token: action.payload?.token || state.token, isAuthenticated: !!action.payload };
+    case 'SET_TOKEN':
+      return { ...state, token: action.payload };
     case 'LOGOUT':
       // Clear all client-side state on logout
       return { ...initialState, currentScreen: 'landing' };
@@ -121,9 +124,14 @@ export function AppProvider({ children }) {
       if (saved) {
         const parsed = JSON.parse(saved);
         dispatch({
+          type: 'SET_TOKEN',
+          payload: parsed.token || parsed.user?.token || '',
+        });
+        dispatch({
           type: 'RESTORE_SESSION',
           payload: {
             user: parsed.user,
+            token: parsed.token || parsed.user?.token || '',
             isAuthenticated: !!parsed.user,
             selectedBootcamp: parsed.selectedBootcamp,
             currentDay: parsed.currentDay || 1,
@@ -163,7 +171,8 @@ export function AppProvider({ children }) {
     if (state.isAuthenticated) {
       try {
         const toSave = {
-          user: { name: state.user?.name, email: state.user?.email, role: state.user?.role },
+          user: { name: state.user?.name, email: state.user?.email, role: state.user?.role, token: state.token },
+          token: state.token,
           isAuthenticated: state.isAuthenticated,
           selectedBootcamp: state.selectedBootcamp,
           currentDay: state.currentDay,

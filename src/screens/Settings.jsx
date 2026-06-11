@@ -1,13 +1,33 @@
-/**
- * Settings — System Configuration
- * Hackorizon Dark Aesthetic Design
- */
+import { useState, useEffect } from 'react';
 import { useApp } from '../context/AppContext';
+import { apiGet, apiPut } from '../lib/api';
 import ThemeContainer from '../components/ThemeContainer';
 import Sidebar from '../components/Sidebar';
 
+const TOGGLES = [
+  { id: 'animations', label: 'Micro-Animations', desc: 'Enable subtle transitions and state changes' },
+  { id: 'sound', label: 'Haptic Audio', desc: 'Interface sounds and AI voice modulation' },
+  { id: 'streaming', label: 'Real-time Streaming', desc: 'Stream AI responses token-by-token' },
+];
+
 export default function Settings() {
   const { state, dispatch } = useApp();
+  const [preferences, setPreferences] = useState({ streaming: true, animations: true, sound: false });
+  const [saving, setSaving] = useState(null);
+
+  useEffect(() => {
+    apiGet('/users/me', state.token).then(data => {
+      if (data?.preferences) setPreferences(data.preferences);
+    }).catch(() => {});
+  }, [state.token]);
+
+  const toggle = async (id) => {
+    const next = { ...preferences, [id]: !preferences[id] };
+    setPreferences(next);
+    setSaving(id);
+    await apiPut('/users/me/preferences', { preferences: next }, state.token);
+    setSaving(null);
+  };
 
   return (
     <ThemeContainer>
@@ -51,21 +71,23 @@ export default function Settings() {
               </div>
               
               <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-                {[
-                  { id: 'animations', label: 'Micro-Animations', desc: 'Enable subtle transitions and state changes', checked: true },
-                  { id: 'sound', label: 'Haptic Audio', desc: 'Interface sounds and AI voice modulation', checked: false },
-                  { id: 'streaming', label: 'Real-time Streaming', desc: 'Stream Vishesh responses token-by-token', checked: true },
-                ].map((s) => (
+                {TOGGLES.map((s) => (
                   <div key={s.id} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '16px 20px', background: 'var(--bg-card)', borderRadius: '16px', border: '1px solid var(--border-subtle)' }}>
                     <div>
                       <div style={{ fontWeight: 700, fontSize: '14px', color: 'var(--text-primary)', marginBottom: '4px' }}>{s.label}</div>
                       <div style={{ fontSize: '13px', color: 'var(--text-secondary)' }}>{s.desc}</div>
                     </div>
-                    <div style={{ width: 44, height: 24, background: s.checked ? 'var(--border-active)' : 'var(--border-subtle)', borderRadius: '12px', position: 'relative', cursor: 'pointer', transition: 'all 0.2s ease' }}>
-                      <div style={{ position: 'absolute', top: 2, left: s.checked ? 22 : 2, width: 20, height: 20, background: '#010203', borderRadius: '50%', transition: 'all 0.2s ease', boxShadow: '0 2px 4px rgba(0,0,0,0.4)' }} />
+                    <div
+                      onClick={() => toggle(s.id)}
+                      style={{ width: 44, height: 24, background: preferences[s.id] ? 'var(--border-active)' : 'var(--border-subtle)', borderRadius: '12px', position: 'relative', cursor: 'pointer', transition: 'all 0.2s ease', opacity: saving === s.id ? 0.5 : 1 }}
+                    >
+                      <div style={{ position: 'absolute', top: 2, left: preferences[s.id] ? 22 : 2, width: 20, height: 20, background: '#010203', borderRadius: '50%', transition: 'all 0.2s ease', boxShadow: '0 2px 4px rgba(0,0,0,0.4)' }} />
                     </div>
                   </div>
                 ))}
+              </div>
+              <div style={{ marginTop: '12px', fontSize: '11px', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>
+                Preferences saved to your account
               </div>
             </div>
             

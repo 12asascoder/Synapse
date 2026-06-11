@@ -17,7 +17,7 @@ export default function SkillPassport() {
   const { user, selectedBootcamp, scores, totalPoints, currentDay } = state;
   const [achievements, setAchievements] = useState([]);
   const [userAchievements, setUserAchievements] = useState([]);
-  const shareUrl = `synapse.ai/passport/${user?.name?.toLowerCase().replace(/\s/g, '-') || 'operative'}`;
+  const shareUrl = user?.id ? `${window.location.origin}/passport/${user.id}` : null;
 
   useEffect(() => {
     fetch(`${API}/achievements`)
@@ -101,13 +101,13 @@ export default function SkillPassport() {
                   {user?.name || 'Operative'}
                 </div>
                 <div style={{ fontSize: '14px', color: 'var(--text-secondary)', fontWeight: 500, marginBottom: '24px' }}>
-                  Architect Tier II
+                  {totalPoints > 2000 ? 'Architect' : totalPoints > 500 ? 'Apprentice' : 'Novice'}
                 </div>
                 <div style={{ display: 'flex', justifyContent: 'center', gap: '32px', marginBottom: '24px' }}>
                   {[
-                    { label: 'Points', val: totalPoints || 4150 },
+                    { label: 'Points', val: totalPoints || 0 },
                     { label: 'Day', val: currentDay },
-                    { label: 'Score', val: `${scores.knowledge || 72}%` },
+                    { label: 'Score', val: scores.knowledge ? `${scores.knowledge}%` : '—' },
                   ].map((s) => (
                     <div key={s.label} style={{ textAlign: 'center' }}>
                       <div style={{ fontWeight: 800, fontSize: '20px', color: 'var(--text-primary)', marginBottom: '4px' }}>{s.val}</div>
@@ -119,9 +119,12 @@ export default function SkillPassport() {
                   padding: '12px 16px', background: 'var(--bg-card)',
                   border: '1px solid var(--border-subtle)', borderRadius: '12px',
                   fontSize: '13px', color: 'var(--text-primary)', fontWeight: 500,
-                  wordBreak: 'break-all',
-                }}>
-                  🔗 {shareUrl}
+                  wordBreak: 'break-all', cursor: 'pointer',
+                }}
+                onClick={() => { if (shareUrl) { navigator.clipboard.writeText(shareUrl); } }}
+                title="Click to copy verification link"
+                >
+                  🔗 {shareUrl || 'No user ID available'}
                 </div>
               </div>
 
@@ -168,6 +171,7 @@ export default function SkillPassport() {
                 </div>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
                   {[
+                    { label: 'Copy Verification Link', icon: '🔗', action: () => { if (shareUrl) navigator.clipboard.writeText(shareUrl); } },
                     { label: 'Share to LinkedIn', icon: 'in' },
                     { label: 'Add to Portfolio', icon: '⊞' },
                     { label: 'Download PDF', icon: '↓' },
@@ -179,6 +183,7 @@ export default function SkillPassport() {
                       cursor: 'pointer', fontSize: '14px', fontWeight: 500, color: 'var(--text-primary)',
                       transition: 'all 0.15s ease',
                     }}
+                    onClick={btn.action}
                     onMouseEnter={(e) => { e.currentTarget.style.background = 'var(--bg-hover)'; e.currentTarget.style.borderColor = 'var(--border-active)'; }}
                     onMouseLeave={(e) => { e.currentTarget.style.background = 'var(--bg-card)'; e.currentTarget.style.borderColor = 'var(--border-subtle)'; }}
                     >

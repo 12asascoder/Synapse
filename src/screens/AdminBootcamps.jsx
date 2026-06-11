@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
 import AdminSidebar from '../components/AdminSidebar';
 
-const API = import.meta.env.VITE_API_URL || 'http://localhost:5001/api';
+import { useApp } from '../context/AppContext';
+const API = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
 
 const CARD = {
   background: 'rgba(10, 15, 25, 0.7)',
@@ -50,18 +51,12 @@ const TH = {
 };
 const TD = { padding: '14px 20px', fontSize: '13px', color: 'var(--text-primary)' };
 
-function getToken() {
-  try {
-    const s = sessionStorage.getItem('synapse_session_v1');
-    if (!s) return '';
-    const parsed = JSON.parse(s);
-    return parsed.token || '';
-  } catch { return ''; }
-}
-
 const emptyForm = { name: '', slug: '', description: '', icon: 'Brain', duration: '30 Days', level: 'Beginner', color: '#6366f1' };
 
 export default function AdminBootcamps() {
+  const { state } = useApp();
+  const token = state.token;
+  const headers = { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` };
   const [bootcamps, setBootcamps] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
@@ -69,9 +64,6 @@ export default function AdminBootcamps() {
   const [form, setForm] = useState({ ...emptyForm });
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
-  const token = getToken();
-
-  const headers = { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` };
 
   const fetchBootcamps = () => {
     fetch(`${API}/admin/bootcamps`, { headers })

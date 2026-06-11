@@ -33,7 +33,12 @@ router.post('/discussions', async (req, res) => {
   try {
     const { userId, title, content, category } = req.body;
     const discussion = await CommunityDiscussion.create({ userId, title, content, category });
-    res.json(discussion);
+    const full = await CommunityDiscussion.findByPk(discussion.id, {
+      include: [{ model: User, attributes: ['id', 'name', 'avatar', 'tier'] }],
+    });
+    const io = req.app.get('io');
+    if (io) io.emit('new-discussion', full);
+    res.json(full);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }

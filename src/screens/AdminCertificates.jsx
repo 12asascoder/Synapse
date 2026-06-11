@@ -1,22 +1,19 @@
 import { useState, useEffect } from 'react';
 import AdminSidebar from '../components/AdminSidebar';
 
-const API = import.meta.env.VITE_API_URL || 'http://localhost:5001/api';
+import { useApp } from '../context/AppContext';
+const API = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
 
 const CARD = { background: 'rgba(10, 15, 25, 0.7)', border: '1px solid rgba(56, 189, 248, 0.15)', borderRadius: '16px' };
 const TH = { padding: '16px 20px', fontSize: '11px', color: 'var(--cyan-400)', textTransform: 'uppercase', letterSpacing: '0.05em', fontWeight: 600 };
 const TD = { padding: '14px 20px', fontSize: '13px', color: 'var(--text-primary)' };
 
-function getToken() {
-  try { const s = sessionStorage.getItem('synapse_session_v1'); return s ? (JSON.parse(s).token || '') : ''; }
-  catch { return ''; }
-}
-
 export default function AdminCertificates() {
+  const { state } = useApp();
+  const token = state.token;
+  const headers = { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` };
   const [graduates, setGraduates] = useState([]);
   const [loading, setLoading] = useState(true);
-  const token = getToken();
-  const headers = { Authorization: `Bearer ${token}` };
 
   useEffect(() => {
     fetch(`${API}/admin/certificates`, { headers })

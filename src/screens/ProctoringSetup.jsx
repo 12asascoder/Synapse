@@ -97,7 +97,7 @@ export default function ProctoringSetup() {
             animation: 'fadeInRight 0.5s ease 0.2s both',
             boxShadow: '0 8px 24px rgba(0,0,0,0.02)'
           }}>
-            <div style={{ fontSize: '12px', fontWeight: 700, color: '#A59F97', letterSpacing: '0.05em', marginBottom: '24px', textTransform: 'uppercase' }}>
+            <div style={{ fontSize: '12px', fontWeight: 700, color: 'var(--text-secondary)', letterSpacing: '0.05em', marginBottom: '24px', textTransform: 'uppercase' }}>
               Verification Status
             </div>
 
@@ -140,7 +140,7 @@ export default function ProctoringSetup() {
               style={{
                 marginTop: '36px', width: '100%', justifyContent: 'center',
                 background: allReady ? '#000' : '#E8E6E3',
-                color: allReady ? '#FFF' : '#A59F97',
+                color: allReady ? '#FFF' : 'var(--text-secondary)',
                 border: 'none',
                 padding: '16px', borderRadius: '12px',
                 cursor: allReady ? 'pointer' : 'not-allowed', fontSize: '15px', fontWeight: 600,

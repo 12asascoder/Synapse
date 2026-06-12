@@ -79,7 +79,7 @@ export default function AdminVishesh() {
             <div style={{ fontWeight: 700, color: 'var(--cyan-400)', fontFamily: 'var(--font-mono)', fontSize: '12px', marginBottom: '20px', textTransform: 'uppercase', letterSpacing: '0.05em' }}>AI Configuration</div>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
               {configItems.map((item, i) => (
-                <div key={i} style={{ display: 'flex', alignItems: 'flex-start', gap: '12px', padding: '12px', background: 'rgba(0,0,0,0.2)', borderRadius: '10px', border: '1px solid rgba(255,255,255,0.05)' }}>
+                <div key={i} style={{ display: 'flex', alignItems: 'flex-start', gap: '12px', padding: '12px', background: 'rgba(0,0,0,0.2)', borderRadius: '10px', border: '1px solid #FFFFFF' }}>
                   <span style={{ fontSize: '18px', flexShrink: 0 }}>{item.icon}</span>
                   <div style={{ flex: 1 }}>
                     <div style={{ fontSize: '11px', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)', textTransform: 'uppercase', letterSpacing: '0.03em', marginBottom: '4px' }}>{item.label}</div>
@@ -100,7 +100,7 @@ export default function AdminVishesh() {
             <div style={{ fontWeight: 700, color: 'var(--cyan-400)', fontFamily: 'var(--font-mono)', fontSize: '12px', marginBottom: '12px', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Capabilities</div>
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
               {['Lesson Delivery', 'Code Review', 'Assessment Grading', 'Interview Simulation', 'Concept Explanation', 'Career Guidance', 'Exercise Generation', 'Progress Analysis'].map((cap, i) => (
-                <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '8px 12px', background: 'rgba(0,0,0,0.2)', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.05)' }}>
+                <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '8px 12px', background: 'rgba(0,0,0,0.2)', borderRadius: '8px', border: '1px solid #FFFFFF' }}>
                   <span style={{ color: 'var(--emerald-400)', fontSize: '12px' }}>✓</span>
                   <span style={{ fontSize: '11px', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>{cap}</span>
                 </div>

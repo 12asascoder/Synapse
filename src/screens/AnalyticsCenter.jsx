@@ -30,7 +30,7 @@ function MetricCard({ label, value, sub, color, delta }) {
       animation: 'fadeInUp 0.4s ease both',
       boxShadow: '0 8px 24px rgba(0,0,0,0.02)'
     }}>
-      <div style={{ fontSize: '11px', fontWeight: 700, color: '#A59F97', letterSpacing: '0.05em', marginBottom: '8px', textTransform: 'uppercase' }}>{label}</div>
+      <div style={{ fontSize: '11px', fontWeight: 700, color: 'var(--text-secondary)', letterSpacing: '0.05em', marginBottom: '8px', textTransform: 'uppercase' }}>{label}</div>
       <div style={{ fontSize: '32px', fontWeight: 700, color, fontFamily: 'var(--font-display)', marginBottom: '4px' }}>{value}</div>
       {sub && <div style={{ fontSize: '13px', color: '#6B6B6B', fontWeight: 500 }}>{sub}</div>}
       {delta !== undefined && (
@@ -126,16 +126,16 @@ export default function AnalyticsCenter() {
               <div style={{ fontSize: '13px', color: '#6B6B6B', marginBottom: '32px' }}>Score · Velocity · Retention</div>
               <ResponsiveContainer width="100%" height={240}>
                 <LineChart data={weeklyData}>
-                  <XAxis dataKey="day" tick={{ fill: '#A59F97', fontSize: 12 }} tickLine={false} axisLine={false} />
-                  <YAxis tick={{ fill: '#A59F97', fontSize: 12 }} tickLine={false} axisLine={false} domain={[40, 100]} />
+                  <XAxis dataKey="day" tick={{ fill: 'var(--text-secondary)', fontSize: 12 }} tickLine={false} axisLine={false} />
+                  <YAxis tick={{ fill: 'var(--text-secondary)', fontSize: 12 }} tickLine={false} axisLine={false} domain={[40, 100]} />
                   <Tooltip content={<CustomTooltip />} />
                   <Line type="monotone" dataKey="score" stroke="#000" strokeWidth={2} dot={false} />
-                  <Line type="monotone" dataKey="velocity" stroke="#A59F97" strokeWidth={2} dot={false} strokeDasharray="4 4" />
+                  <Line type="monotone" dataKey="velocity" stroke="var(--text-secondary)" strokeWidth={2} dot={false} strokeDasharray="4 4" />
                   <Line type="monotone" dataKey="retention" stroke="#DCDCDC" strokeWidth={2} dot={false} />
                 </LineChart>
               </ResponsiveContainer>
               <div style={{ display: 'flex', gap: '24px', marginTop: '20px' }}>
-                {[['Score', '#000'], ['Velocity', '#A59F97'], ['Retention', '#DCDCDC']].map(([l, c]) => (
+                {[['Score', '#000'], ['Velocity', 'var(--text-secondary)'], ['Retention', '#DCDCDC']].map(([l, c]) => (
                   <div key={l} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                     <div style={{ width: 16, height: 3, background: c, borderRadius: '1.5px' }} />
                     <span style={{ fontSize: '12px', color: '#6B6B6B', fontWeight: 500 }}>{l}</span>
@@ -156,15 +156,15 @@ export default function AnalyticsCenter() {
                       <stop offset="100%" stopColor="#000" stopOpacity={0} />
                     </linearGradient>
                     <linearGradient id="consistGrad" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="0%" stopColor="#A59F97" stopOpacity={0.1} />
-                      <stop offset="100%" stopColor="#A59F97" stopOpacity={0} />
+                      <stop offset="0%" stopColor="var(--text-secondary)" stopOpacity={0.1} />
+                      <stop offset="100%" stopColor="var(--text-secondary)" stopOpacity={0} />
                     </linearGradient>
                   </defs>
-                  <XAxis dataKey="day" tick={{ fill: '#A59F97', fontSize: 12 }} tickLine={false} axisLine={false} />
-                  <YAxis tick={{ fill: '#A59F97', fontSize: 12 }} tickLine={false} axisLine={false} />
+                  <XAxis dataKey="day" tick={{ fill: 'var(--text-secondary)', fontSize: 12 }} tickLine={false} axisLine={false} />
+                  <YAxis tick={{ fill: 'var(--text-secondary)', fontSize: 12 }} tickLine={false} axisLine={false} />
                   <Tooltip content={<CustomTooltip />} />
                   <Area type="monotone" dataKey="growth" stroke="#000" fill="url(#growthGrad)" strokeWidth={2} />
-                  <Area type="monotone" dataKey="consistency" stroke="#A59F97" fill="url(#consistGrad)" strokeWidth={2} />
+                  <Area type="monotone" dataKey="consistency" stroke="var(--text-secondary)" fill="url(#consistGrad)" strokeWidth={2} />
                 </AreaChart>
               </ResponsiveContainer>
             </div>
@@ -220,7 +220,7 @@ export default function AnalyticsCenter() {
                 <div style={{ width: 36, height: 36, borderRadius: '10px', background: '#000', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '16px', fontWeight: 700 }}>V</div>
                 <div>
                   <div style={{ fontSize: '12px', fontWeight: 700, color: '#000', letterSpacing: '0.05em', textTransform: 'uppercase' }}>Vishesh Analysis</div>
-                  <div style={{ fontSize: '11px', color: '#A59F97' }}>Real-time intelligence</div>
+                  <div style={{ fontSize: '11px', color: 'var(--text-secondary)' }}>Real-time intelligence</div>
                 </div>
               </div>
               <div style={{ borderLeft: '3px solid #E8E6E3', paddingLeft: '16px' }}>

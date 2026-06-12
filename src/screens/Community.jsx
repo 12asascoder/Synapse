@@ -104,8 +104,8 @@ export default function Community() {
           {activeTab === 'leaderboard' && (
             <div style={{ animation: 'fadeIn 0.3s ease' }}>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 320px', gap: '32px' }}>
-                <div style={{ background: 'rgba(255,255,255,0.07)', border: '1px solid rgba(255,255,255,0.2)', borderRadius: '24px', overflow: 'hidden', boxShadow: '0 8px 24px rgba(0,0,0,0.02)' }}>
-                  <div style={{ background: '#010203', borderBottom: '1px solid rgba(255,255,255,0.2)', display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '24px' }}>
+                <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border-default)', borderRadius: '24px', overflow: 'hidden', boxShadow: '0 8px 24px rgba(0,0,0,0.02)' }}>
+                  <div style={{ background: 'var(--bg-base)', borderBottom: '1px solid var(--border-default)', display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '24px' }}>
                     <div style={{ fontWeight: 700, fontSize: '18px', fontFamily: 'var(--font-display)', color: '#000' }}>Sector Alpha Rankings</div>
                     <span style={{ fontSize: '11px', fontWeight: 700, padding: '4px 10px', background: '#F5F3F1', borderRadius: '6px', color: '#000', letterSpacing: '0.05em' }}>LIVE</span>
                   </div>
@@ -138,7 +138,7 @@ export default function Community() {
                       <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                         <div style={{ fontWeight: 700, fontSize: '16px', color: '#000' }}>
                           {op.points?.toLocaleString() || 0}
-                          <span style={{ fontSize: '11px', color: '#A59F97', marginLeft: '4px', fontWeight: 600 }}>pts</span>
+                          <span style={{ fontSize: '11px', color: 'var(--text-secondary)', marginLeft: '4px', fontWeight: 600 }}>pts</span>
                         </div>
                       </div>
                     </div>
@@ -147,13 +147,13 @@ export default function Community() {
 
                 {/* Side stats */}
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
-                  <div style={{ background: 'rgba(255,255,255,0.07)', border: '1px solid rgba(255,255,255,0.2)', borderRadius: '24px', padding: '32px', textAlign: 'center', boxShadow: '0 8px 24px rgba(0,0,0,0.02)' }}>
-                    <div style={{ fontSize: '12px', fontWeight: 700, color: '#A59F97', letterSpacing: '0.05em', marginBottom: '16px', textTransform: 'uppercase' }}>Your Ranking</div>
+                  <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border-default)', borderRadius: '24px', padding: '32px', textAlign: 'center', boxShadow: '0 8px 24px rgba(0,0,0,0.02)' }}>
+                    <div style={{ fontSize: '12px', fontWeight: 700, color: 'var(--text-secondary)', letterSpacing: '0.05em', marginBottom: '16px', textTransform: 'uppercase' }}>Your Ranking</div>
                     <div style={{ fontSize: '64px', fontWeight: 700, fontFamily: 'var(--font-display)', color: '#000', lineHeight: 1 }}>{userRank > 0 ? `#${userRank}` : '—'}</div>
                     <div style={{ fontSize: '14px', color: '#6B6B6B', marginTop: '12px' }}>{totalOperatives > 0 ? `of ${totalOperatives} operatives` : 'No data'}</div>
                   </div>
                   {[{ label: 'Points', val: (state.totalPoints || 0).toLocaleString() }, { label: 'Tier', val: userTier }, { label: 'Streak', val: `${state.streak || 0}🔥` }].map((s) => (
-                    <div key={s.label} style={{ background: 'rgba(255,255,255,0.07)', border: '1px solid rgba(255,255,255,0.2)', borderRadius: '16px', padding: '20px 24px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', boxShadow: '0 4px 12px rgba(0,0,0,0.01)' }}>
+                    <div key={s.label} style={{ background: 'var(--bg-card)', border: '1px solid var(--border-default)', borderRadius: '16px', padding: '20px 24px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', boxShadow: '0 4px 12px rgba(0,0,0,0.01)' }}>
                       <span style={{ fontSize: '13px', color: '#6B6B6B', fontWeight: 500 }}>{s.label}</span>
                       <span style={{ fontSize: '16px', fontWeight: 700, color: '#000' }}>{s.val}</span>
                     </div>
@@ -192,7 +192,7 @@ export default function Community() {
                       <div style={{ flex: 1 }}>
                         <div style={{ display: 'flex', gap: '12px', alignItems: 'center', marginBottom: '12px' }}>
                           <span style={{ fontWeight: 700, fontSize: '15px', color: '#000' }}>{d.User?.name || 'Anonymous'}</span>
-                          <span style={{ fontSize: '12px', color: '#A59F97' }}>{new Date(d.createdAt).toLocaleDateString()}</span>
+                          <span style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>{new Date(d.createdAt).toLocaleDateString()}</span>
                         </div>
                         <p style={{ fontSize: '15px', color: '#44403B', lineHeight: 1.6, marginBottom: '20px' }}>{d.content || d.title}</p>
                         <div style={{ display: 'flex', gap: '24px' }}>
@@ -204,7 +204,7 @@ export default function Community() {
                   </div>
                 ))}
                 <div style={{ marginTop: '16px' }}>
-                  <div style={{ display: 'flex', gap: '16px', padding: '20px 24px', background: 'rgba(255,255,255,0.07)', border: '1px solid rgba(255,255,255,0.2)', borderRadius: '24px', boxShadow: '0 8px 24px rgba(0,0,0,0.04)' }}>
+                  <div style={{ display: 'flex', gap: '16px', padding: '20px 24px', background: 'var(--bg-card)', border: '1px solid var(--border-default)', borderRadius: '24px', boxShadow: '0 8px 24px rgba(0,0,0,0.04)' }}>
                     <div style={{ width: 40, height: 40, borderRadius: '12px', background: '#000', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '14px', fontWeight: 700, flexShrink: 0 }}>
                       {(state.user?.name || 'Y')[0]}
                     </div>

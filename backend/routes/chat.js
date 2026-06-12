@@ -1,8 +1,9 @@
 const express = require('express');
 const router = express.Router();
 const { trugenGenerate, trugenStream } = require('../ai/trugen');
+const { authenticate } = require('../middleware/auth');
 
-router.post('/message', async (req, res) => {
+router.post('/message', authenticate, async (req, res) => {
   try {
     const { message, contextHistory = [] } = req.body;
     const response = await trugenGenerate(message, contextHistory);
@@ -12,7 +13,7 @@ router.post('/message', async (req, res) => {
   }
 });
 
-router.post('/stream', async (req, res) => {
+router.post('/stream', authenticate, async (req, res) => {
   try {
     const { prompt, contextHistory = [] } = req.body;
     const stream = await trugenStream(prompt, contextHistory);

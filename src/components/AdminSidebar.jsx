@@ -48,7 +48,7 @@ export default function AdminSidebar() {
             width: 36, height: 36, borderRadius: '10px',
             background: 'var(--border-active)',
             display: 'flex', alignItems: 'center', justifyContent: 'center',
-            fontSize: '16px', color: '#010203',
+            fontSize: '16px', color: 'var(--bg-base)',
             flexShrink: 0,
             fontWeight: 800,
           }}>✦</div>

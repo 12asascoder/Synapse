@@ -160,7 +160,7 @@ export default function AdminCurriculum() {
               ) : days.length === 0 ? (
                 <tr><td colSpan={6} style={{ ...TD, textAlign: 'center', color: 'var(--text-muted)' }}>No curriculum days found.</td></tr>
               ) : days.map(d => (
-                <tr key={d.id} style={{ borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
+                <tr key={d.id} style={{ borderBottom: '1px solid #FFFFFF' }}>
                   <td style={TD}>
                     <span style={{ background: 'rgba(56,189,248,0.1)', color: 'var(--cyan-400)', padding: '3px 10px', borderRadius: '4px', fontSize: '12px', fontWeight: 700 }}>
                       {d.day}

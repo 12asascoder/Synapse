@@ -175,7 +175,7 @@ export default function AdminAssessments() {
                   ) : questions.length === 0 ? (
                     <tr><td colSpan={5} style={{ ...TD, textAlign: 'center', color: 'var(--text-muted)' }}>No questions yet.</td></tr>
                   ) : questions.map(q => (
-                    <tr key={q.id} style={{ borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
+                    <tr key={q.id} style={{ borderBottom: '1px solid #FFFFFF' }}>
                       <td style={{ ...TD, maxWidth: '400px' }}>
                         <div style={{ fontWeight: 600, color: 'white', fontSize: '13px', lineHeight: 1.4 }}>{q.question.length > 100 ? q.question.slice(0, 100) + '…' : q.question}</div>
                       </td>
@@ -217,7 +217,7 @@ export default function AdminAssessments() {
                 {submissions.length === 0 ? (
                   <tr><td colSpan={4} style={{ ...TD, textAlign: 'center', color: 'var(--text-muted)' }}>No submissions yet.</td></tr>
                 ) : submissions.map(s => (
-                  <tr key={s.id} style={{ borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
+                  <tr key={s.id} style={{ borderBottom: '1px solid #FFFFFF' }}>
                     <td style={TD}>
                       <div style={{ fontWeight: 600, color: 'white' }}>{s.userName}</div>
                       <div style={{ fontSize: '11px', color: 'var(--text-muted)' }}>{s.userEmail}</div>

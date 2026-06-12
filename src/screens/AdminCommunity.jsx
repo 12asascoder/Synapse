@@ -117,7 +117,7 @@ export default function AdminCommunity() {
                   <div>No discussions found.</div>
                 </td></tr>
               ) : filtered.map(d => (
-                <tr key={d.id} style={{ borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
+                <tr key={d.id} style={{ borderBottom: '1px solid #FFFFFF' }}>
                   <td style={TD}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                       <div style={{ width: 32, height: 32, borderRadius: '8px', background: 'linear-gradient(135deg, var(--cyan-600), var(--cyan-800))', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '12px', color: 'white', fontWeight: 700, flexShrink: 0 }}>

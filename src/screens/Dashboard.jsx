@@ -10,7 +10,7 @@ import { motion } from 'framer-motion';
 
 const API = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
 
-function ScoreRing({ value, label, color = '#CFFF00', size = 80 }) {
+function ScoreRing({ value, label, color = '#0D6EFD', size = 80 }) {
   const radius = (size - 10) / 2;
   const circ = 2 * Math.PI * radius;
   const offset = circ - (value / 100) * circ;
@@ -76,7 +76,7 @@ export default function Dashboard() {
   const progressData = progressHistory?.length > 0 ? progressHistory : [{ day: 1, score: 0 }];
 
   return (
-    <div style={{ minHeight: '100vh', background: '#010203', display: 'flex', color: '#f3f2ee' }}>
+    <div style={{ minHeight: '100vh', background: 'var(--bg-base)', display: 'flex', color: 'var(--text-primary)' }}>
       <Sidebar />
 
       <div style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
@@ -93,7 +93,7 @@ export default function Dashboard() {
             <div style={{ display: 'flex', gap: '8px' }}>
               {['Curriculum', 'Network', 'Simulations'].map((item, i) => (
                 <button key={item} onClick={() => { if (i === 0) navigate('hub'); }} style={{
-                  background: 'rgba(255,255,255,0.07)', border: '1px solid rgba(255,255,255,0.2)', color: '#f3f2ee', cursor: 'pointer',
+                  background: 'var(--bg-card)', border: '1px solid var(--border-default)', color: 'var(--text-primary)', cursor: 'pointer',
                   fontSize: '14px', fontWeight: i === 0 ? 700 : 500,
                   padding: '8px 16px', borderRadius: '8px',
                 }}>{item}</button>
@@ -106,7 +106,7 @@ export default function Dashboard() {
               className="btn btn-primary"
               style={{
                 padding: '8px 20px', fontSize: '14px',
-                background: 'var(--border-active)', color: '#010203',
+                background: 'var(--border-active)', color: 'var(--bg-base)',
                 border: 'none', fontWeight: 700, borderRadius: '8px', cursor: 'pointer'
               }}
             >
@@ -175,7 +175,7 @@ export default function Dashboard() {
                   onClick={() => navigate('lesson')}
                   className="btn btn-primary"
                   id="dashboard-continue-btn"
-                  style={{ width: '100%', marginTop: '16px', padding: '14px', fontSize: '15px', borderRadius: '10px', background: 'var(--border-active)', color: '#010203', border: 'none', fontWeight: 700, cursor: 'pointer' }}
+                  style={{ width: '100%', marginTop: '16px', padding: '14px', fontSize: '15px', borderRadius: '10px', background: 'var(--border-active)', color: 'var(--bg-base)', border: 'none', fontWeight: 700, cursor: 'pointer' }}
                 >
                   Continue Day {currentDay} →
                 </button>
@@ -203,7 +203,7 @@ export default function Dashboard() {
                             background: isDone ? 'var(--border-active)' : isActive ? 'var(--bg-card)' : isMilestone ? 'rgba(207,255,0,0.05)' : 'var(--bg-surface)',
                             border: `2px solid ${isDone ? 'var(--border-active)' : isActive ? 'var(--border-active)' : isMilestone ? 'var(--border-active)' : 'var(--border-subtle)'}`,
                             display: 'flex', alignItems: 'center', justifyContent: 'center',
-                            fontSize: '13px', fontWeight: 700, color: isDone ? '#010203' : isActive ? 'var(--text-primary)' : isMilestone ? 'var(--text-accent)' : 'var(--text-muted)',
+                            fontSize: '13px', fontWeight: 700, color: isDone ? 'var(--bg-base)' : isActive ? 'var(--text-primary)' : isMilestone ? 'var(--text-accent)' : 'var(--text-muted)',
                           }}>
                             {isDone ? '✓' : isActive ? '▶' : isMilestone ? '★' : '○'}
                           </div>
@@ -234,14 +234,14 @@ export default function Dashboard() {
                   <AreaChart data={progressData}>
                     <defs>
                       <linearGradient id="scoreGrad" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="0%" stopColor="#CFFF00" stopOpacity={0.25} />
-                        <stop offset="100%" stopColor="#CFFF00" stopOpacity={0} />
+                        <stop offset="0%" stopColor="#0D6EFD" stopOpacity={0.25} />
+                        <stop offset="100%" stopColor="#0D6EFD" stopOpacity={0} />
                       </linearGradient>
                     </defs>
                     <XAxis dataKey="day" tick={{ fill: 'var(--text-muted)', fontSize: 12 }} tickLine={false} axisLine={false} />
                     <YAxis tick={{ fill: 'var(--text-muted)', fontSize: 12 }} tickLine={false} axisLine={false} />
                     <Tooltip contentStyle={{ background: 'var(--bg-elevated)', border: '1px solid var(--border-subtle)', borderRadius: '8px', fontSize: '13px', color: 'var(--text-primary)' }} />
-                    <Area type="monotone" dataKey="score" stroke="#CFFF00" fill="url(#scoreGrad)" strokeWidth={2} dot={{ fill: '#CFFF00', strokeWidth: 0, r: 4 }} />
+                    <Area type="monotone" dataKey="score" stroke="#0D6EFD" fill="url(#scoreGrad)" strokeWidth={2} dot={{ fill: '#0D6EFD', strokeWidth: 0, r: 4 }} />
                   </AreaChart>
                 </ResponsiveContainer>
               </motion.div>
@@ -261,7 +261,7 @@ export default function Dashboard() {
                 borderRadius: '20px', padding: '24px',
               }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '20px' }}>
-                  <div style={{ width: 36, height: 36, borderRadius: '10px', background: 'var(--border-active)', color: '#010203', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '14px', fontWeight: 800 }}>V</div>
+                  <div style={{ width: 36, height: 36, borderRadius: '10px', background: 'var(--border-active)', color: 'var(--bg-base)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '14px', fontWeight: 800 }}>V</div>
                   <div>
                     <div style={{ fontSize: '13px', fontWeight: 700, color: 'var(--text-primary)' }}>VISHESH INSIGHTS</div>
                     <div style={{ fontSize: '11px', color: 'var(--text-muted)' }}>AI Analysis</div>
@@ -281,7 +281,7 @@ export default function Dashboard() {
                 style={{ background: 'var(--bg-surface)', border: '1px solid var(--border-subtle)', borderRadius: '20px', padding: '24px' }}>
                 <div style={{ fontSize: '12px', fontWeight: 700, color: 'var(--text-muted)', letterSpacing: '0.05em', marginBottom: '24px', textTransform: 'uppercase' }}>Skill Matrix</div>
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '16px', justifyItems: 'center' }}>
-                  <ScoreRing value={scores.technical || 72} label="Technical" color="#CFFF00" size={72} />
+                  <ScoreRing value={scores.technical || 72} label="Technical" color="#0D6EFD" size={72} />
                   <ScoreRing value={scores.communication || 81} label="Comms" color="#22d3ee" size={72} />
                   <ScoreRing value={scores.problemSolving || 68} label="Problem" color="#a78bfa" size={72} />
                 </div>
@@ -299,7 +299,7 @@ export default function Dashboard() {
                   <RadarChart data={radarData}>
                     <PolarGrid stroke="var(--border-subtle)" />
                     <PolarAngleAxis dataKey="skill" tick={{ fill: 'var(--text-secondary)', fontSize: 11 }} />
-                    <Radar name="Score" dataKey="value" stroke="#CFFF00" fill="#CFFF00" fillOpacity={0.15} strokeWidth={2} dot={{ fill: '#CFFF00', strokeWidth: 0, r: 4 }} />
+                    <Radar name="Score" dataKey="value" stroke="#0D6EFD" fill="#0D6EFD" fillOpacity={0.15} strokeWidth={2} dot={{ fill: '#0D6EFD', strokeWidth: 0, r: 4 }} />
                   </RadarChart>
                 </ResponsiveContainer>
               </motion.div>

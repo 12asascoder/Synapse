@@ -1,6 +1,10 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useApp } from '../context/AppContext';
 import { apiGet, apiPut, apiPost } from '../lib/api';
+import * as pdfjsLib from 'pdfjs-dist';
+import pdfjsWorker from 'pdfjs-dist/build/pdf.worker.mjs?url';
+
+pdfjsLib.GlobalWorkerOptions.workerSrc = pdfjsWorker;
 
 const API = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
 
@@ -29,6 +33,37 @@ export default function ProfileSetup() {
   const [resumeText, setResumeText] = useState('');
   const [resumeParsing, setResumeParsing] = useState(false);
   const [resumeError, setResumeError] = useState('');
+  const [pdfUploading, setPdfUploading] = useState(false);
+  const fileInputRef = useRef(null);
+
+  const handleFileUpload = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    if (file.type !== 'application/pdf') {
+      setResumeError('Please upload a valid PDF file.');
+      return;
+    }
+    setPdfUploading(true);
+    setResumeError('');
+    try {
+      const arrayBuffer = await file.arrayBuffer();
+      const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+      let fullText = '';
+      for (let i = 1; i <= pdf.numPages; i++) {
+        const page = await pdf.getPage(i);
+        const content = await page.getTextContent();
+        const pageText = content.items.map(item => item.str).join(' ');
+        fullText += pageText + '\n';
+      }
+      setResumeText(fullText);
+    } catch (err) {
+      setResumeError('Error extracting text from PDF. Please paste manually.');
+      console.error(err);
+    } finally {
+      setPdfUploading(false);
+      if (fileInputRef.current) fileInputRef.current.value = '';
+    }
+  };
 
   // Step 2: Skills
   const [skills, setSkills] = useState([]);
@@ -69,19 +104,27 @@ export default function ProfileSetup() {
     setResumeError('');
     try {
       const result = await apiPost('/profile/resume/parse', { resumeText: resumeText.trim() }, token);
-      if (result?.success && result?.data?.skills) {
-        const parsed = result.data.skills.map((s) => ({
-          name: s.name,
-          proficiency: Math.min(5, Math.max(1, Math.ceil((s.years || 1) / 2))),
-          years: s.years || 1,
-          category: s.category || 'technical',
-          confidence: 'ai-extracted',
-        }));
-        setSkills((prev) => {
-          const existing = new Set(prev.map((s) => s.name.toLowerCase()));
-          const newOnes = parsed.filter((s) => !existing.has(s.name.toLowerCase()));
-          return [...prev, ...newOnes];
-        });
+      if (result?.success) {
+        if (result.data?.skills) {
+          const parsed = result.data.skills.map((s) => ({
+            name: s.name,
+            proficiency: Math.min(5, Math.max(1, Math.ceil((s.years || 1) / 2))),
+            years: s.years || 1,
+            category: s.category || 'technical',
+            confidence: 'ai-extracted',
+          }));
+          setSkills((prev) => {
+            const existing = new Set(prev.map((s) => s.name.toLowerCase()));
+            const newOnes = parsed.filter((s) => !existing.has(s.name.toLowerCase()));
+            return [...prev, ...newOnes];
+          });
+        }
+        
+        if (result.data?.github) setGithubUrl(result.data.github);
+        if (result.data?.linkedin) setLinkedinUrl(result.data.linkedin);
+        if (result.data?.portfolio) setPortfolioUrl(result.data.portfolio);
+        
+        setStep(1); // Advance to the Skills step automatically!
       }
     } catch {
       setResumeError('Could not parse resume. You can add skills manually.');
@@ -164,8 +207,15 @@ export default function ProfileSetup() {
         {/* STEP 1: RESUME */}
         {step === 0 && (
           <div style={{ animation: 'fadeIn 0.3s ease' }}>
-            <h2 style={{ fontSize: '22px', fontWeight: 700, marginBottom: '8px' }}>Paste your resume</h2>
-            <p style={{ fontSize: '14px', color: '#A59F97', marginBottom: '24px' }}>We'll extract your skills automatically. You can edit them in the next step.</p>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: '8px' }}>
+              <h2 style={{ fontSize: '22px', fontWeight: 700, margin: 0 }}>Paste your resume</h2>
+              <button onClick={() => fileInputRef.current?.click()} disabled={pdfUploading}
+                style={{ padding: '8px 16px', borderRadius: '8px', border: '1px solid rgba(243,242,238,0.2)', background: 'rgba(243,242,238,0.05)', color: '#f3f2ee', fontSize: '13px', fontWeight: 600, cursor: pdfUploading ? 'not-allowed' : 'pointer' }}>
+                {pdfUploading ? 'Extracting...' : '📄 Upload PDF'}
+              </button>
+            </div>
+            <p style={{ fontSize: '14px', color: '#A59F97', marginBottom: '16px' }}>We'll extract your skills automatically. You can upload a PDF or paste the text below.</p>
+            <input type="file" accept="application/pdf" ref={fileInputRef} onChange={handleFileUpload} style={{ display: 'none' }} />
             <textarea
               value={resumeText}
               onChange={(e) => setResumeText(e.target.value)}

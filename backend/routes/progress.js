@@ -4,8 +4,10 @@ const { Progress } = require('../models');
 
 router.get('/:userId', async (req, res) => {
   try {
-    const progress = await Progress.findOne({ where: { userId: req.params.userId } });
-    if (!progress) return res.status(404).json({ error: 'Progress not found' });
+    let progress = await Progress.findOne({ where: { userId: req.params.userId } });
+    if (!progress) {
+      progress = await Progress.create({ userId: req.params.userId });
+    }
     res.json(progress);
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -14,8 +16,10 @@ router.get('/:userId', async (req, res) => {
 
 router.post('/:userId/complete-day', async (req, res) => {
   try {
-    const progress = await Progress.findOne({ where: { userId: req.params.userId } });
-    if (!progress) return res.status(404).json({ error: 'Progress not found' });
+    let progress = await Progress.findOne({ where: { userId: req.params.userId } });
+    if (!progress) {
+      progress = await Progress.create({ userId: req.params.userId });
+    }
 
     progress.currentDay += 1;
     progress.streak += 1;
@@ -34,8 +38,10 @@ router.post('/:userId/complete-day', async (req, res) => {
 router.post('/:userId/assessment', async (req, res) => {
   try {
     const { scores } = req.body;
-    const progress = await Progress.findOne({ where: { userId: req.params.userId } });
-    if (!progress) return res.status(404).json({ error: 'Progress not found' });
+    let progress = await Progress.findOne({ where: { userId: req.params.userId } });
+    if (!progress) {
+      progress = await Progress.create({ userId: req.params.userId });
+    }
 
     const fields = ['knowledge', 'velocity', 'technical', 'communication', 'problemSolving', 'consistency', 'retention'];
     fields.forEach((field) => {

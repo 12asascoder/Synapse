@@ -68,11 +68,21 @@ router.post('/resume/parse', authenticate, async (req, res) => {
           skillsList.push({ name: skill, category: 'technical', years: 1 });
         }
       });
+
+      const emailMatch = t.match(/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/);
+      const linkedinMatch = t.match(/linkedin\.com\/in\/[a-zA-Z0-9_-]+/i);
+      const githubMatch = t.match(/github\.com\/[a-zA-Z0-9_-]+/i);
+
       return {
         success: true,
         data: {
-          name: null, email: null, phone: null, linkedin: null, github: null,
-          portfolio: null, summary: t.length > 100 ? t.slice(0, 500) + '...' : t,
+          name: null, 
+          email: emailMatch ? emailMatch[0] : null, 
+          phone: null, 
+          linkedin: linkedinMatch ? `https://www.${linkedinMatch[0]}` : null, 
+          github: githubMatch ? `https://${githubMatch[0]}` : null,
+          portfolio: null, 
+          summary: t.length > 100 ? t.slice(0, 500) + '...' : t,
           experiences: [],
           education: [],
           skills: skillsList.slice(0, 20),

@@ -143,6 +143,45 @@ class SoundEngine {
 /* ─────────────────────────────────────────────
    CUSTOM CURSOR
 ───────────────────────────────────────────── */
+const NAV_LINKS = ['FEATURES', 'CURRICULUM', 'COMMUNITY', 'FAQ'];
+const STATS = [
+  { label: 'ACTIVE USERS', val: '14.2K+' },
+  { label: 'LINES OF CODE', val: '2.4M' },
+  { label: 'PLACEMENTS', val: '94%' },
+  { label: 'AVERAGE SALARY', val: '$115K' }
+];
+const MARQUEE_ITEMS = ['SYSTEM DESIGN', 'ALGORITHMS', 'FULL STACK', 'DEVOPS', 'MACHINE LEARNING'];
+const PHASES = [
+  { step: '01', title: 'FOUNDATION', desc: 'Master the core concepts.' },
+  { step: '02', title: 'BUILD', desc: 'Build scalable applications.' },
+  { step: '03', title: 'SCALE', desc: 'Deploy and scale to millions.' },
+  { step: '04', title: 'LEAD', desc: 'Become an engineering leader.' }
+];
+const FEATURES = [
+  { id: 'F1', title: 'AI MENTOR', desc: '24/7 personalized code reviews and guidance.' },
+  { id: 'F2', title: 'LIVE LABS', desc: 'Real-time collaborative coding environments.' },
+  { id: 'F3', title: 'CAREER PREP', desc: 'Mock interviews and resume building.' }
+];
+
+const S = {
+  page: {
+    minHeight: '100vh',
+    background: 'var(--bg-base)',
+    color: 'var(--text-primary)',
+    fontFamily: 'Inter, sans-serif',
+    overflowX: 'hidden'
+  },
+  btnAccent: {
+    background: '#0D6EFD',
+    color: '#fff',
+    border: 'none',
+    borderRadius: '4px',
+    fontWeight: 'bold',
+    cursor: 'pointer',
+    transition: 'all 0.2s ease',
+  }
+};
+
 export default function LandingPage() {
   const { navigate } = useApp();
   const [hoveredNav, setHoveredNav] = useState(null);

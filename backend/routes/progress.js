@@ -5,7 +5,7 @@ const { authenticate } = require('../middleware/auth');
 
 router.get('/:userId', authenticate, async (req, res) => {
   try {
-    if (req.user.id !== req.params.userId && req.user.role !== 'SUPER_ADMIN') {
+    if (req.user.id != req.params.userId && req.user.role !== 'SUPER_ADMIN') {
       return res.status(403).json({ error: 'Forbidden' });
     }
     let progress = await Progress.findOne({ where: { userId: req.params.userId } });
@@ -20,7 +20,7 @@ router.get('/:userId', authenticate, async (req, res) => {
 
 router.post('/:userId/complete-day', authenticate, async (req, res) => {
   try {
-    if (req.user.id !== req.params.userId && req.user.role !== 'SUPER_ADMIN') {
+    if (req.user.id != req.params.userId && req.user.role !== 'SUPER_ADMIN') {
       return res.status(403).json({ error: 'Forbidden' });
     }
     let progress = await Progress.findOne({ where: { userId: req.params.userId } });
@@ -44,7 +44,7 @@ router.post('/:userId/complete-day', authenticate, async (req, res) => {
 
 router.post('/:userId/assessment', authenticate, async (req, res) => {
   try {
-    if (req.user.id !== req.params.userId && req.user.role !== 'SUPER_ADMIN') {
+    if (req.user.id != req.params.userId && req.user.role !== 'SUPER_ADMIN') {
       return res.status(403).json({ error: 'Forbidden' });
     }
     const { scores } = req.body;

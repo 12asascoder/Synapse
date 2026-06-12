@@ -133,7 +133,7 @@ router.post('/advance', authenticate, async (req, res) => {
 
 router.get('/:userId', authenticate, async (req, res) => {
   try {
-    if (req.user.id !== req.params.userId && req.user.role !== 'SUPER_ADMIN') {
+    if (req.user.id != req.params.userId && req.user.role !== 'SUPER_ADMIN') {
       return res.status(403).json({ error: 'Forbidden' });
     }
     const { bootcampId } = req.query;

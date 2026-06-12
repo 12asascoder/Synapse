@@ -9,7 +9,7 @@ const { generatePassport } = require('../services/passportGenerator');
 
 router.get('/:userId', authenticate, async (req, res) => {
   try {
-    if (req.user.id !== req.params.userId && req.user.role !== 'SUPER_ADMIN') {
+    if (req.user.id != req.params.userId && req.user.role !== 'SUPER_ADMIN') {
       return res.status(403).json({ error: 'Forbidden' });
     }
     const prep = await InterviewPrep.findOne({
@@ -256,7 +256,7 @@ router.post('/mock/respond', authenticate, async (req, res) => {
 
 router.get('/:userId/analytics', authenticate, async (req, res) => {
   try {
-    if (req.user.id !== req.params.userId && req.user.role !== 'SUPER_ADMIN') {
+    if (req.user.id != req.params.userId && req.user.role !== 'SUPER_ADMIN') {
       return res.status(403).json({ error: 'Forbidden' });
     }
 

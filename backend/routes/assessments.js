@@ -31,7 +31,7 @@ router.post('/submit', authenticate, async (req, res) => {
 
 router.get('/history/:userId', authenticate, async (req, res) => {
   try {
-    if (req.user.id !== req.params.userId && req.user.role !== 'SUPER_ADMIN') {
+    if (req.user.id != req.params.userId && req.user.role !== 'SUPER_ADMIN') {
       return res.status(403).json({ error: 'Forbidden' });
     }
     const assessments = await Assessment.findAll({

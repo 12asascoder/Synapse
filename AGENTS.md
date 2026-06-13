@@ -12,7 +12,7 @@
 
 - **PostgreSQL via Supabase** — `DATABASE_URL` in `.env`. `backend/models/index.js` uses SSL with `rejectUnauthorized: false`.
 - **Auto-migrate** — `db.sequelize.sync({ alter: true })` on startup. All schema changes auto-applied.
-- **Seed** — `cd backend && node seed.js` populates bootcamps, curriculum, questions, achievements, and an admin user.
+- **Seed** — `cd backend && node seed.js` populates questions, achievements, and an admin user.
 - **Admin login** — `admin@synapse.ai` / `admin123` (created by seed).
 
 ## Authentication
@@ -52,20 +52,23 @@ cd synapse_mobile && flutter run
 - Chat endpoints: `POST /api/chat/message` (non-streaming), `POST /api/chat/stream` (SSE streaming).
 - No local Ollama dependency required.
 
-## Database models (10 tables)
+## Database models (11 tables)
 
 | Model | Table | Purpose |
 |-------|-------|---------|
 | User | Users | Auth, roles, points |
-| Progress | Progresss | Bootcamp progress, scores, history |
-| Bootcamp | Bootcamps | Available bootcamp programs |
-| CurriculumDay | CurriculumDays | Daily lesson topics per bootcamp |
+| Progress | Progresss | Learning progress, scores, history |
 | AssessmentQuestion | AssessmentQuestions | MCQ bank with options/answers |
 | Assessment | Assessments | User assessment records |
 | Achievement | Achievements | Badges and milestones |
 | UserAchievement | UserAchievements | Junction: user ↔ achievements |
 | CommunityDiscussion | CommunityDiscussions | User forum posts |
 | ChatMessage | ChatMessages | Chat history |
+| UserProfile | UserProfiles | Extended user profile data |
+| InterviewPrep | InterviewPreps | Interview prep sessions (company, date, resume, JD, timeline, DSA questions) |
+| MockInterview | MockInterviews | Mock interview sessions with Q&A and scoring |
+| WeakTopic | WeakTopics | User weak topics identified from mock interviews |
+| DSAAttempt | DSAAttempts | DSA question attempt tracking per company |
 
 ## Backend API
 
@@ -75,10 +78,9 @@ cd synapse_mobile && flutter run
 | POST | `/api/auth/login` | Login, returns JWT |
 | GET | `/api/progress/:userId` | Fetch user progress |
 | POST | `/api/progress/:userId/complete-day` | Advance day |
-| POST | `/api/progress/:userId/assessment` | Update scores (no hardcoded defaults) |
-| GET | `/api/curriculum/:userId` | Curriculum with status (from DB) |
-| GET | `/api/bootcamps` | List active bootcamps |
-| GET | `/api/bootcamps/:id` | Bootcamp with curriculum days |
+| POST | `/api/progress/:userId/assessment` | Update scores |
+| GET | `/api/curriculum/plan/:userId` | Fetch active curriculum plan |
+| POST | `/api/curriculum/generate` | Generate personalized curriculum |
 | GET | `/api/assessments/questions` | Assessment questions (query: topic, limit) |
 | POST | `/api/assessments/submit` | Save assessment results |
 | GET | `/api/achievements` | All achievements |
@@ -91,8 +93,19 @@ cd synapse_mobile && flutter run
 | GET | `/api/users/me` | Current user (auth required) |
 | GET | `/api/users` | All users (admin only) |
 | GET | `/api/analytics/overview` | Platform stats |
+| POST | `/api/interview/setup` | Create interview prep (company, date, resume, JD) |
+| POST | `/api/interview/mock/start` | Start a mock interview session |
+| POST | `/api/interview/mock/respond` | Submit answer to mock interview |
+| POST | `/api/interview/mock/complete` | Complete mock interview |
+| POST | `/api/interview/:prepId/complete` | Mark real interview as completed with analysis |
+| POST | `/api/interview/:prepId/weak-reinterview` | Start targeted re-interview on weak topics |
+| GET | `/api/interview/:prepId/dsa-questions` | Get DSA questions for the company |
+| POST | `/api/interview/dsa/attempt` | Log a DSA question attempt |
+| GET | `/api/interview/dsa/progress/:company` | Get DSA progress stats |
+| GET | `/api/interview/:prepId/weak-topics` | Get weak topics for a prep session |
+| POST | `/api/interview/weak-topics/master` | Mark a weak topic as mastered |
 | GET | `/health` | Health check |
 
 ## Navigation screen names
 
-`landing`, `loading`, `auth`, `hub`, `bootcamp-init`, `dashboard`, `lesson`, `assessment`, `lesson-analytics`, `skill-passport`, `milestone`, `interview`, `analytics`, `community`, `settings`, `admin-dashboard`, `admin-users`, `admin-bootcamps`, `admin-curriculum`, `admin-assessments`, `admin-certificates`, `admin-community`, `admin-vishesh`, `admin-analytics`.
+`landing`, `loading`, `auth`, `hub`, `dashboard`, `lesson`, `assessment`, `lesson-analytics`, `skill-passport`, `interview-prep`, `analytics`, `community`, `settings`, `admin-dashboard`, `admin-users`, `admin-assessments`, `admin-community`, `admin-vishesh`, `admin-analytics`.

@@ -9,7 +9,7 @@ const API = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
 
 export default function AssessmentScreen() {
   const { state, dispatch, navigate } = useApp();
-  const { selectedBootcamp, currentDay } = state;
+  const { currentDay } = state;
 
   const [questions, setQuestions] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -98,7 +98,7 @@ export default function AssessmentScreen() {
           body: JSON.stringify({
             userId: state.user.id,
             day: currentDay,
-            bootcamp: state.selectedBootcamp?.name || 'General',
+            bootcamp: 'General',
             totalQuestions: questions.length,
             correctAnswers: correct,
             scores,
@@ -224,7 +224,7 @@ export default function AssessmentScreen() {
                 &nbsp;&nbsp;&nbsp;&nbsp;<span style={{ color: '#2563EB' }}>pass</span>
               </div>
               <button 
-                onClick={() => navigate('milestone')}
+                onClick={() => navigate('lesson-analytics')}
                 className="btn btn-primary"
                 style={{ marginTop: '32px', padding: '14px 28px', fontSize: '14px', fontWeight: 600, borderRadius: '10px' }}
               >

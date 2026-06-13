@@ -120,16 +120,16 @@ export async function askVishesh({ prompt, context = '' }) {
   }
 }
 
-export async function generateLessonIntro({ bootcamp, topic, day }) {
-  const prompt = `You are teaching Day ${day} of the ${bootcamp} bootcamp. The topic is: ${topic}.
+export async function generateLessonIntro({ topic, day }) {
+  const prompt = `You are teaching Day ${day}. The topic is: ${topic}.
 
 Write a compelling lesson introduction (3-4 paragraphs) that:
 1. Hooks the learner with why this topic matters in the real world
 2. Explains what they will learn today specifically
-3. Connects it to their career goals in ${bootcamp}
+3. Connects it to their career goals
 4. Sets an exciting learning objective
 
 Be direct, engaging, and technically precise. Write as Vishesh.`;
 
-  return askVishesh({ prompt, context: `${bootcamp} - Day ${day} - ${topic}` });
+  return askVishesh({ prompt, context: `Day ${day} - ${topic}` });
 }

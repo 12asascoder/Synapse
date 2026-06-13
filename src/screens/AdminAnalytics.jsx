@@ -48,17 +48,6 @@ export default function AdminAnalytics() {
     { label: 'Community Posts', value: stats.totalDiscussions.toLocaleString(), color: 'var(--fuchsia-400)', trend: 'Active discussions' },
   ];
 
-  const bootcampChartData = {
-    labels: stats.bootcampStats.map(b => b.name),
-    datasets: [{
-      label: 'Curriculum Days (Proxy for Size)',
-      data: stats.bootcampStats.map(b => b.curriculumDays),
-      backgroundColor: stats.bootcampStats.map(b => `${b.color}88`),
-      borderColor: stats.bootcampStats.map(b => b.color),
-      borderWidth: 1,
-    }]
-  };
-
   const scoreDistData = {
     labels: ['0-20', '21-40', '41-60', '61-80', '81-100'],
     datasets: [{
@@ -112,14 +101,7 @@ export default function AdminAnalytics() {
         </div>
 
         {/* Charts */}
-        <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: '24px' }}>
-          <div style={{ ...CARD, padding: '24px' }}>
-            <div style={{ fontWeight: 700, color: 'var(--cyan-400)', fontFamily: 'var(--font-mono)', fontSize: '12px', marginBottom: '24px', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Bootcamp Scale (Curriculum Days)</div>
-            <div style={{ height: '300px' }}>
-              <Bar data={bootcampChartData} options={chartOptions} />
-            </div>
-          </div>
-
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '24px' }}>
           <div style={{ ...CARD, padding: '24px' }}>
             <div style={{ fontWeight: 700, color: 'var(--cyan-400)', fontFamily: 'var(--font-mono)', fontSize: '12px', marginBottom: '24px', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Growth Score Distribution</div>
             <div style={{ height: '260px', display: 'flex', justifyContent: 'center' }}>

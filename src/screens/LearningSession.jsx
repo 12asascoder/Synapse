@@ -30,7 +30,7 @@ function AnimatedWaveform({ active }) {
 
 export default function LearningSession() {
   const { state, dispatch, navigate } = useApp();
-  const { selectedBootcamp, currentDay, user } = state;
+  const { currentDay, user } = state;
 
   const [hasPermissions, setHasPermissions] = useState(false);
   const [curriculum, setCurriculum] = useState([]);
@@ -93,11 +93,10 @@ export default function LearningSession() {
         introMessage = "Welcome to your Milestone Validation. I will be assessing your knowledge across the topics we've covered. Are you ready to begin?";
       } else {
         // Teach mode
-        const topic = curriculum.find(c => String(c.day) === String(currentDay))?.topic || 'Optimization Strategies';
-        const bootcampName = selectedBootcamp?.name || 'AI Engineering';
+        const topic = curriculum.find(c => String(c.day) === String(currentDay))?.topic || `Day ${currentDay}`;
         
         try {
-          introMessage = await generateLessonIntro({ bootcamp: bootcampName, topic, day: currentDay });
+          introMessage = await generateLessonIntro({ topic, day: currentDay });
         } catch (err) {
           introMessage = `Welcome back. Today we are covering ${topic}. Let's dive in.`;
         }
@@ -120,7 +119,7 @@ export default function LearningSession() {
     };
 
     startSession();
-  }, [hasPermissions, currentDay, curriculum, selectedBootcamp, messages.length]);
+  }, [hasPermissions, currentDay, curriculum, messages.length]);
 
   // --- Voice Setup ---
   const speakMessage = (text, onEnd) => {
@@ -265,7 +264,7 @@ export default function LearningSession() {
     await streamVisheshResponse({
       userMessage: text,
       history,
-      context: `Bootcamp: ${selectedBootcamp?.name || 'AI Engineering'} | Day: ${currentDay} | Topic: ${topic} | Mode: ${modeContext}`,
+      context: `Day: ${currentDay} | Topic: ${topic} | Mode: ${modeContext}`,
 
       abortController: abortRef.current,
       onToken: (_, full) => {
@@ -305,7 +304,7 @@ export default function LearningSession() {
         setIsStreaming(false);
       },
     });
-  }, [input, isStreaming, messages, selectedBootcamp, currentDay]);
+  }, [input, isStreaming, messages, currentDay]);
 
   const handleKeyDown = (e) => {
     if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); }
@@ -590,8 +589,8 @@ export default function LearningSession() {
                 {!loadingCurriculum && curriculum.length === 0 && (
                   <div style={{ padding: '24px', textAlign: 'center', color: '#A59F97' }}>
                     <div style={{ fontSize: '32px', marginBottom: '12px' }}>📚</div>
-                    <div style={{ fontSize: '14px', fontWeight: 600, color: '#44403B', marginBottom: '8px' }}>No active bootcamp</div>
-                    <div style={{ fontSize: '12px', lineHeight: 1.5, marginBottom: '16px' }}>Select a bootcamp from the Dashboard to see your curriculum here.</div>
+                    <div style={{ fontSize: '14px', fontWeight: 600, color: '#44403B', marginBottom: '8px' }}>No active curriculum</div>
+                    <div style={{ fontSize: '12px', lineHeight: 1.5, marginBottom: '16px' }}>Start a learning session from the Dashboard.</div>
                     <button onClick={() => navigate('dashboard')} style={{ padding: '10px 20px', background: '#000', color: '#fff', border: 'none', borderRadius: '8px', fontSize: '13px', cursor: 'pointer', fontWeight: 600 }}>Go to Dashboard</button>
                   </div>
                 )}

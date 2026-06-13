@@ -9,52 +9,48 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.UUID,
       allowNull: false,
     },
+    company: {
+      type: DataTypes.STRING,
+      defaultValue: 'Unknown',
+    },
+    role: {
+      type: DataTypes.STRING,
+      defaultValue: null,
+    },
+    interviewDate: {
+      type: DataTypes.DATE,
+      defaultValue: null,
+    },
+    resumeText: {
+      type: DataTypes.TEXT,
+      defaultValue: null,
+    },
     jdText: {
       type: DataTypes.TEXT,
       defaultValue: null,
     },
-    jdParsed: {
+    skillGapAnalysis: {
       type: DataTypes.JSON,
       defaultValue: null,
     },
-    jdSummary: {
-      type: DataTypes.STRING,
-      defaultValue: null,
-    },
-    mode: {
-      type: DataTypes.STRING,
-      defaultValue: 'structured',
-    },
-    starQuestions: {
+    timeline: {
       type: DataTypes.JSON,
       defaultValue: [],
     },
-    oveQuestions: {
+    weakTopics: {
       type: DataTypes.JSON,
       defaultValue: [],
     },
-    answers: {
+    dsaQuestions: {
       type: DataTypes.JSON,
       defaultValue: [],
-    },
-    readinessScore: {
-      type: DataTypes.INTEGER,
-      defaultValue: 0,
-    },
-    prepProgress: {
-      type: DataTypes.JSON,
-      defaultValue: { questionsAnswered: 0, avgScore: 0, weakAreas: [], sessionsCompleted: 0 },
     },
     status: {
       type: DataTypes.STRING,
       defaultValue: 'active',
     },
-    expiresAt: {
+    completedAt: {
       type: DataTypes.DATE,
-      defaultValue: null,
-    },
-    passport: {
-      type: DataTypes.JSON,
       defaultValue: null,
     },
   });

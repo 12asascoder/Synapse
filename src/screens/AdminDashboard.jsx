@@ -9,16 +9,10 @@ const API = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
 
 export default function AdminDashboard() {
   const [stats, setStats] = useState(null);
-  const [bootcampCount, setBootcampCount] = useState(0);
-
   useEffect(() => {
     fetch(`${API}/analytics/overview`)
       .then((r) => r.json())
       .then((data) => setStats(data))
-      .catch(() => {});
-    fetch(`${API}/bootcamps`)
-      .then((r) => r.json())
-      .then((data) => setBootcampCount(data.length))
       .catch(() => {});
   }, []);
 
@@ -26,14 +20,13 @@ export default function AdminDashboard() {
     ? [
         { label: 'Total Users', value: stats.totalUsers?.toLocaleString() || '0', trend: 'Registered' },
         { label: 'Active (7d)', value: stats.activeUsers?.toLocaleString() || '0', trend: 'Active' },
-        { label: 'Bootcamps', value: bootcampCount.toString(), trend: 'Programs' },
         { label: 'Assessments', value: stats.totalAssessments?.toLocaleString() || '0', trend: 'Completed' },
         { label: 'Avg Growth', value: stats.avgGrowthScore ? `${stats.avgGrowthScore}/100` : 'N/A', trend: 'Platform Avg' },
         { label: 'Engagement', value: stats.totalUsers ? `${Math.round((stats.activeUsers / stats.totalUsers) * 100)}%` : 'N/A', trend: 'Active Rate' },
         { label: 'Platform', value: 'Online', trend: 'Operational' },
         { label: 'Database', value: 'Connected', trend: 'PostgreSQL' },
       ]
-    : Array.from({ length: 8 }, (_, i) => ({
+    : Array.from({ length: 7 }, (_, i) => ({
         label: 'Loading...', value: '—', trend: '',
       }));
 
@@ -85,7 +78,6 @@ export default function AdminDashboard() {
             <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}><div style={{ width: 6, height: 6, background: '#DCDCDC', borderRadius: '50%' }} /> Database: PostgreSQL on Supabase</div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}><div style={{ width: 6, height: 6, background: '#DCDCDC', borderRadius: '50%' }} /> Auth: bcrypt (12 rounds) + JWT</div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}><div style={{ width: 6, height: 6, background: '#DCDCDC', borderRadius: '50%' }} /> AI: TruGen API</div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}><div style={{ width: 6, height: 6, background: '#DCDCDC', borderRadius: '50%' }} /> Models: {bootcampCount} bootcamps, 10 tables</div>
             {stats && <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}><div style={{ width: 6, height: 6, background: '#DCDCDC', borderRadius: '50%' }} /> Users: {stats.totalUsers} total / {stats.activeUsers} active</div>}
             {stats && <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}><div style={{ width: 6, height: 6, background: '#DCDCDC', borderRadius: '50%' }} /> Assessments: {stats.totalAssessments} completed</div>}
             {stats && <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}><div style={{ width: 6, height: 6, background: '#DCDCDC', borderRadius: '50%' }} /> Avg Growth Score: {stats.avgGrowthScore || 0}/100</div>}

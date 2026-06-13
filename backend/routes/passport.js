@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { User, Achievement, UserAchievement, Progress, Bootcamp } = require('../models');
+const { User, Achievement, UserAchievement, Progress } = require('../models');
 
 router.get('/verify/:userId', async (req, res) => {
   try {
@@ -18,11 +18,6 @@ router.get('/verify/:userId', async (req, res) => {
     const earnedIds = userAchievements.map((ua) => ua.achievementId);
     const earned = achievements.filter((a) => earnedIds.includes(a.id));
 
-    let bootcamp = null;
-    if (progress?.bootcampId) {
-      bootcamp = await Bootcamp.findByPk(progress.bootcampId);
-    }
-
     res.json({
       user: { name: user.name, tier: user.tier, points: user.points },
       earnedAchievements: earned.map((a) => ({ id: a.id, name: a.name, icon: a.icon, description: a.description })),
@@ -35,7 +30,6 @@ router.get('/verify/:userId', async (req, res) => {
         retention: progress.retention,
         velocity: progress.velocity,
       } : null,
-      bootcamp: bootcamp ? { name: bootcamp.name, icon: bootcamp.icon } : null,
       verifiedAt: new Date().toISOString(),
     });
   } catch (error) {

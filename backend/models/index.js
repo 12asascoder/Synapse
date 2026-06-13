@@ -41,8 +41,6 @@ db.sequelize = sequelize;
 
 db.User = require('./User')(sequelize, DataTypes);
 db.Progress = require('./Progress')(sequelize, DataTypes);
-db.Bootcamp = require('./Bootcamp')(sequelize, DataTypes);
-db.CurriculumDay = require('./CurriculumDay')(sequelize, DataTypes);
 db.AssessmentQuestion = require('./AssessmentQuestion')(sequelize, DataTypes);
 db.Assessment = require('./Assessment')(sequelize, DataTypes);
 db.Achievement = require('./Achievement')(sequelize, DataTypes);
@@ -51,7 +49,9 @@ db.CommunityDiscussion = require('./CommunityDiscussion')(sequelize, DataTypes);
 db.ChatMessage = require('./ChatMessage')(sequelize, DataTypes);
 db.UserProfile = require('./UserProfile')(sequelize, DataTypes);
 db.InterviewPrep = require('./InterviewPrep')(sequelize, DataTypes);
-db.CurriculumPlan = require('./CurriculumPlan')(sequelize, DataTypes);
+db.MockInterview = require('./MockInterview')(sequelize, DataTypes);
+db.DSAAttempt = require('./DSAAttempt')(sequelize, DataTypes);
+db.WeakTopic = require('./WeakTopic')(sequelize, DataTypes);
 
 db.User.hasOne(db.Progress, { foreignKey: 'userId' });
 db.Progress.belongsTo(db.User, { foreignKey: 'userId' });
@@ -62,11 +62,14 @@ db.UserProfile.belongsTo(db.User, { foreignKey: 'userId' });
 db.User.hasMany(db.InterviewPrep, { foreignKey: 'userId' });
 db.InterviewPrep.belongsTo(db.User, { foreignKey: 'userId' });
 
-db.User.hasMany(db.CurriculumPlan, { foreignKey: 'userId' });
-db.CurriculumPlan.belongsTo(db.User, { foreignKey: 'userId' });
+db.User.hasMany(db.MockInterview, { foreignKey: 'userId' });
+db.MockInterview.belongsTo(db.User, { foreignKey: 'userId' });
 
-db.Bootcamp.hasMany(db.CurriculumDay, { foreignKey: 'bootcampId' });
-db.CurriculumDay.belongsTo(db.Bootcamp, { foreignKey: 'bootcampId' });
+db.User.hasMany(db.DSAAttempt, { foreignKey: 'userId' });
+db.DSAAttempt.belongsTo(db.User, { foreignKey: 'userId' });
+
+db.User.hasMany(db.WeakTopic, { foreignKey: 'userId' });
+db.WeakTopic.belongsTo(db.User, { foreignKey: 'userId' });
 
 db.User.belongsToMany(db.Achievement, { through: db.UserAchievement, foreignKey: 'userId' });
 db.Achievement.belongsToMany(db.User, { through: db.UserAchievement, foreignKey: 'achievementId' });

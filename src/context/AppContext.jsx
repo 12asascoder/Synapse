@@ -164,14 +164,14 @@ export function AppProvider({ children }) {
         })
         .catch(err => console.error("Failed to fetch progress", err));
     }
-  }, [state.isAuthenticated, state.user]);
+  }, [state.isAuthenticated, state.user?.id]);
 
   // Persist session state (non-sensitive only)
   useEffect(() => {
     if (state.isAuthenticated) {
       try {
         const toSave = {
-          user: { name: state.user?.name, email: state.user?.email, role: state.user?.role, token: state.token, onboardingComplete: state.user?.onboardingComplete },
+          user: { id: state.user?.id, name: state.user?.name, email: state.user?.email, role: state.user?.role, token: state.token, onboardingComplete: state.user?.onboardingComplete },
           token: state.token,
           isAuthenticated: state.isAuthenticated,
           selectedBootcamp: state.selectedBootcamp,

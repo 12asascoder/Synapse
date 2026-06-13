@@ -36,19 +36,16 @@ export default function LoadingScreen() {
       setProgress((p) => Math.min(p + Math.random() * 10, 100));
     }, 250);
 
-    const run = async () => {
-      if (isAuthenticated && user && token) {
-        await new Promise((r) => setTimeout(r, 600));
-        if (!dead) {
-          doneRef.current = true;
-          const target = user?.onboardingComplete === false ? 'profile-setup'
-            : user?.role === 'SUPER_ADMIN' ? 'admin-dashboard'
-            : state.selectedBootcamp ? 'dashboard' : 'hub';
-          navigate(target);
-          return;
-        }
-      }
+    if (isAuthenticated && user && token) {
+      doneRef.current = true;
+      const target = user?.onboardingComplete === false ? 'profile-setup'
+        : user?.role === 'SUPER_ADMIN' ? 'admin-dashboard'
+        : state.selectedBootcamp ? 'dashboard' : 'hub';
+      const t = setTimeout(() => { if (!dead) navigate(target); }, 400);
+      return () => { dead = true; clearInterval(msgInterval); clearInterval(progressInterval); clearTimeout(t); };
+    }
 
+    const run = async () => {
       try {
         await fetch(`${API.replace('/api', '')}/health`, { signal: AbortSignal.timeout(3000) });
       } catch {
@@ -69,7 +66,7 @@ export default function LoadingScreen() {
     const navFallback = setTimeout(() => {
       if (!doneRef.current) {
         doneRef.current = true;
-        navigate(isAuthenticated ? 'hub' : 'landing');
+        navigate('landing');
       }
     }, 5000);
 
@@ -79,7 +76,7 @@ export default function LoadingScreen() {
       clearInterval(progressInterval);
       clearTimeout(navFallback);
     };
-  }, []);
+  }, [isAuthenticated, user, token]);
 
   return (
     <ThemeContainer>

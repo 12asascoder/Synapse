@@ -813,7 +813,10 @@ export default function InterviewPrep() {
                 {prep.mode && ` · ${prep.mode === 'crash' ? '🚀 Crash Mode' : '📅 Structured Mode'}`}
               </p>
             </div>
-            <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+            <div style={{ display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap' }}>
+              <button onClick={() => navigate('company-dsa')} style={{ ...STYLES.button, ...STYLES.buttonSecondary, fontSize: 12, padding: '6px 14px' }}>📚 DSA</button>
+              <button onClick={() => navigate('targeted-reinterview')} style={{ ...STYLES.button, ...STYLES.buttonSecondary, fontSize: 12, padding: '6px 14px' }}>🎯 Re-Interview</button>
+              <button onClick={() => navigate('interview-history')} style={{ ...STYLES.button, ...STYLES.buttonSecondary, fontSize: 12, padding: '6px 14px' }}>📋 History</button>
               <button onClick={() => navigate('hub')} style={{ ...STYLES.button, ...STYLES.buttonSecondary, fontSize: 12, padding: '6px 14px' }}>Hub</button>
               <button onClick={() => navigate('dashboard')} style={{ ...STYLES.button, ...STYLES.buttonSecondary, fontSize: 12, padding: '6px 14px' }}>Dashboard</button>
               <StatusBadge status={prep.status} />

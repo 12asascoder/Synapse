@@ -52,6 +52,9 @@ db.ChatMessage = require('./ChatMessage')(sequelize, DataTypes);
 db.UserProfile = require('./UserProfile')(sequelize, DataTypes);
 db.InterviewPrep = require('./InterviewPrep')(sequelize, DataTypes);
 db.CurriculumPlan = require('./CurriculumPlan')(sequelize, DataTypes);
+db.MockInterview = require('./MockInterview')(sequelize, DataTypes);
+db.DSAAttempt = require('./DSAAttempt')(sequelize, DataTypes);
+db.WeakTopic = require('./WeakTopic')(sequelize, DataTypes);
 
 db.User.hasOne(db.Progress, { foreignKey: 'userId' });
 db.Progress.belongsTo(db.User, { foreignKey: 'userId' });
@@ -76,6 +79,19 @@ db.CommunityDiscussion.belongsTo(db.User, { foreignKey: 'userId' });
 
 db.User.hasMany(db.ChatMessage, { foreignKey: 'userId' });
 db.ChatMessage.belongsTo(db.User, { foreignKey: 'userId' });
+
+db.InterviewPrep.hasMany(db.MockInterview, { foreignKey: 'interviewPrepId' });
+db.MockInterview.belongsTo(db.InterviewPrep, { foreignKey: 'interviewPrepId' });
+
+db.InterviewPrep.hasMany(db.DSAAttempt, { foreignKey: 'interviewPrepId' });
+db.DSAAttempt.belongsTo(db.InterviewPrep, { foreignKey: 'interviewPrepId' });
+
+db.InterviewPrep.hasMany(db.WeakTopic, { foreignKey: 'interviewPrepId' });
+db.WeakTopic.belongsTo(db.InterviewPrep, { foreignKey: 'interviewPrepId' });
+
+db.User.hasMany(db.MockInterview, { foreignKey: 'userId' });
+db.User.hasMany(db.DSAAttempt, { foreignKey: 'userId' });
+db.User.hasMany(db.WeakTopic, { foreignKey: 'userId' });
 
 module.exports = db;
 

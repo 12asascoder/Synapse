@@ -3,6 +3,13 @@
  */
 import { useApp } from '../context/AppContext';
 
+const INTERVIEW_CHILD_ITEMS = [
+  { id: 'interview-prep', label: 'Setup & Practice', icon: '◆' },
+  { id: 'company-dsa', label: 'DSA Question Bank', icon: '📚' },
+  { id: 'targeted-reinterview', label: 'Re-Interview', icon: '🎯' },
+  { id: 'interview-history', label: 'History', icon: '📋' },
+];
+
 const NAV_ITEMS = [
   { id: 'dashboard', label: 'Dashboard', icon: '⊕' },
   { id: 'lesson', label: 'Learning Session', icon: '◈' },
@@ -10,7 +17,7 @@ const NAV_ITEMS = [
   { id: 'analytics', label: 'Analytics', icon: '▦' },
   { id: 'community', label: 'Community', icon: '⌘' },
   { id: 'skill-passport', label: 'Skill Passport', icon: '◆' },
-  { id: 'interview-prep', label: 'Interview Prep', icon: '🎯' },
+  { id: 'interview-parent', label: 'Interview Prep', icon: '🎯', isParent: true },
   { id: 'certificates', label: 'Certificates', icon: '◇' },
 ];
 
@@ -76,6 +83,55 @@ export default function Sidebar() {
       <nav style={{ flex: 1, padding: '12px 8px', overflowY: 'auto' }}>
         {NAV_ITEMS.map((item) => {
           const isActive = currentScreen === item.id;
+          const isParent = item.isParent;
+          const showChildren = isParent && (currentScreen === 'interview-prep' || currentScreen === 'company-dsa' || currentScreen === 'targeted-reinterview' || currentScreen === 'interview-history');
+
+          if (isParent) {
+            return (
+              <div key={item.id}>
+                <div style={{
+                  width: '100%', display: 'flex', alignItems: 'center', gap: '10px',
+                  padding: '9px 12px', borderRadius: '8px',
+                  color: showChildren ? 'var(--text-accent)' : 'var(--text-secondary)',
+                  fontFamily: 'var(--font-body)', fontSize: '13px',
+                  fontWeight: showChildren ? 700 : 450, marginBottom: '2px',
+                  borderLeft: showChildren ? '2px solid var(--border-active)' : '2px solid transparent',
+                }}>
+                  <span style={{ fontSize: '14px', flexShrink: 0, opacity: showChildren ? 1 : 0.6 }}>{item.icon}</span>
+                  <span style={{ flex: 1 }}>{item.label}</span>
+                </div>
+                {showChildren && (
+                  <div style={{ marginLeft: '8px' }}>
+                    {INTERVIEW_CHILD_ITEMS.map((child) => {
+                      const isChildActive = currentScreen === child.id;
+                      return (
+                        <button
+                          key={child.id}
+                          onClick={() => navigate(child.id)}
+                          id={`sidebar-${child.id}`}
+                          style={{
+                            width: '100%', display: 'flex', alignItems: 'center', gap: '10px',
+                            padding: '7px 12px', borderRadius: '6px', border: 'none',
+                            background: isChildActive ? 'rgba(207,255,0,0.08)' : 'transparent',
+                            color: isChildActive ? 'var(--text-accent)' : 'var(--text-secondary)',
+                            fontFamily: 'var(--font-body)', fontSize: '12px',
+                            fontWeight: isChildActive ? 700 : 400,
+                            cursor: 'pointer', textAlign: 'left', marginBottom: '1px',
+                            transition: 'all 0.15s ease',
+                          }}
+                          onMouseEnter={(e) => { if (!isChildActive) { e.currentTarget.style.background = 'rgba(243,242,238,0.04)'; e.currentTarget.style.color = 'var(--text-primary)'; } }}
+                          onMouseLeave={(e) => { if (!isChildActive) { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = 'var(--text-secondary)'; } }}
+                        >
+                          <span style={{ fontSize: '12px', flexShrink: 0, opacity: 0.6 }}>{child.icon}</span>
+                          <span style={{ flex: 1 }}>{child.label}</span>
+                        </button>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
+            );
+          }
 
           return (
             <button

@@ -3,7 +3,7 @@ const router = express.Router();
 const { authenticate, requireAdmin } = require('../middleware/auth');
 const {
   Bootcamp, CurriculumDay, AssessmentQuestion, Assessment,
-  User, Progress, CommunityDiscussion, Achievement, UserAchievement,
+  User, Progress, CommunityDiscussion, Achievement, UserAchievement, InterviewPrep,
 } = require('../models');
 const { Op } = require('sequelize');
 
@@ -310,6 +310,33 @@ router.get('/analytics/detailed', async (req, res) => {
     });
   } catch (error) {
     res.status(500).json({ error: 'Failed to fetch analytics' });
+  }
+});
+
+router.get('/interview-stats', async (req, res) => {
+  try {
+    const allPreps = await InterviewPrep.findAll({
+      include: [{ model: User, attributes: ['name', 'email'] }],
+      order: [['createdAt', 'DESC']],
+    });
+
+    const totalPreps = allPreps.length;
+    const activePreps = allPreps.filter(p => p.status === 'active').length;
+    const completedPreps = allPreps.filter(p => p.status === 'completed').length;
+    const allAnswers = allPreps.flatMap(p => p.answers || []);
+    const scores = allAnswers.filter(a => a.score != null).map(a => a.score);
+    const avgScore = scores.length > 0 ? Math.round(scores.reduce((a, b) => a + b, 0) / scores.length) : 0;
+
+    res.json({
+      totalPreps,
+      activePreps,
+      completedPreps,
+      totalAnswers: allAnswers.length,
+      avgScore,
+      recentPreps: allPreps.slice(0, 20),
+    });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
   }
 });
 

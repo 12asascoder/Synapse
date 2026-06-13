@@ -312,4 +312,111 @@ router.get('/:userId/analytics', authenticate, async (req, res) => {
   }
 });
 
+router.get('/:userId/weak-topics', authenticate, async (req, res) => {
+  try {
+    if (req.user.id !== req.params.userId && req.user.role !== 'SUPER_ADMIN') {
+      return res.status(403).json({ error: 'Forbidden' });
+    }
+    const { WeakTopic } = require('../models');
+    const weakTopics = await WeakTopic.findAll({
+      where: { userId: req.params.userId, mastered: false },
+      order: [['score', 'ASC']],
+    });
+    res.json(weakTopics);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+router.post('/:prepId/weak-reinterview', authenticate, async (req, res) => {
+  try {
+    const { WeakTopic, InterviewPrep } = require('../models');
+    const prep = await InterviewPrep.findOne({
+      where: { id: req.params.prepId, userId: req.user.id },
+    });
+    if (!prep) return res.status(404).json({ error: 'Prep session not found' });
+
+    const { topics } = req.body;
+    const weakTopics = topics || [];
+
+    if (weakTopics.length === 0) {
+      return res.status(400).json({ error: 'At least one weak topic required' });
+    }
+
+    const allQs = [...(prep.starQuestions || []), ...(prep.oveQuestions || [])];
+    const targetedQuestions = allQs.filter(q =>
+      weakTopics.some(t => (q.targetedSkill || '').toLowerCase().includes(t.toLowerCase()) ||
+        (q.category || '').toLowerCase().includes(t.toLowerCase()) ||
+        (q.question || '').toLowerCase().includes(t.toLowerCase()))
+    );
+
+    const session = {
+      id: `reinterview-${Date.now()}`,
+      startedAt: new Date().toISOString(),
+      currentIndex: 0,
+      questions: targetedQuestions.length > 0
+        ? targetedQuestions.sort(() => Math.random() - 0.5).slice(0, Math.min(5, targetedQuestions.length))
+        : allQs.sort(() => Math.random() - 0.5).slice(0, 5),
+      responses: [],
+      status: 'in_progress',
+      type: 'reinterview',
+      focusTopics: weakTopics,
+    };
+
+    res.json(session);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+router.post('/:prepId/complete-interview', authenticate, async (req, res) => {
+  try {
+    const { InterviewPrep } = require('../models');
+    const prep = await InterviewPrep.findOne({
+      where: { id: req.params.prepId, userId: req.user.id },
+    });
+    if (!prep) return res.status(404).json({ error: 'Prep session not found' });
+
+    const { topicsCovered, scores } = req.body;
+    const { WeakTopic } = require('../models');
+
+    if (topicsCovered && scores) {
+      for (const topic of topicsCovered) {
+        const existing = await WeakTopic.findOne({
+          where: { interviewPrepId: req.params.prepId, userId: req.user.id, topic },
+        });
+        const topicScore = scores[topic] || 0;
+        if (existing) {
+          await existing.update({
+            score: topicScore,
+            attempts: existing.attempts + 1,
+            lastAttempted: new Date(),
+            mastered: topicScore >= 80,
+          });
+        } else {
+          await WeakTopic.create({
+            interviewPrepId: req.params.prepId,
+            userId: req.user.id,
+            topic,
+            score: topicScore,
+            attempts: 1,
+            lastAttempted: new Date(),
+            mastered: topicScore >= 80,
+            source: 'interview',
+          });
+        }
+      }
+    }
+
+    await prep.update({
+      status: 'completed',
+      passport: prep.passport || { completedAt: new Date().toISOString() },
+    });
+
+    res.json({ status: 'completed', message: 'Interview marked complete' });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
 module.exports = router;

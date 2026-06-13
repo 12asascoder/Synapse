@@ -131,36 +131,6 @@ router.post('/advance', authenticate, async (req, res) => {
   }
 });
 
-router.get('/:userId', authenticate, async (req, res) => {
-  try {
-    if (req.user.id != req.params.userId && req.user.role !== 'SUPER_ADMIN') {
-      return res.status(403).json({ error: 'Forbidden' });
-    }
-    const { bootcampId } = req.query;
-    const progress = await Progress.findOne({ where: { userId: req.params.userId } });
-    if (!progress) return res.status(404).json({ error: 'Progress not found' });
-
-    const where = bootcampId ? { bootcampId } : {};
-    const days = await CurriculumDay.findAll({
-      where,
-      order: [['day', 'ASC']],
-      include: [{ model: Bootcamp, attributes: ['name', 'slug', 'color'] }],
-    });
-
-    const currentDay = progress.currentDay;
-    const curriculumWithStatus = days.map((item) => {
-      const d = item.toJSON();
-      let status = 'locked';
-      if (d.day < currentDay) status = 'complete';
-      else if (d.day === currentDay) status = 'active';
-      return { ...d, status };
-    });
-
-    res.json(curriculumWithStatus);
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-});
 
 router.post('/remedial', authenticate, async (req, res) => {
   try {
@@ -261,16 +231,5 @@ router.post('/adjust-difficulty', authenticate, async (req, res) => {
   }
 });
 
-router.get('/', authenticate, async (req, res) => {
-  try {
-    const days = await CurriculumDay.findAll({
-      order: [['day', 'ASC']],
-      include: [{ model: Bootcamp, attributes: ['name', 'slug', 'color'] }],
-    });
-    res.json(days);
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-});
 
 module.exports = router;

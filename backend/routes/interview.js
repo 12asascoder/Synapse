@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { InterviewPrep, MockInterview, WeakTopic, DSAAttempt, User } = require('../models');
+const { InterviewPrep, MockInterview, WeakTopic, DSAAttempt } = require('../models');
 const { authenticate } = require('../middleware/auth');
 const { trugenGenerate } = require('../ai/trugen');
 
@@ -14,7 +14,6 @@ router.post('/setup', authenticate, async (req, res) => {
     }
 
     const analysis = await analyzeResumeJD(resumeText, jdText, role, company);
-
     const dsaQuestions = await generateDSAQuestions(company);
 
     const prep = await InterviewPrep.create({
@@ -91,7 +90,7 @@ Only output valid JSON array, no other text.`;
   }
 }
 
-// ─── Get prep ────────────────────────────────────────────────────────────────
+// ─── Get Prep ────────────────────────────────────────────────────────────────
 
 router.get('/:userId', authenticate, async (req, res) => {
   try {
@@ -110,22 +109,7 @@ router.get('/:userId', authenticate, async (req, res) => {
 
 router.get('/active/:userId', authenticate, async (req, res) => {
   try {
-    if (req.user.id != req.params.userId && req.user.role !== 'SUPER_ADMIN') {
-      return res.status(403).json({ error: 'Forbidden' });
-    }
-    const preps = await InterviewPrep.findAll({
-      where: { userId: req.params.userId },
-      order: [['createdAt', 'DESC']],
-    });
-    res.json(preps);
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-});
-
-router.get('/active/:userId', authenticate, async (req, res) => {
-  try {
-    if (req.user.id != req.params.userId && req.user.role !== 'SUPER_ADMIN') {
+    if (req.user.id !== req.params.userId && req.user.role !== 'SUPER_ADMIN') {
       return res.status(403).json({ error: 'Forbidden' });
     }
     const prep = await InterviewPrep.findOne({
@@ -479,13 +463,6 @@ router.post('/dsa/attempt', authenticate, async (req, res) => {
 
 router.get('/dsa/progress/:company', authenticate, async (req, res) => {
   try {
-    if (req.user.id != req.params.userId && req.user.role !== 'SUPER_ADMIN') {
-      return res.status(403).json({ error: 'Forbidden' });
-    }
-
-    const allPreps = await InterviewPrep.findAll({
-      where: { userId: req.params.userId },
-      order: [['createdAt', 'ASC']],
     const attempts = await DSAAttempt.findAll({
       where: { userId: req.user.id, company: req.params.company },
     });

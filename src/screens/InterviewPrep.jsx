@@ -580,7 +580,6 @@ export default function InterviewPrep() {
     setTab('timeline');
   };
 
-
   if (loading) {
     return (
       <div style={outerStyle}>

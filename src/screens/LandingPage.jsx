@@ -382,6 +382,16 @@ export default function LandingPage() {
           -webkit-text-stroke: 1px #CFFF00;
           color: transparent;
         }
+        .outline-hover-yellow {
+          -webkit-text-stroke: 1px rgba(243, 242, 238, 0.85);
+          color: transparent;
+          letter-spacing: 0.04em;
+          transition: -webkit-text-stroke 0.3s ease;
+        }
+        .outline-hover-yellow:hover {
+          -webkit-text-stroke: 1px #CFFF00;
+          color: transparent;
+        }
       `}</style>
 
       {/* Custom cursor (rendered first so it's always on top) */}

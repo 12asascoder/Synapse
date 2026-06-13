@@ -1,10 +1,7 @@
 import { useApp } from '../context/AppContext';
 
-
 export default function WelcomeHub() {
   const { navigate } = useApp();
-
-
   return (
     <div style={{
       minHeight: '100vh',

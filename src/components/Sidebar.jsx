@@ -47,7 +47,7 @@ export default function Sidebar() {
             width: 32, height: 32, borderRadius: '8px',
             background: 'var(--border-active)',
             display: 'flex', alignItems: 'center', justifyContent: 'center',
-            fontSize: '14px', color: '#010203',
+            fontSize: '14px', color: 'var(--bg-base)',
             flexShrink: 0,
             fontWeight: 800,
           }}>✦</div>

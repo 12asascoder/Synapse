@@ -181,7 +181,7 @@ export default function MilestoneInterview() {
           </div>
 
           <div style={{ padding: '24px', background: '#F5F3F1', border: '1px solid #E8E6E3', borderRadius: '16px' }}>
-            <div style={{ fontSize: '12px', color: '#A59F97', fontWeight: 700, letterSpacing: '0.05em', marginBottom: '16px', textTransform: 'uppercase' }}>Telemetry</div>
+            <div style={{ fontSize: '12px', color: 'var(--text-secondary)', fontWeight: 700, letterSpacing: '0.05em', marginBottom: '16px', textTransform: 'uppercase' }}>Telemetry</div>
             {[
               { l: 'Gaze Tracking', v: 'Stable', c: '#10B981' },
               { l: 'Audio Environment', v: 'Clear', c: '#10B981' },
@@ -196,7 +196,7 @@ export default function MilestoneInterview() {
         </div>
 
         <div style={{ padding: '32px', borderTop: '1px solid #E8E6E3', textAlign: 'center', background: '#FDFCFC' }}>
-          <div style={{ fontSize: '12px', color: '#A59F97', fontWeight: 700, letterSpacing: '0.05em', marginBottom: '12px', textTransform: 'uppercase' }}>Remaining Time</div>
+          <div style={{ fontSize: '12px', color: 'var(--text-secondary)', fontWeight: 700, letterSpacing: '0.05em', marginBottom: '12px', textTransform: 'uppercase' }}>Remaining Time</div>
           <div style={{ fontSize: '48px', fontWeight: 700, fontFamily: 'var(--font-mono)', color: timeLeft < 180 ? '#DC2626' : '#000', lineHeight: 1 }}>
             {formatTime(timeLeft)}
           </div>
@@ -277,7 +277,7 @@ export default function MilestoneInterview() {
               <div style={{ width: 36, height: 36, borderRadius: '50%', background: '#000', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '14px', color: '#fff', fontWeight: 700 }}>V</div>
               <div style={{ display: 'flex', gap: '6px' }}>
                 {[0,1,2].map((i) => (
-                  <div key={i} style={{ width: 8, height: 8, borderRadius: '50%', background: '#A59F97', animation: 'pulse-dot 1.2s infinite', animationDelay: `${i * 200}ms` }} />
+                  <div key={i} style={{ width: 8, height: 8, borderRadius: '50%', background: 'var(--text-secondary)', animation: 'pulse-dot 1.2s infinite', animationDelay: `${i * 200}ms` }} />
                 ))}
               </div>
             </div>
@@ -323,7 +323,7 @@ export default function MilestoneInterview() {
               style={{
                 width: 44, height: 44, borderRadius: '12px',
                 background: input.trim() ? '#000' : '#F5F3F1',
-                border: 'none', color: input.trim() ? '#fff' : '#A59F97',
+                border: 'none', color: input.trim() ? '#fff' : 'var(--text-secondary)',
                 fontSize: '18px', cursor: input.trim() ? 'pointer' : 'default',
                 transition: 'all 0.2s ease'
               }}

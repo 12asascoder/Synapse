@@ -56,7 +56,7 @@ export default function SessionStartModal({ onJoin }) {
         <h2 style={{ fontSize: '22px', fontFamily: 'var(--font-display)', fontWeight: 700, color: '#000', marginBottom: '8px' }}>
           Join Learning Session
         </h2>
-        <p style={{ fontSize: '14px', color: '#A59F97', marginBottom: '32px' }}>
+        <p style={{ fontSize: '14px', color: 'var(--text-secondary)', marginBottom: '32px' }}>
           Vishesh requires camera and microphone access to provide live feedback during the session.
         </p>
 

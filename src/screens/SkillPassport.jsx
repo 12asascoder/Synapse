@@ -91,7 +91,7 @@ export default function SkillPassport() {
               }}>
                 <div style={{
                   width: 80, height: 80, borderRadius: '20px', margin: '0 auto 20px',
-                  background: 'var(--border-active)', color: '#010203',
+                  background: 'var(--border-active)', color: 'var(--bg-base)',
                   display: 'flex', alignItems: 'center', justifyContent: 'center',
                   fontSize: '32px', fontWeight: 800,
                 }}>
@@ -211,7 +211,7 @@ export default function SkillPassport() {
                   <RadarChart data={radarData}>
                     <PolarGrid stroke="var(--border-subtle)" />
                     <PolarAngleAxis dataKey="skill" tick={{ fill: 'var(--text-secondary)', fontSize: 11 }} />
-                    <Radar name="Skills" dataKey="value" stroke="#CFFF00" fill="#CFFF00" fillOpacity={0.15} strokeWidth={2} dot={{ fill: '#CFFF00', strokeWidth: 0, r: 4 }} />
+                    <Radar name="Skills" dataKey="value" stroke="#0D6EFD" fill="#0D6EFD" fillOpacity={0.15} strokeWidth={2} dot={{ fill: '#0D6EFD', strokeWidth: 0, r: 4 }} />
                   </RadarChart>
                 </ResponsiveContainer>
               </div>

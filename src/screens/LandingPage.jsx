@@ -143,447 +143,45 @@ class SoundEngine {
 /* ─────────────────────────────────────────────
    CUSTOM CURSOR
 ───────────────────────────────────────────── */
-function CustomCursor() {
-  const dotRef   = useRef(null);
-  const ringRef  = useRef(null);
-  const pos      = useRef({ x: -100, y: -100 });
-  const ring     = useRef({ x: -100, y: -100 });
-  const rafRef   = useRef(null);
-  const isHover  = useRef(false);
-
-  useEffect(() => {
-    const onMove = (e) => {
-      pos.current = { x: e.clientX, y: e.clientY };
-    };
-    const onEnter = () => { isHover.current = true; };
-    const onLeave = () => { isHover.current = false; };
-
-    window.addEventListener('mousemove', onMove);
-    // detect hoverable elements
-    document.addEventListener('mouseenter', onEnter, true);
-    document.addEventListener('mouseleave', onLeave, true);
-
-    const loop = () => {
-      // dot snaps immediately
-      if (dotRef.current) {
-        dotRef.current.style.transform = `translate(${pos.current.x - 4}px, ${pos.current.y - 4}px)`;
-      }
-      // ring lags behind with lerp
-      ring.current.x += (pos.current.x - ring.current.x) * 0.1;
-      ring.current.y += (pos.current.y - ring.current.y) * 0.1;
-      if (ringRef.current) {
-        const r = isHover.current ? 36 : 24;
-        ringRef.current.style.transform = `translate(${ring.current.x - r}px, ${ring.current.y - r}px)`;
-        ringRef.current.style.width  = `${r * 2}px`;
-        ringRef.current.style.height = `${r * 2}px`;
-      }
-      rafRef.current = requestAnimationFrame(loop);
-    };
-    rafRef.current = requestAnimationFrame(loop);
-
-    return () => {
-      window.removeEventListener('mousemove', onMove);
-      document.removeEventListener('mouseenter', onEnter, true);
-      document.removeEventListener('mouseleave', onLeave, true);
-      cancelAnimationFrame(rafRef.current);
-    };
-  }, []);
-
-  return (
-    <>
-      {/* Small solid dot */}
-      <div
-        ref={dotRef}
-        style={{
-          position: 'fixed',
-          top: 0, left: 0,
-          width: 8, height: 8,
-          borderRadius: '50%',
-          background: '#CFFF00',
-          pointerEvents: 'none',
-          zIndex: 9999,
-          mixBlendMode: 'difference',
-          willChange: 'transform',
-        }}
-      />
-      {/* Lagging ring */}
-      <div
-        ref={ringRef}
-        style={{
-          position: 'fixed',
-          top: 0, left: 0,
-          width: 48, height: 48,
-          borderRadius: '50%',
-          border: '1.5px solid rgba(207, 255, 0, 0.7)',
-          pointerEvents: 'none',
-          zIndex: 9998,
-          mixBlendMode: 'difference',
-          willChange: 'transform, width, height',
-          transition: 'width 0.2s, height 0.2s',
-        }}
-      />
-    </>
-  );
-}
-
-/* ─────────────────────────────────────────────
-   HERO CANVAS — particles + polyhedra + grid + outline text
-───────────────────────────────────────────── */
-function HeroCanvas() {
-  const canvasRef = useRef(null);
-  const mouseRef  = useRef({ x: 0, y: 0 });
-
-  useEffect(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    const ctx = canvas.getContext('2d');
-    let rafId;
-    let gridOffset = 0;
-
-    /* ── resize ── */
-    const resize = () => {
-      canvas.width  = canvas.offsetWidth;
-      canvas.height = canvas.offsetHeight;
-    };
-    const ro = new ResizeObserver(resize);
-    ro.observe(canvas.parentElement);
-    resize();
-
-    /* ── mouse ── */
-    const onMouse = (e) => {
-      const r = canvas.getBoundingClientRect();
-      mouseRef.current = { x: e.clientX - r.left, y: e.clientY - r.top };
-    };
-    canvas.parentElement.addEventListener('mousemove', onMouse);
-
-    /* ── particles ── */
-    const NPTS = 90;
-    const pts = Array.from({ length: NPTS }, () => ({
-      x: Math.random() * 1920,
-      y: Math.random() * 1080,
-      vx: (Math.random() - 0.5) * 0.35,
-      vy: (Math.random() - 0.5) * 0.35,
-      r: Math.random() * 1.4 + 0.4,
-    }));
-
-    /* ── wireframe icosahedron helper ── */
-    const icoFaces = (() => {
-      const φ = (1 + Math.sqrt(5)) / 2;
-      const verts = [
-        [-1, φ, 0], [1, φ, 0], [-1, -φ, 0], [1, -φ, 0],
-        [0, -1, φ], [0, 1, φ], [0, -1, -φ], [0, 1, -φ],
-        [φ, 0, -1], [φ, 0, 1], [-φ, 0, -1], [-φ, 0, 1],
-      ].map(([x, y, z]) => {
-        const l = Math.hypot(x, y, z);
-        return [x / l, y / l, z / l];
-      });
-      const edges = [
-        [0,1],[0,5],[0,7],[0,10],[0,11],
-        [1,5],[1,7],[1,8],[1,9],
-        [2,3],[2,4],[2,6],[2,10],[2,11],
-        [3,4],[3,6],[3,8],[3,9],
-        [4,5],[4,9],[4,11],
-        [5,9],[5,11],
-        [6,7],[6,8],[6,10],
-        [7,8],[7,10],
-        [8,9],[10,11],
-      ];
-      return { verts, edges };
-    })();
-
-    function drawWireframe(cx, cy, radius, rotX, rotY, rotZ, alpha) {
-      const cos = Math.cos, sin = Math.sin;
-      const project = ([x, y, z]) => {
-        // rotate X
-        let y1 = y * cos(rotX) - z * sin(rotX);
-        let z1 = y * sin(rotX) + z * cos(rotX);
-        // rotate Y
-        let x2 = x * cos(rotY) + z1 * sin(rotY);
-        let z2 = -x * sin(rotY) + z1 * cos(rotY);
-        // rotate Z
-        let x3 = x2 * cos(rotZ) - y1 * sin(rotZ);
-        let y3 = x2 * sin(rotZ) + y1 * cos(rotZ);
-        return [cx + x3 * radius, cy + y3 * radius];
-      };
-      ctx.strokeStyle = `rgba(207, 255, 0, ${alpha})`;
-      ctx.lineWidth = 0.7;
-      for (const [a, b] of icoFaces.edges) {
-        const [ax, ay] = project(icoFaces.verts[a]);
-        const [bx, by] = project(icoFaces.verts[b]);
-        ctx.beginPath();
-        ctx.moveTo(ax, ay);
-        ctx.lineTo(bx, by);
-        ctx.stroke();
-      }
-      // draw vertex dots
-      ctx.fillStyle = `rgba(207, 255, 0, ${alpha * 1.8})`;
-      for (const v of icoFaces.verts) {
-        const [px, py] = project(v);
-        ctx.beginPath();
-        ctx.arc(px, py, 1.5, 0, Math.PI * 2);
-        ctx.fill();
-      }
-    }
-
-    /* ── shapes ── */
-    const shapes = [
-      { bx: 0.62, by: 0.32, r: 72, spd: 0.0007, phase: 0    },
-      { bx: 0.82, by: 0.65, r: 42, spd: 0.0011, phase: 1.2  },
-      { bx: 0.45, by: 0.72, r: 34, spd: 0.0009, phase: 2.1  },
-      { bx: 0.15, by: 0.55, r: 50, spd: 0.0006, phase: 3.5  },
-      { bx: 0.75, by: 0.18, r: 28, spd: 0.0014, phase: 0.7  },
-    ];
-
-    /* ── perspective grid ── */
-    const drawGrid = (t) => {
-      const W = canvas.width, H = canvas.height;
-      const horizon = H * 0.42;
-      const cx = W / 2;
-      const COLS = 20, ROWS = 14;
-
-      // vertical lines
-      ctx.lineWidth = 0.8;
-      for (let i = 0; i <= COLS; i++) {
-        const xBase    = (W / COLS) * i;
-        const xHorizon = cx + (xBase - cx) * 0.04;
-        const alpha    = 0.05 + Math.abs((xBase / W) - 0.5) * 0.03;
-        ctx.strokeStyle = `rgba(207,255,0,${alpha})`;
-        ctx.beginPath();
-        ctx.moveTo(xBase, H);
-        ctx.lineTo(xHorizon, horizon);
-        ctx.stroke();
-      }
-      // horizontal lines moving
-      gridOffset = (gridOffset + 0.5) % (H / ROWS);
-      for (let i = 0; i < ROWS + 2; i++) {
-        const progress = (i / ROWS + gridOffset / (H / ROWS)) % 1;
-        const y = horizon + (H - horizon) * Math.pow(progress, 1.8);
-        const a = progress * 0.14;
-        ctx.strokeStyle = `rgba(207,255,0,${a})`;
-        ctx.beginPath();
-        ctx.moveTo(0, y);
-        ctx.lineTo(W, y);
-        ctx.stroke();
-      }
-    };
-
-    /* ── main render ── */
-    const render = (t) => {
-      const W = canvas.width, H = canvas.height;
-      ctx.clearRect(0, 0, W, H);
-
-      // ① Perspective grid
-      drawGrid(t);
-
-      // ② Particles + connections
-      const mx = mouseRef.current.x || W / 2;
-      const my = mouseRef.current.y || H / 2;
-
-      for (const p of pts) {
-        p.x = (p.x + p.vx + W) % W;
-        p.y = (p.y + p.vy + H) % H;
-        // subtle mouse attraction
-        const dx = mx - p.x, dy = my - p.y;
-        const d  = Math.hypot(dx, dy);
-        if (d < 160) { p.x += dx * 0.0005; p.y += dy * 0.0005; }
-      }
-
-      // draw connections
-      for (let i = 0; i < pts.length; i++) {
-        for (let j = i + 1; j < pts.length; j++) {
-          const dx = pts[i].x - pts[j].x;
-          const dy = pts[i].y - pts[j].y;
-          const dist = Math.hypot(dx, dy);
-          if (dist < 110) {
-            const a = (1 - dist / 110) * 0.18;
-            ctx.strokeStyle = `rgba(207,255,0,${a})`;
-            ctx.lineWidth = 0.5;
-            ctx.beginPath();
-            ctx.moveTo(pts[i].x, pts[i].y);
-            ctx.lineTo(pts[j].x, pts[j].y);
-            ctx.stroke();
-          }
-        }
-      }
-
-      // draw dots
-      for (const p of pts) {
-        ctx.fillStyle = 'rgba(207,255,0,0.55)';
-        ctx.beginPath();
-        ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-        ctx.fill();
-      }
-
-      // ④ Wireframe polyhedra
-      for (const s of shapes) {
-        const cx = s.bx * W;
-        const cy = s.by * H;
-        const rot = t * s.spd + s.phase;
-        drawWireframe(cx, cy, s.r, rot * 1.1, rot, rot * 0.7, 0.22);
-      }
-
-      rafId = requestAnimationFrame(render);
-    };
-    rafId = requestAnimationFrame(render);
-
-    return () => {
-      ro.disconnect();
-      canvas.parentElement?.removeEventListener('mousemove', onMouse);
-      cancelAnimationFrame(rafId);
-    };
-  }, []);
-
-  return (
-    <canvas
-      ref={canvasRef}
-      style={{
-        position: 'absolute',
-        inset: 0,
-        width: '100%',
-        height: '100%',
-        pointerEvents: 'none',
-        display: 'block',
-      }}
-    />
-  );
-}
-
-/* ─────────────────────────────────────────────
-   DATA
-───────────────────────────────────────────── */
-const NAV_LINKS = ['ABOUT', 'BOOTCAMPS', 'SCHEDULE', 'COMMUNITY', 'FAQ'];
-
+const NAV_LINKS = ['FEATURES', 'CURRICULUM', 'COMMUNITY', 'FAQ'];
 const STATS = [
-  { label: 'BUILD TIME',      value: '∞'     },
-  { label: 'AI-POWERED',      value: '100%'  },
-  { label: 'ACTIVE LEARNERS', value: '8,450+'},
-  { label: 'MISSION',         value: 'BUILD' },
+  { label: 'ACTIVE USERS', val: '14.2K+' },
+  { label: 'LINES OF CODE', val: '2.4M' },
+  { label: 'PLACEMENTS', val: '94%' },
+  { label: 'AVERAGE SALARY', val: '$115K' }
 ];
-
-const MARQUEE_ITEMS = [
-  'AI & MACHINE LEARNING', 'FULL STACK ENGINEERING', 'SYSTEM DESIGN',
-  'PRODUCT MANAGEMENT', 'UI/UX DESIGN', 'DATA SCIENCE', 'CLOUD ARCHITECTURE',
-  'BLOCKCHAIN', 'CYBERSECURITY', '6 BOOTCAMPS',
-];
-
+const MARQUEE_ITEMS = ['SYSTEM DESIGN', 'ALGORITHMS', 'FULL STACK', 'DEVOPS', 'MACHINE LEARNING'];
 const PHASES = [
-  { phase:'PHASE 01', title:'Foundations',  date:'WEEK 1–2', desc:'Kickstart your bootcamp with curated lessons, video content and daily AI-assisted drills. Build your base before the sprint.' },
-  { phase:'PHASE 02', title:'Deep Dives',   date:'WEEK 3–4', desc:'Work through advanced modules, peer reviews and live mentor sessions. The knowledge compounds daily.' },
-  { phase:'PHASE 03', title:'Assessment',   date:'WEEK 5',   desc:'Proctored AI-graded assessments across knowledge and application. Every answer immutably logged.' },
-  { phase:'PHASE 04', title:'Capstone',     date:'WEEK 6',   desc:'Ship your milestone project. Pass the milestone interview to earn your Skill Passport certification.' },
+  { step: '01', title: 'FOUNDATION', desc: 'Master the core concepts.' },
+  { step: '02', title: 'BUILD', desc: 'Build scalable applications.' },
+  { step: '03', title: 'SCALE', desc: 'Deploy and scale to millions.' },
+  { step: '04', title: 'LEAD', desc: 'Become an engineering leader.' }
 ];
-
 const FEATURES = [
-  { id:'01', title:'Adaptive Curriculum',   desc:'AI-native bootcamps that dynamically evolve with your progress. No two sessions look exactly alike.' },
-  { id:'02', title:'Proctored Validation',  desc:'Fair, consistent evaluations with immutable evidence your compliance team can review and trust.' },
-  { id:'03', title:'Skill Passport',        desc:'Earn verifiable certificates for each bootcamp phase. A living credential that grows with you.' },
+  { id: 'F1', title: 'AI MENTOR', desc: '24/7 personalized code reviews and guidance.' },
+  { id: 'F2', title: 'LIVE LABS', desc: 'Real-time collaborative coding environments.' },
+  { id: 'F3', title: 'CAREER PREP', desc: 'Mock interviews and resume building.' }
 ];
 
-/* ─────────────────────────────────────────────
-   SCROLL REVEAL
-───────────────────────────────────────────── */
-function Reveal({ children, delay = 0, direction = 'up' }) {
-  const initial =
-    direction === 'up'    ? { opacity:0, y: 40 } :
-    direction === 'left'  ? { opacity:0, x:-40 } :
-    direction === 'right' ? { opacity:0, x: 40 } :
-                            { opacity:0 };
-  const animate =
-    direction === 'up'    ? { opacity:1, y:0 } :
-    direction === 'left'  ? { opacity:1, x:0 } :
-    direction === 'right' ? { opacity:1, x:0 } :
-                            { opacity:1 };
-  return (
-    <motion.div
-      initial={initial}
-      whileInView={animate}
-      viewport={{ once:true, margin:'-80px' }}
-      transition={{ duration:0.65, delay, ease:[0.22,1,0.36,1] }}
-    >
-      {children}
-    </motion.div>
-  );
-}
-
-/* ─────────────────────────────────────────────
-   SHARED STYLES
-───────────────────────────────────────────── */
 const S = {
   page: {
-    background: '#010203',
     minHeight: '100vh',
-    color: '#f3f2ee',
-    fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, sans-serif',
-    overflowX: 'hidden',
-    position: 'relative',
-    zIndex: 10,
-    cursor: 'none',          // hide default cursor
-  },
-  nav: {
-    position: 'fixed',
-    top:0, left:0, right:0,
-    height: '64px',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    padding: '0 40px',
-    zIndex: 200,
-    background: 'rgba(1,2,3,0.85)',
-    backdropFilter: 'blur(20px)',
-    WebkitBackdropFilter: 'blur(20px)',
-    borderBottom: '1px solid rgba(243,242,238,0.08)',
-  },
-  logo: {
-    fontSize: '20px',
-    fontWeight: 900,
-    letterSpacing: '-0.02em',
-    color: '#CFFF00',
-    textTransform: 'uppercase',
-    cursor: 'none',
-  },
-  navLink: {
-    background: 'none',
-    border: 'none',
-    cursor: 'none',
-    fontSize: '11px',
-    fontWeight: 600,
-    color: 'rgba(243,242,238,0.5)',
-    letterSpacing: '0.12em',
-    fontFamily: 'inherit',
-    transition: 'color 0.2s',
+    background: 'var(--bg-base)',
+    color: 'var(--text-primary)',
+    fontFamily: 'Inter, sans-serif',
+    overflowX: 'hidden'
   },
   btnAccent: {
-    background: '#CFFF00',
-    color: '#010203',
+    background: '#0D6EFD',
+    color: '#fff',
     border: 'none',
-    padding: '10px 22px',
-    fontWeight: 800,
-    fontSize: '12px',
-    letterSpacing: '0.08em',
-    cursor: 'none',
-    fontFamily: 'inherit',
-    textTransform: 'uppercase',
-    transition: 'opacity 0.2s',
-  },
+    borderRadius: '4px',
+    fontWeight: 'bold',
+    cursor: 'pointer',
+    transition: 'all 0.2s ease',
+  }
 };
 
-/* ─────────────────────────────────────────────
-   SECTION LABEL
-───────────────────────────────────────────── */
-function SectionLabel({ text }) {
-  return (
-    <div style={{ display:'flex', alignItems:'center', gap:'12px', marginBottom:'20px' }}>
-      <div style={{ width:'32px', height:'1px', background:'rgba(243,242,238,0.4)' }} />
-      <span style={{ fontSize:'12px', fontWeight:600, color:'rgba(243,242,238,0.5)', letterSpacing:'0.12em' }}>
-        {text}
-      </span>
-    </div>
-  );
-}
-
-/* ─────────────────────────────────────────────
-   MAIN COMPONENT
-───────────────────────────────────────────── */
 export default function LandingPage() {
   const { navigate } = useApp();
   const [hoveredNav, setHoveredNav] = useState(null);
@@ -665,7 +263,7 @@ export default function LandingPage() {
           position: relative;
           background: none;
           border: none;
-          cursor: none;
+          cursor: auto;
           font-size: 11px;
           font-weight: 500;
           color: rgba(244, 242, 237, 0.45);
@@ -682,7 +280,7 @@ export default function LandingPage() {
         }
         .hover-underline::after {
           content: "";
-          background: #CFFF00;
+          background: #0D6EFD;
           transform-origin: 100%;
           width: 100%;
           height: 1.5px;
@@ -698,14 +296,14 @@ export default function LandingPage() {
         }
         .btn-fill-accent {
           position: relative;
-          background: #CFFF00;
+          background: #0D6EFD;
           color: #020306;
           border: none;
           padding: 10px 18px;
           font-weight: 700;
           font-size: 10px;
           letter-spacing: 1.6px;
-          cursor: none;
+          cursor: auto;
           font-family: inherit;
           text-transform: uppercase;
           z-index: 1;
@@ -733,7 +331,7 @@ export default function LandingPage() {
           background: none;
           border: none;
           color: rgba(244, 242, 237, 0.45);
-          cursor: none;
+          cursor: auto;
           display: flex;
           align-items: center;
           justify-content: center;
@@ -741,12 +339,12 @@ export default function LandingPage() {
           transition: color 0.2s ease;
         }
         .sound-btn:hover {
-          color: #CFFF00;
+          color: #0D6EFD;
         }
       `}</style>
 
       {/* Custom cursor (rendered first so it's always on top) */}
-      <CustomCursor />
+      
 
       {/* ── NAV ── */}
       <nav
@@ -770,19 +368,19 @@ export default function LandingPage() {
         {/* Left: Logo and divider */}
         <div style={{ display: 'flex', alignItems: 'center' }}>
           <div
-            style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'none' }}
+            style={{ display: 'flex', alignItems: 'center', gap: '8px',  }}
             onClick={handleButtonClick}
           >
             <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-              <div style={{ width: '16px', height: '2.5px', background: '#CFFF00' }} />
-              <div style={{ width: '16px', height: '2.5px', background: '#CFFF00' }} />
+              <div style={{ width: '16px', height: '2.5px', background: '#0D6EFD' }} />
+              <div style={{ width: '16px', height: '2.5px', background: '#0D6EFD' }} />
             </div>
             <span
               style={{
                 fontSize: '11px',
                 fontWeight: 900,
                 letterSpacing: '0.14em',
-                color: '#CFFF00',
+                color: '#0D6EFD',
                 textTransform: 'uppercase',
               }}
             >
@@ -881,7 +479,7 @@ export default function LandingPage() {
           left: 0,
           right: 0,
           height: '24px',
-          background: '#CFFF00',
+          background: '#0D6EFD',
           color: '#020306',
           zIndex: 199,
           display: 'flex',
@@ -917,7 +515,7 @@ export default function LandingPage() {
         style={{
           position: 'relative',
           height: '100vh',
-          background: '#010203',
+          background: 'var(--bg-base)',
         }}
       >
         {/* Sticky inner — stays fixed while scrolling through the 200vh */}
@@ -985,7 +583,7 @@ export default function LandingPage() {
               transition={{ duration: 0.5, delay: 0.2 }}
               style={{ marginBottom: '18px' }}
             >
-              <div style={{ fontSize: '22px', fontWeight: 900, color: '#f3f2ee', letterSpacing: '-0.02em', lineHeight: 1 }}>
+              <div style={{ fontSize: '22px', fontWeight: 900, color: 'var(--text-primary)', letterSpacing: '-0.02em', lineHeight: 1 }}>
                 Synapse AI
               </div>
               <div style={{ fontSize: '10px', fontWeight: 700, color: 'rgba(243,242,238,0.38)', letterSpacing: '0.18em', textTransform: 'uppercase', marginTop: '4px' }}>
@@ -1003,7 +601,7 @@ export default function LandingPage() {
                 fontWeight: 900,
                 lineHeight: 1.0,
                 letterSpacing: '-0.03em',
-                color: '#f3f2ee',
+                color: 'var(--text-primary)',
                 margin: '0 0 24px 0',
                 textTransform: 'lowercase',
                 scale: heroHeadlineScale,
@@ -1011,10 +609,10 @@ export default function LandingPage() {
               }}
             >
               finally an ai that{' '}
-              <span style={{ fontStyle: 'italic', color: '#CFFF00' }}>takes bootcamps</span>
+              <span style={{ fontStyle: 'italic', color: '#0D6EFD' }}>takes bootcamps</span>
               <br />
               that actually{' '}
-              <span style={{ fontStyle: 'italic', color: '#CFFF00' }}>makes an impact.</span>
+              <span style={{ fontStyle: 'italic', color: '#0D6EFD' }}>makes an impact.</span>
             </motion.h1>
 
             {/* Description — fades on scroll */}
@@ -1043,9 +641,9 @@ export default function LandingPage() {
               <button
                 onClick={() => navigate('auth')}
                 style={{
-                  background: '#CFFF00', color: '#010203', border: 'none',
+                  background: '#0D6EFD', color: 'var(--bg-base)', border: 'none',
                   padding: '14px 32px', fontSize: '12px', fontWeight: 800,
-                  letterSpacing: '0.1em', cursor: 'none', fontFamily: 'inherit',
+                  letterSpacing: '0.1em',  fontFamily: 'inherit',
                   textTransform: 'uppercase', transition: 'all 0.2s',
                   display: 'flex', alignItems: 'center', gap: '8px',
                 }}
@@ -1057,15 +655,15 @@ export default function LandingPage() {
               <button
                 onClick={() => navigate('auth')}
                 style={{
-                  background: 'transparent', color: '#f3f2ee',
+                  background: 'transparent', color: 'var(--text-primary)',
                   border: '1px solid rgba(243,242,238,0.2)',
                   padding: '13px 28px', fontSize: '12px', fontWeight: 700,
-                  letterSpacing: '0.08em', cursor: 'none', fontFamily: 'inherit',
+                  letterSpacing: '0.08em',  fontFamily: 'inherit',
                   textTransform: 'uppercase', transition: 'all 0.2s',
                   display: 'flex', alignItems: 'center', gap: '8px',
                 }}
-                onMouseEnter={e => { e.currentTarget.style.borderColor = 'rgba(207,255,0,0.45)'; e.currentTarget.style.color = '#CFFF00'; }}
-                onMouseLeave={e => { e.currentTarget.style.borderColor = 'rgba(243,242,238,0.2)'; e.currentTarget.style.color = '#f3f2ee'; }}
+                onMouseEnter={e => { e.currentTarget.style.borderColor = 'rgba(207,255,0,0.45)'; e.currentTarget.style.color = '#0D6EFD'; }}
+                onMouseLeave={e => { e.currentTarget.style.borderColor = 'rgba(243,242,238,0.2)'; e.currentTarget.style.color = 'var(--text-primary)'; }}
               >
                 ◯ JOIN COMMUNITY
               </button>
@@ -1087,15 +685,15 @@ export default function LandingPage() {
             <span style={{ fontSize: '10px', fontWeight: 700, color: 'rgba(243,242,238,0.3)', letterSpacing: '0.14em' }}>
               24H BOOTCAMPS · VIRTUAL · FREE · ALL LEARNERS
             </span>
-            <span style={{ fontSize: '12px', fontWeight: 800, fontStyle: 'italic', color: '#CFFF00', letterSpacing: '-0.01em' }}>
+            <span style={{ fontSize: '12px', fontWeight: 800, fontStyle: 'italic', color: '#0D6EFD', letterSpacing: '-0.01em' }}>
               Enroll Today 2026
             </span>
             <button
               onClick={() => navigate('auth')}
               style={{
-                background: '#CFFF00', color: '#010203', border: 'none',
+                background: '#0D6EFD', color: 'var(--bg-base)', border: 'none',
                 padding: '10px 20px', fontSize: '10px', fontWeight: 800,
-                letterSpacing: '0.1em', cursor: 'none', fontFamily: 'inherit',
+                letterSpacing: '0.1em',  fontFamily: 'inherit',
                 textTransform: 'uppercase', transition: 'opacity 0.2s',
               }}
               onMouseEnter={e => e.currentTarget.style.opacity = '0.8'}
@@ -1119,7 +717,7 @@ export default function LandingPage() {
           }}
         >
           {/* info card content */}
-          <div style={{ fontSize: '28px', fontWeight: 900, color: '#CFFF00', letterSpacing: '-0.03em', lineHeight: 1, marginBottom: '16px' }}>
+          <div style={{ fontSize: '28px', fontWeight: 900, color: '#0D6EFD', letterSpacing: '-0.03em', lineHeight: 1, marginBottom: '16px' }}>
             6 TRACKS
           </div>
           {[
@@ -1131,7 +729,7 @@ export default function LandingPage() {
               <div style={{ fontSize: '9px', fontWeight: 700, color: 'rgba(243,242,238,0.3)', letterSpacing: '0.16em', marginBottom: '5px' }}>
                 {row.label}
               </div>
-              <div style={{ fontSize: '13px', fontWeight: 700, color: '#f3f2ee', lineHeight: 1.45, whiteSpace: 'pre-line' }}>
+              <div style={{ fontSize: '13px', fontWeight: 700, color: 'var(--text-primary)', lineHeight: 1.45, whiteSpace: 'pre-line' }}>
                 {row.value}
               </div>
               {i < arr.length - 1 && (
@@ -1161,7 +759,7 @@ export default function LandingPage() {
 
 
       {/* ── STATS BAR ── */}
-      <div style={{ borderTop:'1px solid rgba(243,242,238,0.07)', borderBottom:'1px solid rgba(243,242,238,0.07)', background:'#010203' }}>
+      <div style={{ borderTop:'1px solid rgba(243,242,238,0.07)', borderBottom:'1px solid rgba(243,242,238,0.07)', background:'var(--bg-base)' }}>
         <div style={{ display:'grid', gridTemplateColumns:'repeat(4,1fr)' }}>
           {STATS.map((s,i) => (
             <Reveal key={s.label} delay={i*0.08}>
@@ -1172,7 +770,7 @@ export default function LandingPage() {
                 <div style={{ fontSize:'11px', fontWeight:600, color:'rgba(243,242,238,0.38)', letterSpacing:'0.12em', marginBottom:'8px' }}>
                   {s.label}
                 </div>
-                <div style={{ fontSize:'48px', fontWeight:900, color:'#CFFF00', lineHeight:1, letterSpacing:'-0.02em' }}>
+                <div style={{ fontSize:'48px', fontWeight:900, color:'#0D6EFD', lineHeight:1, letterSpacing:'-0.02em' }}>
                   {s.value}
                 </div>
               </div>
@@ -1182,14 +780,14 @@ export default function LandingPage() {
       </div>
 
       {/* ── MARQUEE ── */}
-      <div style={{ background:'#CFFF00', padding:'14px 0', overflow:'hidden', whiteSpace:'nowrap' }}>
+      <div style={{ background:'#0D6EFD', padding:'14px 0', overflow:'hidden', whiteSpace:'nowrap' }}>
         <div style={{ display:'inline-flex', gap:'36px', animation:'marquee-lp 28s linear infinite' }}>
           {[...MARQUEE_ITEMS,...MARQUEE_ITEMS,...MARQUEE_ITEMS].map((item,i) => (
             <span
               key={i}
               style={{
                 fontSize:'12px', fontWeight:800, letterSpacing:'0.1em',
-                color:'#010203', textTransform:'uppercase',
+                color:'var(--bg-base)', textTransform:'uppercase',
                 display:'inline-flex', alignItems:'center', gap:'14px',
               }}
             >
@@ -1206,9 +804,9 @@ export default function LandingPage() {
 
           <Reveal direction="left">
             <SectionLabel text="WHAT IS THIS" />
-            <h2 style={{ fontSize:'clamp(40px,4vw,64px)', fontWeight:900, lineHeight:1.0, letterSpacing:'-0.03em', color:'#f3f2ee' }}>
+            <h2 style={{ fontSize:'clamp(40px,4vw,64px)', fontWeight:900, lineHeight:1.0, letterSpacing:'-0.03em', color:'var(--text-primary)' }}>
               The learning platform you&apos;ve been{' '}
-              <span style={{ fontStyle:'italic', color:'#CFFF00' }}>waiting for.</span>
+              <span style={{ fontStyle:'italic', color:'#0D6EFD' }}>waiting for.</span>
             </h2>
           </Reveal>
 
@@ -1219,12 +817,12 @@ export default function LandingPage() {
               mentorship from people who've actually shipped, and problem sets that demand your absolute best.
             </p>
 
-            <blockquote style={{ borderLeft:'2px solid #CFFF00', paddingLeft:'24px', fontSize:'20px', fontStyle:'italic', color:'#f3f2ee', lineHeight:1.5, fontWeight:600, marginBottom:'32px' }}>
+            <blockquote style={{ borderLeft:'2px solid #0D6EFD', paddingLeft:'24px', fontSize:'20px', fontStyle:'italic', color:'var(--text-primary)', lineHeight:1.5, fontWeight:600, marginBottom:'32px' }}>
               "We didn't want to build another course platform. We wanted to build the one people still talk about ten years from now."
             </blockquote>
 
             <div style={{ fontSize:'11px', fontWeight:700, color:'rgba(243,242,238,0.38)', letterSpacing:'0.12em' }}>
-              — ORGANISED BY <span style={{ color:'#f3f2ee' }}>SYNAPSE AI COMMUNITY</span>
+              — ORGANISED BY <span style={{ color:'var(--text-primary)' }}>SYNAPSE AI COMMUNITY</span>
             </div>
 
             <button
@@ -1232,20 +830,20 @@ export default function LandingPage() {
               style={{
                 marginTop:'40px', background:'transparent',
                 border:'1px solid rgba(243,242,238,0.18)',
-                color:'#f3f2ee', padding:'14px 28px',
+                color:'var(--text-primary)', padding:'14px 28px',
                 fontSize:'13px', fontWeight:700,
-                letterSpacing:'0.08em', cursor:'none',
+                letterSpacing:'0.08em', 
                 fontFamily:'inherit', textTransform:'uppercase',
                 transition:'all 0.2s',
               }}
               onMouseEnter={e => {
-                e.currentTarget.style.background='#CFFF00';
-                e.currentTarget.style.color='#010203';
-                e.currentTarget.style.borderColor='#CFFF00';
+                e.currentTarget.style.background='#0D6EFD';
+                e.currentTarget.style.color='var(--bg-base)';
+                e.currentTarget.style.borderColor='#0D6EFD';
               }}
               onMouseLeave={e => {
                 e.currentTarget.style.background='transparent';
-                e.currentTarget.style.color='#f3f2ee';
+                e.currentTarget.style.color='var(--text-primary)';
                 e.currentTarget.style.borderColor='rgba(243,242,238,0.18)';
               }}
             >
@@ -1261,7 +859,7 @@ export default function LandingPage() {
         <div style={{ padding:'0 40px', marginBottom:'48px', display:'flex', justifyContent:'space-between', alignItems:'flex-end' }}>
           <Reveal>
             <SectionLabel text="THE JOURNEY" />
-            <h2 style={{ fontSize:'48px', fontWeight:900, color:'#f3f2ee', letterSpacing:'-0.02em', lineHeight:1 }}>
+            <h2 style={{ fontSize:'48px', fontWeight:900, color:'var(--text-primary)', letterSpacing:'-0.02em', lineHeight:1 }}>
               HOW IT WORKS
             </h2>
           </Reveal>
@@ -1285,10 +883,10 @@ export default function LandingPage() {
                 onMouseEnter={e => e.currentTarget.style.background='rgba(207,255,0,0.03)'}
                 onMouseLeave={e => e.currentTarget.style.background='transparent'}
               >
-                <div style={{ fontSize:'11px', fontWeight:700, color:'#CFFF00', letterSpacing:'0.14em', marginBottom:'18px' }}>
+                <div style={{ fontSize:'11px', fontWeight:700, color:'#0D6EFD', letterSpacing:'0.14em', marginBottom:'18px' }}>
                   {phase.phase}
                 </div>
-                <div style={{ fontSize:'22px', fontWeight:800, fontStyle:'italic', color:'#f3f2ee', marginBottom:'6px', lineHeight:1.2 }}>
+                <div style={{ fontSize:'22px', fontWeight:800, fontStyle:'italic', color:'var(--text-primary)', marginBottom:'6px', lineHeight:1.2 }}>
                   {phase.title}
                 </div>
                 <div style={{ fontSize:'11px', fontWeight:600, color:'rgba(243,242,238,0.3)', letterSpacing:'0.1em', marginBottom:'18px' }}>
@@ -1308,7 +906,7 @@ export default function LandingPage() {
         <div style={{ maxWidth:'1400px', margin:'0 auto' }}>
           <Reveal>
             <SectionLabel text="CAPABILITIES" />
-            <h2 style={{ fontSize:'48px', fontWeight:900, color:'#f3f2ee', letterSpacing:'-0.02em', lineHeight:1, marginBottom:'80px' }}>
+            <h2 style={{ fontSize:'48px', fontWeight:900, color:'var(--text-primary)', letterSpacing:'-0.02em', lineHeight:1, marginBottom:'80px' }}>
               ENGINEERED FOR SCALE
             </h2>
           </Reveal>
@@ -1317,14 +915,14 @@ export default function LandingPage() {
             {FEATURES.map((f,i) => (
               <Reveal key={f.id} delay={i*0.1}>
                 <div
-                  style={{ background:'#010203', padding:'48px 40px', transition:'background 0.3s' }}
+                  style={{ background:'var(--bg-base)', padding:'48px 40px', transition:'background 0.3s' }}
                   onMouseEnter={e => e.currentTarget.style.background='#0d0c0b'}
-                  onMouseLeave={e => e.currentTarget.style.background='#010203'}
+                  onMouseLeave={e => e.currentTarget.style.background='var(--bg-base)'}
                 >
                   <div style={{ fontSize:'40px', fontWeight:900, color:'rgba(207,255,0,0.18)', fontFamily:'monospace', letterSpacing:'-0.02em', marginBottom:'28px', lineHeight:1 }}>
                     {f.id}
                   </div>
-                  <h3 style={{ fontSize:'22px', fontWeight:800, color:'#f3f2ee', letterSpacing:'-0.01em', marginBottom:'16px', lineHeight:1.2 }}>
+                  <h3 style={{ fontSize:'22px', fontWeight:800, color:'var(--text-primary)', letterSpacing:'-0.01em', marginBottom:'16px', lineHeight:1.2 }}>
                     {f.title}
                   </h3>
                   <p style={{ fontSize:'15px', color:'rgba(243,242,238,0.48)', lineHeight:1.65, fontWeight:400 }}>
@@ -1357,11 +955,11 @@ export default function LandingPage() {
           <h2 style={{
             fontSize:'clamp(52px,7vw,96px)', fontWeight:900,
             letterSpacing:'-0.04em', lineHeight:0.95,
-            color:'#f3f2ee', textTransform:'uppercase',
+            color:'var(--text-primary)', textTransform:'uppercase',
             marginBottom:'48px',
           }}>
             READY TO{' '}
-            <span style={{ fontStyle:'italic', color:'#CFFF00' }}>BUILD?</span>
+            <span style={{ fontStyle:'italic', color:'#0D6EFD' }}>BUILD?</span>
           </h2>
           <button
             onClick={() => navigate('auth')}
@@ -1383,7 +981,7 @@ export default function LandingPage() {
         justifyContent:'space-between',
         alignItems:'center',
       }}>
-        <div style={{ fontSize:'18px', fontWeight:900, color:'#CFFF00', letterSpacing:'-0.01em' }}>SYNAPSE</div>
+        <div style={{ fontSize:'18px', fontWeight:900, color:'#0D6EFD', letterSpacing:'-0.01em' }}>SYNAPSE</div>
         <div style={{ fontSize:'11px', fontWeight:600, color:'rgba(243,242,238,0.28)', letterSpacing:'0.1em' }}>
           © 2026 SYNAPSE ENTERPRISE · ALL RIGHTS RESERVED
         </div>
@@ -1403,7 +1001,7 @@ export default function LandingPage() {
           from { transform: translateX(0); }
           to   { transform: translateX(-33.333%); }
         }
-        * { cursor: none !important; }
+        * { cursor: auto !important; }
       `}</style>
     </div>
   );

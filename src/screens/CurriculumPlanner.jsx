@@ -26,7 +26,7 @@ const STYLES = {
     padding: '10px 24px', borderRadius: '8px', border: 'none', fontWeight: 600, fontSize: '14px',
     cursor: 'pointer', transition: 'all 0.15s',
   },
-  buttonPrimary: { background: 'var(--border-active)', color: '#010203', border: 'none' },
+  buttonPrimary: { background: 'var(--border-active)', color: 'var(--bg-base)', border: 'none' },
   buttonSecondary: { background: 'var(--bg-card)', color: 'var(--text-primary)', border: '1px solid var(--border-subtle)' },
   buttonDanger: { background: 'rgba(239,68,68,0.1)', color: '#fca5a5', border: '1px solid rgba(239,68,68,0.2)' },
   badge: {
@@ -125,7 +125,7 @@ export default function CurriculumPlanner() {
     }
   };
 
-  const outerStyle = { minHeight: '100vh', background: '#010203', display: 'flex', color: '#f3f2ee' };
+  const outerStyle = { minHeight: '100vh', background: 'var(--bg-base)', display: 'flex', color: 'var(--text-primary)' };
   const rightColStyle = { flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden', padding: '24px' };
 
   if (loading) {

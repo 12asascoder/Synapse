@@ -159,14 +159,14 @@ export default function AssessmentScreen() {
             display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '18px',
           }}>⊞</div>
           <div>
-            <div style={{ fontSize: '11px', fontWeight: 600, color: '#A59F97', letterSpacing: '0.05em', textTransform: 'uppercase' }}>SYNAPSE CORE</div>
+            <div style={{ fontSize: '11px', fontWeight: 600, color: 'var(--text-secondary)', letterSpacing: '0.05em', textTransform: 'uppercase' }}>SYNAPSE CORE</div>
             <div style={{ fontSize: '16px', fontWeight: 700, color: '#000' }}>Cognitive Assessment</div>
           </div>
         </div>
 
         {/* Center — Timer */}
         <div style={{ textAlign: 'center' }}>
-          <div style={{ fontSize: '11px', fontWeight: 600, color: '#A59F97', letterSpacing: '0.05em', marginBottom: '2px', textTransform: 'uppercase' }}>Time Remaining</div>
+          <div style={{ fontSize: '11px', fontWeight: 600, color: 'var(--text-secondary)', letterSpacing: '0.05em', marginBottom: '2px', textTransform: 'uppercase' }}>Time Remaining</div>
           <div style={{
             fontSize: '28px', fontWeight: 700, fontFamily: 'var(--font-mono)',
             color: isUrgent ? '#DC2626' : '#000',
@@ -176,7 +176,7 @@ export default function AssessmentScreen() {
 
         {/* Right — System integrity */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-          <div style={{ fontSize: '11px', fontWeight: 600, color: '#A59F97', letterSpacing: '0.05em', textTransform: 'uppercase' }}>System Integrity</div>
+          <div style={{ fontSize: '11px', fontWeight: 600, color: 'var(--text-secondary)', letterSpacing: '0.05em', textTransform: 'uppercase' }}>System Integrity</div>
           <div style={{ display: 'flex', gap: '8px' }}>
             {[
               { icon: '📷', active: true },
@@ -218,7 +218,7 @@ export default function AssessmentScreen() {
                 You have 45 minutes to implement the core algorithm. Your code will be evaluated on correctness, efficiency, and proper gradient scaling.
               </div>
               <div style={{ background: '#FDFCFC', padding: '24px', borderRadius: '16px', minHeight: '300px', fontFamily: 'var(--font-mono)', fontSize: '14px', color: '#000', border: '1px solid #E8E6E3' }}>
-                <span style={{ color: '#A59F97' }}>// Write your Python implementation here...</span>
+                <span style={{ color: 'var(--text-secondary)' }}>// Write your Python implementation here...</span>
                 <br /><br />
                 <span style={{ color: '#2563EB' }}>def</span> apply_lora(model, r=8, alpha=16):<br />
                 &nbsp;&nbsp;&nbsp;&nbsp;<span style={{ color: '#2563EB' }}>pass</span>
@@ -332,7 +332,7 @@ export default function AssessmentScreen() {
                       {isSelected && <div style={{ width: 12, height: 12, borderRadius: '4px', background: '#FFFFFF' }} />}
                     </div>
                     <div>
-                      <div style={{ fontSize: '13px', fontWeight: 700, color: isSelected ? '#000' : '#A59F97', marginBottom: '6px', textTransform: 'uppercase', letterSpacing: '0.02em' }}>
+                      <div style={{ fontSize: '13px', fontWeight: 700, color: isSelected ? '#000' : 'var(--text-secondary)', marginBottom: '6px', textTransform: 'uppercase', letterSpacing: '0.02em' }}>
                         Option {opt.id}
                       </div>
                       <div style={{ fontSize: '16px', color: '#000', lineHeight: 1.5, fontWeight: 500 }}>{opt.text}</div>
@@ -364,8 +364,8 @@ export default function AssessmentScreen() {
                 style={{ width: '100%', appearance: 'none', height: '6px', borderRadius: '3px', outline: 'none', background: `linear-gradient(90deg, #000 ${confidence}%, #E8E6E3 ${confidence}%)`, cursor: 'pointer' }}
               />
               <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '12px' }}>
-                <span style={{ fontSize: '12px', color: '#A59F97', fontWeight: 500 }}>Low Certainty (Guess)</span>
-                <span style={{ fontSize: '12px', color: '#A59F97', fontWeight: 500 }}>High Certainty (Calculated)</span>
+                <span style={{ fontSize: '12px', color: 'var(--text-secondary)', fontWeight: 500 }}>Low Certainty (Guess)</span>
+                <span style={{ fontSize: '12px', color: 'var(--text-secondary)', fontWeight: 500 }}>High Certainty (Calculated)</span>
               </div>
             </div>
             </div>
@@ -409,7 +409,7 @@ export default function AssessmentScreen() {
           style={{
             gap: '10px',
             background: selected && !submitted ? '#000' : '#E8E6E3',
-            color: selected && !submitted ? '#fff' : '#A59F97',
+            color: selected && !submitted ? '#fff' : 'var(--text-secondary)',
             cursor: selected && !submitted ? 'pointer' : 'not-allowed',
             minWidth: '220px', justifyContent: 'center',
             padding: '14px 28px', borderRadius: '10px', fontSize: '15px', fontWeight: 600,

@@ -12,7 +12,7 @@ export default function AnimatedBackground() {
       pointerEvents: 'none',
       zIndex: 0, // Behind all content
       overflow: 'hidden',
-      background: '#010203' // Deep black Hackorizon bg
+      background: 'var(--bg-base)' // Deep black Hackorizon bg
     }}>
       
       {/* Slow moving ambient blob 1 - neon yellow aura */}

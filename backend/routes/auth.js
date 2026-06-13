@@ -14,7 +14,7 @@ router.post('/register', async (req, res) => {
     }
 
     const hashedPassword = await bcrypt.hash(password, 12);
-    user = await User.create({ name, email, password: hashedPassword, role: role || 'USER' });
+    user = await User.create({ name, email, password: hashedPassword, role: 'USER' });
     await Progress.create({ userId: user.id });
 
     const token = generateToken(user);

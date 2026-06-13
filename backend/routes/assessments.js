@@ -1,8 +1,9 @@
 const express = require('express');
 const router = express.Router();
 const { AssessmentQuestion, Assessment } = require('../models');
+const { authenticate } = require('../middleware/auth');
 
-router.get('/questions', async (req, res) => {
+router.get('/questions', authenticate, async (req, res) => {
   try {
     const { topic, limit = 5 } = req.query;
     const where = topic ? { topic } : {};
@@ -17,9 +18,10 @@ router.get('/questions', async (req, res) => {
   }
 });
 
-router.post('/submit', async (req, res) => {
+router.post('/submit', authenticate, async (req, res) => {
   try {
-    const { userId, bootcampId, day, scores, answers } = req.body;
+    const { bootcampId, day, scores, answers } = req.body;
+    const userId = req.user.id;
     const assessment = await Assessment.create({ userId, bootcampId, day, scores, answers, completed: true });
     res.json(assessment);
   } catch (error) {
@@ -27,8 +29,11 @@ router.post('/submit', async (req, res) => {
   }
 });
 
-router.get('/history/:userId', async (req, res) => {
+router.get('/history/:userId', authenticate, async (req, res) => {
   try {
+    if (req.user.id != req.params.userId && req.user.role !== 'SUPER_ADMIN') {
+      return res.status(403).json({ error: 'Forbidden' });
+    }
     const assessments = await Assessment.findAll({
       where: { userId: req.params.userId },
       order: [['createdAt', 'DESC']],

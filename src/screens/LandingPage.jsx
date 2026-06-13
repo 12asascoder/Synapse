@@ -163,6 +163,37 @@ const FEATURES = [
   { id: 'F3', title: 'CAREER PREP', desc: 'Mock interviews and resume building.' }
 ];
 
+/* ─────────────────────────────────────────────
+   SCROLL REVEAL
+───────────────────────────────────────────── */
+function Reveal({ children, delay = 0, direction = 'up' }) {
+  const initial = {
+    opacity: 0,
+    scale: 0.96,
+    y: direction === 'up' ? 50 : 0,
+    x: direction === 'left' ? -50 : direction === 'right' ? 50 : 0,
+  };
+  const animate = {
+    opacity: 1,
+    scale: 1,
+    y: 0,
+    x: 0,
+  };
+  return (
+    <motion.div
+      initial={initial}
+      whileInView={animate}
+      viewport={{ once: false, amount: 0.15 }}
+      transition={{ duration: 0.75, delay, ease: [0.16, 1, 0.3, 1] }}
+    >
+      {children}
+    </motion.div>
+  );
+}
+
+/* ─────────────────────────────────────────────
+   SHARED STYLES
+───────────────────────────────────────────── */
 const S = {
   page: {
     minHeight: '100vh',
@@ -340,6 +371,16 @@ export default function LandingPage() {
         }
         .sound-btn:hover {
           color: #0D6EFD;
+        }
+        .outline-hover-yellow {
+          -webkit-text-stroke: 1px rgba(243, 242, 238, 0.85);
+          color: transparent;
+          letter-spacing: 0.04em;
+          transition: -webkit-text-stroke 0.3s ease;
+        }
+        .outline-hover-yellow:hover {
+          -webkit-text-stroke: 1px #CFFF00;
+          color: transparent;
         }
       `}</style>
 
@@ -550,8 +591,8 @@ export default function LandingPage() {
         {/* ── Main hero content ── — moves toward center on scroll */}
         <motion.div style={{
           position: 'relative', zIndex: 3,
-          flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'flex-start', gap: '12px',
-          padding: '0 48px',
+          flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'space-between',
+          padding: '0 clamp(16px, 5vw, 48px)',
           y: heroContentY,
           x: heroContentX,
         }}>
@@ -561,11 +602,11 @@ export default function LandingPage() {
             initial={{ opacity: 0, y: -12 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.1 }}
-            style={{ display: 'flex', gap: '14px', alignItems: 'center', opacity: heroCtaOpacity, marginTop: '-40px', y: heroTagsY }}
+            style={{ display: 'flex', gap: '14px', alignItems: 'center', opacity: heroCtaOpacity, y: heroTagsY }}
           >
             {['◇ VIRTUAL', '◇ AI-POWERED', '◇ JUNE 2026'].map(tag => (
               <span key={tag} style={{
-                fontSize: '10px', fontWeight: 700, letterSpacing: '0.18em',
+                fontSize: '11px', fontWeight: 700, letterSpacing: '0.18em',
                 color: 'rgba(207,255,0,0.65)', textTransform: 'uppercase',
               }}>
                 {tag}
@@ -574,19 +615,19 @@ export default function LandingPage() {
           </motion.div>
 
           {/* Center zone: PRESENTS + headline + desc + CTAs */}
-          <div style={{ maxWidth: '780px' }}>
+          <div style={{ maxWidth: '1100px', marginTop: '24px', marginBottom: '24px', fontFamily: "'Outfit', sans-serif" }}>
 
             {/* PRESENTS label */}
             <motion.div
               initial={{ opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.2 }}
-              style={{ marginBottom: '18px' }}
+              style={{ marginBottom: '32px' }}
             >
-              <div style={{ fontSize: '22px', fontWeight: 900, color: 'var(--text-primary)', letterSpacing: '-0.02em', lineHeight: 1 }}>
-                Synapse AI
+              <div style={{ fontSize: '36px', fontWeight: 900, color: '#f3f2ee', letterSpacing: '-0.03em', lineHeight: 1 }}>
+                Synapse
               </div>
-              <div style={{ fontSize: '10px', fontWeight: 700, color: 'rgba(243,242,238,0.38)', letterSpacing: '0.18em', textTransform: 'uppercase', marginTop: '4px' }}>
+              <div style={{ fontSize: '10px', fontWeight: 700, color: 'rgba(243,242,238,0.38)', letterSpacing: '0.24em', textTransform: 'uppercase', marginTop: '6px' }}>
                 PRESENTS
               </div>
             </motion.div>
@@ -597,22 +638,25 @@ export default function LandingPage() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.9, delay: 0.3, ease: [0.22, 1, 0.36, 1] }}
               style={{
-                fontSize: 'clamp(36px, 5.5vw, 80px)',
+                fontSize: 'clamp(54px, 7.8vw, 115px)',
                 fontWeight: 900,
-                lineHeight: 1.0,
-                letterSpacing: '-0.03em',
-                color: 'var(--text-primary)',
-                margin: '0 0 24px 0',
-                textTransform: 'lowercase',
+                lineHeight: 1.05,
+                letterSpacing: '0.01em',
+                color: '#f3f2ee',
+                margin: '0 0 32px 0',
+                textTransform: 'uppercase',
                 scale: heroHeadlineScale,
                 transformOrigin: 'left center',
               }}
             >
-              finally an ai that{' '}
-              <span style={{ fontStyle: 'italic', color: '#0D6EFD' }}>takes bootcamps</span>
-              <br />
-              that actually{' '}
-              <span style={{ fontStyle: 'italic', color: '#0D6EFD' }}>makes an impact.</span>
+              <div style={{ whiteSpace: 'nowrap' }}>
+                the AI{' '}
+                <span className="outline-hover-yellow">bootcamp</span>
+              </div>
+              <div style={{ whiteSpace: 'nowrap' }}>
+                for{' '}
+                <span className="outline-hover-yellow">builders</span>
+              </div>
             </motion.h1>
 
             {/* Description — fades on scroll */}
@@ -621,9 +665,9 @@ export default function LandingPage() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.7, delay: 0.5 }}
               style={{
-                fontSize: '16px', color: 'rgba(243,242,238,0.5)',
-                maxWidth: '480px', lineHeight: 1.65, fontWeight: 400,
-                margin: '0 0 28px 0',
+                fontSize: '18px', color: 'rgba(243,242,238,0.5)',
+                maxWidth: '600px', lineHeight: 1.7, fontWeight: 400,
+                margin: '0 0 40px 0',
                 opacity: heroDescOpacity,
               }}
             >
@@ -636,14 +680,14 @@ export default function LandingPage() {
                 initial={{ opacity: 0, y: 12 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: 0.6 }}
-                style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'flex-start', gap: '14px', alignItems: 'center', opacity: heroCtaOpacity, zIndex: 5 }}
+                style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'flex-start', gap: '16px', alignItems: 'center', opacity: heroCtaOpacity, zIndex: 5 }}
               >
               <button
                 onClick={() => navigate('auth')}
                 style={{
-                  background: '#0D6EFD', color: 'var(--bg-base)', border: 'none',
-                  padding: '14px 32px', fontSize: '12px', fontWeight: 800,
-                  letterSpacing: '0.1em',  fontFamily: 'inherit',
+                  background: '#CFFF00', color: '#010203', border: 'none',
+                  padding: '16px 36px', fontSize: '13px', fontWeight: 800,
+                  letterSpacing: '0.1em', cursor: 'none', fontFamily: 'inherit',
                   textTransform: 'uppercase', transition: 'all 0.2s',
                   display: 'flex', alignItems: 'center', gap: '8px',
                 }}
@@ -657,8 +701,8 @@ export default function LandingPage() {
                 style={{
                   background: 'transparent', color: 'var(--text-primary)',
                   border: '1px solid rgba(243,242,238,0.2)',
-                  padding: '13px 28px', fontSize: '12px', fontWeight: 700,
-                  letterSpacing: '0.08em',  fontFamily: 'inherit',
+                  padding: '15px 32px', fontSize: '13px', fontWeight: 700,
+                  letterSpacing: '0.08em', cursor: 'none', fontFamily: 'inherit',
                   textTransform: 'uppercase', transition: 'all 0.2s',
                   display: 'flex', alignItems: 'center', gap: '8px',
                 }}

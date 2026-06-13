@@ -1,15 +1,9 @@
-/**
- * AdminSidebar — Hackorizon Dark Admin Navigation
- */
 import { useApp } from '../context/AppContext';
 
 const NAV_ITEMS = [
   { id: 'admin-dashboard', label: 'Command Center', icon: '⌘' },
   { id: 'admin-users', label: 'User Management', icon: '👥' },
-  { id: 'admin-bootcamps', label: 'Bootcamps', icon: '◧' },
-  { id: 'admin-curriculum', label: 'Curriculum', icon: '◈' },
   { id: 'admin-assessments', label: 'Assessments', icon: '◎' },
-  { id: 'admin-certificates', label: 'Certificates', icon: '◇' },
   { id: 'admin-community', label: 'Community', icon: '⚄' },
   { id: 'admin-vishesh', label: 'Vishesh Control', icon: '✦' },
   { id: 'admin-analytics', label: 'Platform Analytics', icon: '▦' },
@@ -38,7 +32,6 @@ export default function AdminSidebar() {
       height: '100vh',
       overflow: 'hidden',
     }}>
-      {/* Admin Header */}
       <div style={{
         padding: '24px 20px 16px',
         borderBottom: '1px solid var(--border-subtle)',
@@ -66,7 +59,6 @@ export default function AdminSidebar() {
         </div>
       </div>
 
-      {/* Nav items */}
       <nav style={{ flex: 1, padding: '16px 12px', overflowY: 'auto' }}>
         {NAV_ITEMS.map((item) => {
           const isActive = currentScreen === item.id;
@@ -115,7 +107,6 @@ export default function AdminSidebar() {
         })}
       </nav>
 
-      {/* Bottom items */}
       <div style={{ padding: '12px', borderTop: '1px solid var(--border-subtle)' }}>
         {BOTTOM_ITEMS.map((item) => (
           <button

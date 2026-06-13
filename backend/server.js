@@ -13,7 +13,6 @@ app.use('/api/auth', require('./routes/auth'));
 app.use('/api/progress', require('./routes/progress'));
 app.use('/api/chat', require('./routes/chat'));
 app.use('/api/curriculum', require('./routes/curriculum'));
-app.use('/api/bootcamps', require('./routes/bootcamps'));
 app.use('/api/assessments', require('./routes/assessments'));
 app.use('/api/achievements', require('./routes/achievements'));
 app.use('/api/community', require('./routes/community'));

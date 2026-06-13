@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { CurriculumDay, Bootcamp, Progress, CurriculumPlan, UserProfile } = require('../models');
+const { Progress, CurriculumPlan, UserProfile } = require('../models');
 const { authenticate } = require('../middleware/auth');
 const { trugenGenerate } = require('../ai/trugen');
 

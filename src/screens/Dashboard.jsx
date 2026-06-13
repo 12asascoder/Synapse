@@ -1,7 +1,3 @@
-/**
- * Dashboard — Core Feed / Main Dashboard
- * Hackorizon Dark Aesthetic Design
- */
 import { useState, useEffect } from 'react';
 import { useApp } from '../context/AppContext';
 import Sidebar from '../components/Sidebar';
@@ -41,19 +37,11 @@ function ScoreRing({ value, label, color = '#0D6EFD', size = 80 }) {
 
 export default function Dashboard() {
   const { state, navigate } = useApp();
-  const { selectedBootcamp, currentDay, streak, scores, progressHistory } = state;
-  const [milestones, setMilestones] = useState([]);
+  const { currentDay, streak, scores, progressHistory } = state;
   const [visheshInsight, setVisheshInsight] = useState('');
 
   useEffect(() => {
     if (!state.user?.id) return;
-    fetch(`${API}/curriculum/${state.user.id}`)
-      .then((r) => r.json())
-      .then((data) => {
-        const keyMilestones = data.filter((d) => d.day % 7 === 1 || d.day === 15 || d.day === 30 || d.contentType === 'assessment');
-        setMilestones(keyMilestones.slice(0, 6));
-      })
-      .catch(() => {});
     fetch(`${API}/chat/message`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -80,7 +68,6 @@ export default function Dashboard() {
       <Sidebar />
 
       <div style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
-        {/* Top bar */}
         <div style={{
           height: '64px', background: 'rgba(10,10,12,0.85)',
           backdropFilter: 'blur(20px)',
@@ -91,13 +78,11 @@ export default function Dashboard() {
           <div style={{ display: 'flex', alignItems: 'center', gap: '24px' }}>
             <div style={{ fontWeight: 800, fontSize: '18px', color: 'var(--text-primary)', letterSpacing: '0.05em' }}>SYNAPSE</div>
             <div style={{ display: 'flex', gap: '8px' }}>
-              {['Curriculum', 'Network', 'Simulations'].map((item, i) => (
-                <button key={item} onClick={() => { if (i === 0) navigate('hub'); }} style={{
-                  background: 'var(--bg-card)', border: '1px solid var(--border-default)', color: 'var(--text-primary)', cursor: 'pointer',
-                  fontSize: '14px', fontWeight: i === 0 ? 700 : 500,
-                  padding: '8px 16px', borderRadius: '8px',
-                }}>{item}</button>
-              ))}
+              <button onClick={() => navigate('hub')} style={{
+                background: 'rgba(255,255,255,0.07)', border: '1px solid rgba(255,255,255,0.2)', color: '#f3f2ee', cursor: 'pointer',
+                fontSize: '14px', fontWeight: 500,
+                padding: '8px 16px', borderRadius: '8px',
+              }}>Hub</button>
             </div>
           </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
@@ -116,15 +101,12 @@ export default function Dashboard() {
           </div>
         </div>
 
-        {/* Main content */}
         <div style={{ flex: 1, overflowY: 'auto', padding: '32px' }} className="scroll-area">
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 340px', gap: '32px', maxWidth: '1200px', margin: '0 auto' }}>
 
-            {/* LEFT — Main content */}
             <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
 
-              {/* Today's Mission */}
-              <motion.div 
+              <motion.div
                 initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: "-50px" }}
@@ -138,7 +120,7 @@ export default function Dashboard() {
                   <div>
                     <div style={{ fontSize: '12px', fontWeight: 700, color: 'var(--text-accent)', letterSpacing: '0.05em', marginBottom: '8px', textTransform: 'uppercase' }}>TODAY'S MISSION</div>
                     <h2 style={{ fontSize: '28px', fontFamily: 'var(--font-display)', fontWeight: 800, color: 'var(--text-primary)' }}>
-                      Day {currentDay} — {selectedBootcamp?.name || 'AI Engineering'}
+                      Day {currentDay}
                     </h2>
                   </div>
                   <div style={{ textAlign: 'right', background: 'rgba(207,255,0,0.08)', padding: '12px 16px', borderRadius: '12px' }}>
@@ -149,7 +131,7 @@ export default function Dashboard() {
 
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '16px', marginBottom: '24px' }}>
                   {[
-                    { label: 'Current Day', value: `${currentDay}/30` },
+                    { label: 'Current Day', value: currentDay },
                     { label: 'Lessons Done', value: state.completedLessons.length },
                     { label: 'Growth Score', value: `${state.growthScore}%` },
                   ].map((s) => (
@@ -158,17 +140,6 @@ export default function Dashboard() {
                       <div style={{ fontSize: '12px', color: 'var(--text-secondary)', fontWeight: 500 }}>{s.label}</div>
                     </div>
                   ))}
-                </div>
-
-                {/* Progress bar */}
-                <div style={{ marginBottom: '12px' }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
-                    <span style={{ fontSize: '13px', color: 'var(--text-secondary)', fontWeight: 500 }}>Journey Progress</span>
-                    <span style={{ fontSize: '13px', color: 'var(--text-primary)', fontWeight: 700 }}>{Math.round((currentDay / 30) * 100)}%</span>
-                  </div>
-                  <div className="progress-bar" style={{ height: '6px', background: 'rgba(243,242,238,0.1)' }}>
-                    <div className="progress-fill" style={{ width: `${(currentDay / 30) * 100}%`, background: 'var(--border-active)' }} />
-                  </div>
                 </div>
 
                 <button
@@ -181,49 +152,7 @@ export default function Dashboard() {
                 </button>
               </motion.div>
 
-              {/* Learning Path Timeline */}
-              <motion.div 
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: "-50px" }}
-                transition={{ duration: 0.5, delay: 0.1 }}
-                style={{ background: 'var(--bg-surface)', border: '1px solid var(--border-subtle)', borderRadius: '20px', padding: '32px' }}>
-                <div style={{ fontWeight: 800, fontSize: '18px', color: 'var(--text-primary)', marginBottom: '24px' }}>Learning Path</div>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '0' }}>
-                  {(milestones.length > 0 ? milestones : []).map((item, i) => {
-                    const day = item.day;
-                    const isActive = day === currentDay;
-                    const isDone = day < currentDay;
-                    const isMilestone = item.contentType === 'assessment';
-                    return (
-                      <div key={day} style={{ display: 'flex', gap: '20px', alignItems: 'flex-start', paddingBottom: '24px', position: 'relative' }}>
-                        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', flexShrink: 0 }}>
-                          <div style={{
-                            width: 32, height: 32, borderRadius: '50%',
-                            background: isDone ? 'var(--border-active)' : isActive ? 'var(--bg-card)' : isMilestone ? 'rgba(207,255,0,0.05)' : 'var(--bg-surface)',
-                            border: `2px solid ${isDone ? 'var(--border-active)' : isActive ? 'var(--border-active)' : isMilestone ? 'var(--border-active)' : 'var(--border-subtle)'}`,
-                            display: 'flex', alignItems: 'center', justifyContent: 'center',
-                            fontSize: '13px', fontWeight: 700, color: isDone ? 'var(--bg-base)' : isActive ? 'var(--text-primary)' : isMilestone ? 'var(--text-accent)' : 'var(--text-muted)',
-                          }}>
-                            {isDone ? '✓' : isActive ? '▶' : isMilestone ? '★' : '○'}
-                          </div>
-                          {i < milestones.length - 1 && <div style={{ width: 2, flex: 1, minHeight: '24px', background: isDone ? 'var(--border-active)' : 'var(--border-subtle)', marginTop: '6px' }} />}
-                        </div>
-                        <div style={{ paddingTop: '6px' }}>
-                          <div style={{ fontSize: '15px', fontWeight: isActive ? 700 : 500, color: isActive ? 'var(--text-primary)' : isDone ? 'var(--text-secondary)' : 'var(--text-muted)' }}>
-                            Day {day} — {item.topic}
-                          </div>
-                          {isActive && <div style={{ fontSize: '12px', color: 'var(--text-accent)', fontWeight: 600, marginTop: '4px' }}>● Currently Active</div>}
-                          {isMilestone && <div style={{ fontSize: '12px', color: 'var(--text-accent)', fontWeight: 600, marginTop: '4px' }}>★ Major Validation</div>}
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-              </motion.div>
-
-              {/* Growth chart */}
-              <motion.div 
+              <motion.div
                 initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: "-50px" }}
@@ -247,11 +176,9 @@ export default function Dashboard() {
               </motion.div>
             </div>
 
-            {/* RIGHT — Insights */}
             <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
-              
-              {/* Vishesh panel */}
-              <motion.div 
+
+              <motion.div
                 initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: "-50px" }}
@@ -272,8 +199,7 @@ export default function Dashboard() {
                 </div>
               </motion.div>
 
-              {/* Score rings */}
-              <motion.div 
+              <motion.div
                 initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: "-50px" }}
@@ -287,8 +213,7 @@ export default function Dashboard() {
                 </div>
               </motion.div>
 
-              {/* Radar chart */}
-              <motion.div 
+              <motion.div
                 initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: "-50px" }}
@@ -304,8 +229,7 @@ export default function Dashboard() {
                 </ResponsiveContainer>
               </motion.div>
 
-              {/* Current Readiness */}
-              <motion.div 
+              <motion.div
                 initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: "-50px" }}

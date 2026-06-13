@@ -2,52 +2,6 @@ require('dotenv').config({ path: require('path').join(__dirname, '.env') });
 const bcrypt = require('bcryptjs');
 const db = require('./models');
 
-const bootcamps = [
-  { name: 'AI Engineering', slug: 'ai-engineering', description: 'Master AI systems from foundations to deployment.', icon: 'Brain', duration: '30 Days', level: 'Advanced', color: '#6366f1', outcomes: ['Build production AI systems', 'Master LLMs & RAG', 'Deploy at scale'], cert: true },
-  { name: 'Frontend Engineering', slug: 'frontend-engineering', description: 'Build beautiful, performant web interfaces.', icon: 'Monitor', duration: '24 Days', level: 'Intermediate', color: '#06b6d4', outcomes: ['React mastery', 'Responsive design', 'Web performance'], cert: true },
-  { name: 'Backend Engineering', slug: 'backend-engineering', description: 'Design scalable server-side systems.', icon: 'Server', duration: '28 Days', level: 'Intermediate', color: '#10b981', outcomes: ['API design', 'Database mastery', 'System architecture'], cert: true },
-  { name: 'Product Management', slug: 'product-management', description: 'Lead products from idea to launch.', icon: 'Rocket', duration: '21 Days', level: 'Beginner', color: '#f59e0b', outcomes: ['Roadmap planning', 'User research', 'Go-to-market strategy'], cert: true },
-  { name: 'Data Science', slug: 'data-science', description: 'Extract insights from data with statistical rigor.', icon: 'BarChart3', duration: '30 Days', level: 'Advanced', color: '#8b5cf6', outcomes: ['Statistical analysis', 'ML modeling', 'Data visualization'], cert: true },
-  { name: 'Cybersecurity', slug: 'cybersecurity', description: 'Protect systems and networks from threats.', icon: 'Shield', duration: '26 Days', level: 'Intermediate', color: '#ef4444', outcomes: ['Threat detection', 'Network security', 'Incident response'], cert: true },
-  { name: 'DevOps', slug: 'devops', description: 'Automate and streamline infrastructure.', icon: 'Container', duration: '24 Days', level: 'Intermediate', color: '#14b8a6', outcomes: ['CI/CD pipelines', 'Container orchestration', 'Infrastructure as code'], cert: true },
-  { name: 'UI/UX Design', slug: 'ui-ux-design', description: 'Craft intuitive, delightful user experiences.', icon: 'Palette', duration: '20 Days', level: 'Beginner', color: '#ec4899', outcomes: ['Design systems', 'User testing', 'Prototyping'], cert: true },
-  { name: 'Cloud Engineering', slug: 'cloud-engineering', description: 'Design and manage cloud infrastructure.', icon: 'Cloud', duration: '28 Days', level: 'Advanced', color: '#3b82f6', outcomes: ['AWS/Azure/GCP', 'Serverless architecture', 'Cost optimization'], cert: true },
-  { name: 'Sales Engineering', slug: 'sales-engineering', description: 'Bridge technical products and customer needs.', icon: 'Handshake', duration: '18 Days', level: 'Beginner', color: '#22c55e', outcomes: ['Technical demos', 'Solution consulting', 'CRM mastery'], cert: true },
-];
-
-const curriculumDays = [
-  { day: 1, topic: 'Introduction to AI Systems', sublabel: 'AI Foundations', description: 'Overview of AI, ML, and deep learning.' },
-  { day: 2, topic: 'Machine Learning Basics', sublabel: 'Supervised Learning', description: 'Regression, classification, and evaluation.' },
-  { day: 3, topic: 'Deep Learning Architectures', sublabel: 'Neural Networks', description: 'Perceptrons, activation functions, and layers.' },
-  { day: 4, topic: 'Data Preprocessing', sublabel: 'Data Pipelines', description: 'Cleaning, transforming, and augmenting data.' },
-  { day: 5, topic: 'Backpropagation', sublabel: 'Gradient Descent', description: 'Training neural networks with backprop.' },
-  { day: 6, topic: 'Convolutional Neural Networks', sublabel: 'Computer Vision', description: 'CNNs for image recognition tasks.' },
-  { day: 7, topic: 'Recurrent Neural Networks', sublabel: 'Sequence Modeling', description: 'RNNs, LSTMs, and GRUs for sequences.' },
-  { day: 8, topic: 'Natural Language Processing', sublabel: 'Text Representation', description: 'Tokenization, embeddings, and transformers.' },
-  { day: 9, topic: 'Transformers', sublabel: 'Attention Mechanisms', description: 'Self-attention and transformer architecture.' },
-  { day: 10, topic: 'Large Language Models', sublabel: 'Generative AI', description: 'GPT, Llama, and foundation models.' },
-  { day: 11, topic: 'Prompt Engineering', sublabel: 'Context Optimization', description: 'Crafting effective prompts for LLMs.' },
-  { day: 12, topic: 'Model Evaluation', sublabel: 'Metrics & Testing', description: 'Evaluating model performance and bias.' },
-  { day: 13, topic: 'Transfer Learning', sublabel: 'Fine-tuning Basics', description: 'Adapting pretrained models to new tasks.' },
-  { day: 14, topic: 'Optimization Strategies', sublabel: 'LoRA & QLoRA', description: 'Parameter-efficient fine-tuning methods.' },
-  { day: 15, topic: 'Mid-Term Programming Assessment', sublabel: 'Phase 1 Validation', description: 'Coding assessment covering weeks 1-2.', contentType: 'assessment' },
-  { day: 16, topic: 'RAG Architecture', sublabel: 'Vector Databases', description: 'Retrieval-augmented generation pipelines.' },
-  { day: 17, topic: 'Embeddings Deep Dive', sublabel: 'Similarity Search', description: 'Vector embeddings and semantic search.' },
-  { day: 18, topic: 'AI Agents', sublabel: 'Autonomous Systems', description: 'Building autonomous AI agents.' },
-  { day: 19, topic: 'Tool Use & APIs', sublabel: 'Agent Capabilities', description: 'Tools, function calling, and API integration.' },
-  { day: 20, topic: 'LangChain & LlamaIndex', sublabel: 'Frameworks', description: 'Popular LLM application frameworks.' },
-  { day: 21, topic: 'Distributed Systems', sublabel: 'Scaling AI', description: 'Distributed training and inference.' },
-  { day: 22, topic: 'MLOps Foundations', sublabel: 'Deployment', description: 'ML pipelines and model deployment.' },
-  { day: 23, topic: 'Model Serving', sublabel: 'Inference at Scale', description: 'Serving models in production.' },
-  { day: 24, topic: 'Monitoring & Logging', sublabel: 'Observability', description: 'Monitoring model performance and drift.' },
-  { day: 25, topic: 'AI Security', sublabel: 'Adversarial Attacks', description: 'Securing AI systems against attacks.' },
-  { day: 26, topic: 'Ethics & Bias', sublabel: 'Responsible AI', description: 'Fairness, accountability, and transparency.' },
-  { day: 27, topic: 'Reinforcement Learning', sublabel: 'Reward Systems', description: 'RL fundamentals and reward modeling.' },
-  { day: 28, topic: 'Multimodal Models', sublabel: 'Vision & Text', description: 'Models that process multiple modalities.' },
-  { day: 29, topic: 'Future of AI', sublabel: 'Emerging Trends', description: 'Frontier research and industry trends.' },
-  { day: 30, topic: 'Final Technical Interview', sublabel: 'Certification Day', description: 'Comprehensive final assessment.', contentType: 'assessment' },
-];
-
 const assessmentQuestions = [
   {
     question: 'What is the primary advantage of using LoRA for fine-tuning large language models?',
@@ -135,8 +89,6 @@ const achievements = [
   { name: 'First Steps', slug: 'first-steps', description: 'Complete your first lesson', icon: 'Footprints', color: '#6366f1', criteria: { lessonsCompleted: 1 } },
   { name: 'Streak Master', slug: 'streak-master', description: 'Maintain a 7-day learning streak', icon: 'Flame', color: '#f59e0b', criteria: { streak: 7 } },
   { name: 'Knowledge Seeker', slug: 'knowledge-seeker', description: 'Score 80+ on any assessment', icon: 'Trophy', color: '#fbbf24', criteria: { assessmentScore: 80 } },
-  { name: 'Halfway There', slug: 'halfway-there', description: 'Complete day 15 of the bootcamp', icon: 'Flag', color: '#10b981', criteria: { currentDay: 15 } },
-  { name: 'Graduate', slug: 'graduate', description: 'Complete all 30 days of the bootcamp', icon: 'GraduationCap', color: '#8b5cf6', criteria: { currentDay: 30 } },
   { name: 'Quick Learner', slug: 'quick-learner', description: 'Complete 5 lessons in one day', icon: 'Zap', color: '#06b6d4', criteria: { lessonsInDay: 5 } },
   { name: 'Top Performer', slug: 'top-performer', description: 'Score 95+ on any assessment', icon: 'Star', color: '#ec4899', criteria: { assessmentScore: 95 } },
   { name: 'Community Contributor', slug: 'community-contributor', description: 'Post 10 discussions in the community', icon: 'MessageCircle', color: '#14b8a6', criteria: { discussions: 10 } },
@@ -146,20 +98,6 @@ async function seed() {
   try {
     await db.sequelize.sync({ force: true });
     console.log('[Seed] Database synced.');
-
-    const existingBootcamps = await db.Bootcamp.count();
-    if (existingBootcamps > 0) {
-      console.log('[Seed] Data already exists, skipping seed.');
-      process.exit(0);
-    }
-
-    const createdBootcamps = await db.Bootcamp.bulkCreate(bootcamps);
-    console.log(`[Seed] Created ${createdBootcamps.length} bootcamps.`);
-
-    const aiBootcamp = createdBootcamps.find((b) => b.slug === 'ai-engineering');
-    const curriculumWithBootcamp = curriculumDays.map((d) => ({ ...d, bootcampId: aiBootcamp.id }));
-    await db.CurriculumDay.bulkCreate(curriculumWithBootcamp);
-    console.log(`[Seed] Created ${curriculumWithBootcamp.length} curriculum days.`);
 
     await db.AssessmentQuestion.bulkCreate(assessmentQuestions);
     console.log(`[Seed] Created ${assessmentQuestions.length} assessment questions.`);

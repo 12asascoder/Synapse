@@ -128,10 +128,9 @@ export default function VisheshChat({ context = '', placeholder = 'Ask Vishesh a
   // Initial Vishesh greeting
   useEffect(() => {
     if (initialGreeting && messages.length === 0) {
-      const bootcamp = state.selectedBootcamp?.name || 'your learning journey';
       setMessages([{
         role: 'assistant',
-        content: `Welcome! I'm Vishesh, your AI learning mentor.\n\nI'm here to guide you through ${bootcamp}. Ask me anything — concepts, problems, strategies, or career guidance.\n\nWhat would you like to explore today?`,
+        content: `Welcome! I'm Vishesh, your AI learning mentor.\n\nI'm here to guide you through your learning journey. Ask me anything — concepts, problems, strategies, or career guidance.\n\nWhat would you like to explore today?`,
         timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
         streaming: false,
       }]);

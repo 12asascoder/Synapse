@@ -1,7 +1,3 @@
-/**
- * Synapse — Application State Management
- * Central context for user session, bootcamp progress, and Vishesh state
- */
 import { createContext, useContext, useReducer, useEffect, useCallback, useRef } from 'react';
 
 const AppContext = createContext(null);
@@ -9,17 +5,13 @@ const AppContext = createContext(null);
 const STORAGE_KEY = 'synapse_session_v1';
 
 const initialState = {
-  // Auth
   user: null,
   token: null,
   isAuthenticated: false,
-  // Bootcamp
-  selectedBootcamp: null,
   currentDay: 1,
   completedDays: [],
   completedLessons: [],
   completedAssessments: [],
-  // Analytics
   scores: {
     knowledge: 0,
     accuracy: 0,
@@ -33,10 +25,8 @@ const initialState = {
   streak: 0,
   totalPoints: 0,
   growthScore: 0,
-  // UI
-  currentScreen: 'loading', // loading | landing | auth | hub | bootcamp-init | dashboard | lesson | assessment | analytics | skill-passport | community | certificates | settings | milestone | results
+  currentScreen: 'loading',
   sidebarOpen: true,
-  // Messages history for Vishesh
   messageHistory: [],
 };
 
@@ -49,12 +39,7 @@ function reducer(state, action) {
     case 'SET_TOKEN':
       return { ...state, token: action.payload };
     case 'LOGOUT':
-      // Clear all client-side state on logout
       return { ...initialState, currentScreen: 'landing' };
-    case 'SELECT_BOOTCAMP':
-      return { ...state, selectedBootcamp: action.payload };
-    case 'START_BOOTCAMP':
-      return { ...state, currentDay: 1, completedDays: [], completedLessons: [], streak: 0 };
     case 'COMPLETE_LESSON':
       return {
         ...state,
@@ -117,7 +102,6 @@ export function AppProvider({ children }) {
   const [state, dispatch] = useReducer(reducer, initialState);
   const navStackRef = useRef([]);
 
-  // Restore session from sessionStorage
   useEffect(() => {
     try {
       const saved = sessionStorage.getItem(STORAGE_KEY);
@@ -133,7 +117,6 @@ export function AppProvider({ children }) {
             user: parsed.user,
             token: parsed.token || parsed.user?.token || '',
             isAuthenticated: !!parsed.user,
-            selectedBootcamp: parsed.selectedBootcamp,
             currentDay: parsed.currentDay || 1,
             completedDays: parsed.completedDays || [],
             completedLessons: parsed.completedLessons || [],
@@ -143,7 +126,7 @@ export function AppProvider({ children }) {
             totalPoints: parsed.totalPoints || 0,
             growthScore: parsed.growthScore || 0,
             progressHistory: parsed.progressHistory || [],
-            currentScreen: parsed.isAuthenticated ? (parsed.user?.onboardingComplete === false ? 'profile-setup' : parsed.user?.role === 'SUPER_ADMIN' ? 'admin-dashboard' : (parsed.selectedBootcamp ? 'dashboard' : 'hub')) : 'landing',
+            currentScreen: parsed.isAuthenticated ? (parsed.user?.onboardingComplete === false ? 'profile-setup' : parsed.user?.role === 'SUPER_ADMIN' ? 'admin-dashboard' : 'dashboard') : 'landing',
           },
         });
       }
@@ -152,7 +135,6 @@ export function AppProvider({ children }) {
     }
   }, []);
 
-  // Fetch real progress from backend when authenticated
   useEffect(() => {
     if (state.isAuthenticated && state.user?.id) {
       fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:5000/api'}/progress/${state.user.id}`)
@@ -166,7 +148,6 @@ export function AppProvider({ children }) {
     }
   }, [state.isAuthenticated, state.user]);
 
-  // Persist session state (non-sensitive only)
   useEffect(() => {
     if (state.isAuthenticated) {
       try {
@@ -174,7 +155,6 @@ export function AppProvider({ children }) {
           user: { name: state.user?.name, email: state.user?.email, role: state.user?.role, token: state.token, onboardingComplete: state.user?.onboardingComplete },
           token: state.token,
           isAuthenticated: state.isAuthenticated,
-          selectedBootcamp: state.selectedBootcamp,
           currentDay: state.currentDay,
           completedDays: state.completedDays,
           completedLessons: state.completedLessons,
@@ -189,7 +169,7 @@ export function AppProvider({ children }) {
         // Storage quota exceeded or private mode — fail silently
       }
     }
-  }, [state.isAuthenticated, state.selectedBootcamp, state.currentDay, state.completedDays, state.scores]);
+  }, [state.isAuthenticated, state.currentDay, state.completedDays, state.scores]);
 
   const navigate = useCallback((screen) => {
     const prev = navStackRef.current[navStackRef.current.length - 1];
@@ -206,7 +186,6 @@ export function AppProvider({ children }) {
     window.history.replaceState({}, '', `/${prev}`);
   }, []);
 
-  // Initialize nav stack
   useEffect(() => {
     navStackRef.current = ['landing'];
     window.history.replaceState({}, '', '/landing');
@@ -215,7 +194,6 @@ export function AppProvider({ children }) {
   const logout = useCallback(() => {
     sessionStorage.removeItem(STORAGE_KEY);
     dispatch({ type: 'LOGOUT' });
-    // Full page state clear
     window.history.pushState({}, '', '/');
   }, []);
 

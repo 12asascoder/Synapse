@@ -2,137 +2,13 @@ const express = require('express');
 const router = express.Router();
 const { authenticate, requireAdmin } = require('../middleware/auth');
 const {
-  Bootcamp, CurriculumDay, AssessmentQuestion, Assessment,
+  AssessmentQuestion, Assessment,
   User, Progress, CommunityDiscussion, Achievement, UserAchievement,
 } = require('../models');
 const { Op } = require('sequelize');
 
 // All routes require SUPER_ADMIN
 router.use(authenticate, requireAdmin);
-
-// ─── Bootcamps ───────────────────────────────────────────────────────────────
-
-router.get('/bootcamps', async (req, res) => {
-  try {
-    const bootcamps = await Bootcamp.findAll({ order: [['createdAt', 'DESC']] });
-    res.json(bootcamps);
-  } catch (error) {
-    res.status(500).json({ error: 'Failed to fetch bootcamps' });
-  }
-});
-
-router.post('/bootcamps', async (req, res) => {
-  try {
-    const { name, slug, description, icon, duration, level, color, outcomes, cert } = req.body;
-    if (!name || !slug || !icon || !duration) {
-      return res.status(400).json({ error: 'name, slug, icon, and duration are required' });
-    }
-    const bootcamp = await Bootcamp.create({
-      name, slug, description: description || '', icon, duration,
-      level: level || 'Beginner', color: color || '#6366f1',
-      outcomes: outcomes || [], cert: cert !== false,
-    });
-    res.status(201).json(bootcamp);
-  } catch (error) {
-    if (error.name === 'SequelizeUniqueConstraintError') {
-      return res.status(409).json({ error: 'A bootcamp with this slug already exists' });
-    }
-    res.status(500).json({ error: 'Failed to create bootcamp' });
-  }
-});
-
-router.put('/bootcamps/:id', async (req, res) => {
-  try {
-    const bootcamp = await Bootcamp.findByPk(req.params.id);
-    if (!bootcamp) return res.status(404).json({ error: 'Bootcamp not found' });
-    const allowed = ['name', 'slug', 'description', 'icon', 'duration', 'level', 'color', 'outcomes', 'cert', 'isActive'];
-    const updates = {};
-    for (const key of allowed) {
-      if (req.body[key] !== undefined) updates[key] = req.body[key];
-    }
-    await bootcamp.update(updates);
-    res.json(bootcamp);
-  } catch (error) {
-    if (error.name === 'SequelizeUniqueConstraintError') {
-      return res.status(409).json({ error: 'A bootcamp with this slug already exists' });
-    }
-    res.status(500).json({ error: 'Failed to update bootcamp' });
-  }
-});
-
-router.delete('/bootcamps/:id', async (req, res) => {
-  try {
-    const bootcamp = await Bootcamp.findByPk(req.params.id);
-    if (!bootcamp) return res.status(404).json({ error: 'Bootcamp not found' });
-    await CurriculumDay.destroy({ where: { bootcampId: bootcamp.id } });
-    await bootcamp.destroy();
-    res.json({ message: 'Bootcamp deleted' });
-  } catch (error) {
-    res.status(500).json({ error: 'Failed to delete bootcamp' });
-  }
-});
-
-// ─── Curriculum ──────────────────────────────────────────────────────────────
-
-router.get('/curriculum', async (req, res) => {
-  try {
-    const where = req.query.bootcampId ? { bootcampId: req.query.bootcampId } : {};
-    const days = await CurriculumDay.findAll({
-      where,
-      order: [['day', 'ASC']],
-      include: [{ model: Bootcamp, attributes: ['name', 'slug', 'color'] }],
-    });
-    res.json(days);
-  } catch (error) {
-    res.status(500).json({ error: 'Failed to fetch curriculum' });
-  }
-});
-
-router.post('/curriculum', async (req, res) => {
-  try {
-    const { bootcampId, day, topic, sublabel, description, contentType } = req.body;
-    if (!bootcampId || !day || !topic) {
-      return res.status(400).json({ error: 'bootcampId, day, and topic are required' });
-    }
-    const existing = await CurriculumDay.findOne({ where: { bootcampId, day } });
-    if (existing) return res.status(409).json({ error: `Day ${day} already exists for this bootcamp` });
-    const currDay = await CurriculumDay.create({
-      bootcampId, day: parseInt(day), topic,
-      sublabel: sublabel || '', description: description || '',
-      contentType: contentType || 'lesson',
-    });
-    res.status(201).json(currDay);
-  } catch (error) {
-    res.status(500).json({ error: 'Failed to create curriculum day' });
-  }
-});
-
-router.put('/curriculum/:id', async (req, res) => {
-  try {
-    const day = await CurriculumDay.findByPk(req.params.id);
-    if (!day) return res.status(404).json({ error: 'Curriculum day not found' });
-    const allowed = ['day', 'topic', 'sublabel', 'description', 'contentType', 'bootcampId'];
-    const updates = {};
-    for (const key of allowed) {
-      if (req.body[key] !== undefined) updates[key] = req.body[key];
-    }
-    await day.update(updates);
-    res.json(day);
-  } catch (error) {
-    res.status(500).json({ error: 'Failed to update curriculum day' });
-  }
-});
-
-router.delete('/curriculum/:id', async (req, res) => {
-  try {
-    const day = await CurriculumDay.findByPk(req.params.id);
-    if (!day) return res.status(404).json({ error: 'Curriculum day not found' });
-    await day.destroy();
-    res.json({ message: 'Curriculum day deleted' });
-  } catch (error) {
-    res.status(500).json({ error: 'Failed to delete curriculum day' });
-  }
-});
 
 // ─── Assessment Questions ────────────────────────────────────────────────────
 
@@ -195,7 +71,6 @@ router.get('/assessments/submissions', async (req, res) => {
       order: [['createdAt', 'DESC']],
       limit: 100,
     });
-    // Fetch user names for each submission
     const userIds = [...new Set(submissions.map(s => s.userId))];
     const users = await User.findAll({
       where: { id: { [Op.in]: userIds } },
@@ -211,29 +86,6 @@ router.get('/assessments/submissions', async (req, res) => {
     res.json(enriched);
   } catch (error) {
     res.status(500).json({ error: 'Failed to fetch submissions' });
-  }
-});
-
-// ─── Certificates (Graduates) ───────────────────────────────────────────────
-
-router.get('/certificates', async (req, res) => {
-  try {
-    const graduates = await Progress.findAll({
-      where: { currentDay: { [Op.gte]: 30 } },
-      include: [{ model: User, attributes: ['id', 'name', 'email', 'tier', 'points'] }],
-    });
-    res.json(graduates.map(g => ({
-      userId: g.userId,
-      userName: g.User?.name || 'Unknown',
-      userEmail: g.User?.email || '',
-      tier: g.User?.tier || 'Trainee',
-      points: g.User?.points || 0,
-      growthScore: g.growthScore,
-      completedAt: g.updatedAt,
-      currentDay: g.currentDay,
-    })));
-  } catch (error) {
-    res.status(500).json({ error: 'Failed to fetch certificates' });
   }
 });
 
@@ -272,7 +124,6 @@ router.get('/analytics/detailed', async (req, res) => {
       where: { updatedAt: { [Op.gte]: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000) } },
     });
     const totalAssessments = await Assessment.count({ where: { completed: true } });
-    const totalBootcamps = await Bootcamp.count();
     const totalQuestions = await AssessmentQuestion.count();
     const totalDiscussions = await CommunityDiscussion.count();
 
@@ -280,19 +131,7 @@ router.get('/analytics/detailed', async (req, res) => {
     const avgGrowthScore = allProgress.length
       ? Math.round(allProgress.reduce((s, p) => s + p.growthScore, 0) / allProgress.length)
       : 0;
-    const graduates = allProgress.filter(p => p.currentDay >= 30).length;
 
-    // Per-bootcamp enrollment (count curriculum days as proxy)
-    const bootcamps = await Bootcamp.findAll({
-      attributes: ['id', 'name', 'slug', 'color'],
-      include: [{ model: CurriculumDay, attributes: ['id'] }],
-    });
-    const bootcampStats = bootcamps.map(b => ({
-      id: b.id, name: b.name, slug: b.slug, color: b.color,
-      curriculumDays: b.CurriculumDays?.length || 0,
-    }));
-
-    // Score distribution
     const scoreRanges = { '0-20': 0, '21-40': 0, '41-60': 0, '61-80': 0, '81-100': 0 };
     allProgress.forEach(p => {
       const s = p.growthScore;
@@ -304,9 +143,9 @@ router.get('/analytics/detailed', async (req, res) => {
     });
 
     res.json({
-      totalUsers, activeUsers, totalAssessments, totalBootcamps,
-      totalQuestions, totalDiscussions, avgGrowthScore, graduates,
-      bootcampStats, scoreDistribution: scoreRanges,
+      totalUsers, activeUsers, totalAssessments, totalQuestions,
+      totalDiscussions, avgGrowthScore, graduates: 0,
+      scoreDistribution: scoreRanges,
     });
   } catch (error) {
     res.status(500).json({ error: 'Failed to fetch analytics' });

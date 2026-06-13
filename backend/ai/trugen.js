@@ -41,7 +41,7 @@ async function aiFetch(body) {
 /* ------------------------------------------------------------------ */
 function localGenerate(prompt, contextHistory = []) {
   const ctx = contextHistory.find((m) => m.role === 'system')?.content || '';
-  const bootcamp = ctx.match(/Bootcamp:\s*(.*?)\s*\|/i)?.[1] || 'your program';
+  const bootcamp = 'your program';
   const day = ctx.match(/Day:\s*(\d+)/i)?.[1] || '';
   
   // Try to grab topic from the new context string format (Topic: X |) or the intro prompt (The topic is: X.)

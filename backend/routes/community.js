@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const { CommunityDiscussion, User } = require('../models');
 const { Op } = require('sequelize');
+const { authenticate } = require('../middleware/auth');
 
 router.get('/discussions', async (req, res) => {
   try {
@@ -29,9 +30,10 @@ router.get('/leaderboard', async (req, res) => {
   }
 });
 
-router.post('/discussions', async (req, res) => {
+router.post('/discussions', authenticate, async (req, res) => {
   try {
-    const { userId, title, content, category } = req.body;
+    const { title, content, category } = req.body;
+    const userId = req.user.id;
     const discussion = await CommunityDiscussion.create({ userId, title, content, category });
     const full = await CommunityDiscussion.findByPk(discussion.id, {
       include: [{ model: User, attributes: ['id', 'name', 'avatar', 'tier'] }],

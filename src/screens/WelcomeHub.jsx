@@ -39,7 +39,7 @@ function BootcampCard({ bootcamp, selected, onSelect }) {
       <div style={{
         width: 48, height: 48, borderRadius: '12px', flexShrink: 0,
         background: isActive ? 'var(--border-active)' : 'var(--bg-surface)',
-        color: isActive ? '#010203' : 'var(--text-primary)',
+        color: isActive ? 'var(--bg-base)' : 'var(--text-primary)',
         display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '20px',
         transition: 'all 0.2s ease',
       }}>
@@ -115,7 +115,7 @@ export default function WelcomeHub() {
           justifyContent: 'space-between', padding: '0 40px',
         }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-            <div style={{ width: 28, height: 28, background: 'var(--border-active)', borderRadius: '6px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '14px', color: '#010203', fontWeight: 800 }}>✦</div>
+            <div style={{ width: 28, height: 28, background: 'var(--border-active)', borderRadius: '6px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '14px', color: 'var(--bg-base)', fontWeight: 800 }}>✦</div>
             <span style={{ fontWeight: 800, fontSize: '16px', color: 'var(--text-primary)', letterSpacing: '0.05em' }}>SYNAPSE</span>
           </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '12px', fontWeight: 500 }}>
@@ -132,7 +132,7 @@ export default function WelcomeHub() {
           <div style={{ maxWidth: '800px', textAlign: 'center', padding: '40px' }}>
             <div style={{ animation: 'fadeInUp 0.5s ease both' }}>
               <div style={{
-                width: 64, height: 64, borderRadius: '16px', background: 'var(--border-active)', color: '#010203',
+                width: 64, height: 64, borderRadius: '16px', background: 'var(--border-active)', color: 'var(--bg-base)',
                 display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '24px',
                 margin: '0 auto 32px', fontWeight: 800
               }}>
@@ -163,15 +163,15 @@ export default function WelcomeHub() {
                   transition: 'all 0.2s', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '16px',
                   boxShadow: '0 4px 20px rgba(0,0,0,0.3)',
                 }}
-                  onMouseEnter={e => { e.currentTarget.style.borderColor = '#CFFF00'; e.currentTarget.style.transform = 'translateY(-4px)'; e.currentTarget.style.boxShadow = '0 12px 24px rgba(207,255,0,0.08)'; }}
+                  onMouseEnter={e => { e.currentTarget.style.borderColor = '#0D6EFD'; e.currentTarget.style.transform = 'translateY(-4px)'; e.currentTarget.style.boxShadow = '0 12px 24px rgba(207,255,0,0.08)'; }}
                   onMouseLeave={e => { e.currentTarget.style.borderColor = 'rgba(243,242,238,0.2)'; e.currentTarget.style.transform = 'none'; e.currentTarget.style.boxShadow = '0 4px 20px rgba(0,0,0,0.3)'; }}
                 >
                   <div style={{ fontSize: '40px' }}>📚</div>
-                  <div style={{ fontWeight: 700, fontSize: '18px', color: '#f3f2ee' }}>Bootcamp Curriculum</div>
-                  <div style={{ fontSize: '14px', color: '#A59F97', lineHeight: 1.5 }}>
+                  <div style={{ fontWeight: 700, fontSize: '18px', color: 'var(--text-primary)' }}>Bootcamp Curriculum</div>
+                  <div style={{ fontSize: '14px', color: 'var(--text-secondary)', lineHeight: 1.5 }}>
                     Follow a structured 30-day learning path with lessons, exercises, and assessments.
                   </div>
-                  <div style={{ marginTop: '8px', padding: '8px 20px', borderRadius: '8px', background: '#CFFF00', color: '#010203', fontWeight: 700, fontSize: '14px' }}>
+                  <div style={{ marginTop: '8px', padding: '8px 20px', borderRadius: '8px', background: '#0D6EFD', color: 'var(--bg-base)', fontWeight: 700, fontSize: '14px' }}>
                     Browse Bootcamps →
                   </div>
                 </button>
@@ -182,15 +182,15 @@ export default function WelcomeHub() {
                   transition: 'all 0.2s', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '16px',
                   boxShadow: '0 4px 20px rgba(0,0,0,0.3)',
                 }}
-                  onMouseEnter={e => { e.currentTarget.style.borderColor = '#CFFF00'; e.currentTarget.style.transform = 'translateY(-4px)'; e.currentTarget.style.boxShadow = '0 12px 24px rgba(207,255,0,0.08)'; }}
+                  onMouseEnter={e => { e.currentTarget.style.borderColor = '#0D6EFD'; e.currentTarget.style.transform = 'translateY(-4px)'; e.currentTarget.style.boxShadow = '0 12px 24px rgba(207,255,0,0.08)'; }}
                   onMouseLeave={e => { e.currentTarget.style.borderColor = 'rgba(243,242,238,0.2)'; e.currentTarget.style.transform = 'none'; e.currentTarget.style.boxShadow = '0 4px 20px rgba(0,0,0,0.3)'; }}
                 >
                   <div style={{ fontSize: '40px' }}>🎯</div>
-                  <div style={{ fontWeight: 700, fontSize: '18px', color: '#f3f2ee' }}>Interview Preparation</div>
-                  <div style={{ fontSize: '14px', color: '#A59F97', lineHeight: 1.5 }}>
+                  <div style={{ fontWeight: 700, fontSize: '18px', color: 'var(--text-primary)' }}>Interview Preparation</div>
+                  <div style={{ fontSize: '14px', color: 'var(--text-secondary)', lineHeight: 1.5 }}>
                     Submit a job description, practice STAR questions, and get AI-powered feedback.
                   </div>
-                  <div style={{ marginTop: '8px', padding: '8px 20px', borderRadius: '8px', background: '#CFFF00', color: '#010203', fontWeight: 700, fontSize: '14px' }}>
+                  <div style={{ marginTop: '8px', padding: '8px 20px', borderRadius: '8px', background: '#0D6EFD', color: 'var(--bg-base)', fontWeight: 700, fontSize: '14px' }}>
                     Start Prep →
                   </div>
                 </button>
@@ -214,7 +214,7 @@ export default function WelcomeHub() {
         justifyContent: 'space-between', padding: '0 40px',
       }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-          <div style={{ width: 28, height: 28, background: 'var(--border-active)', borderRadius: '6px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '14px', color: '#010203', fontWeight: 800 }}>✦</div>
+          <div style={{ width: 28, height: 28, background: 'var(--border-active)', borderRadius: '6px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '14px', color: 'var(--bg-base)', fontWeight: 800 }}>✦</div>
           <span style={{ fontWeight: 800, fontSize: '16px', color: 'var(--text-primary)', letterSpacing: '0.05em' }}>SYNAPSE</span>
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '12px', fontWeight: 500 }}>
@@ -270,7 +270,7 @@ export default function WelcomeHub() {
             <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
               <div style={{
                 width: 48, height: 48, borderRadius: '12px',
-                background: 'var(--border-active)', color: '#010203',
+                background: 'var(--border-active)', color: 'var(--bg-base)',
                 display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '20px',
               }}>{ICON_MAP[selected.icon] || '🧠'}</div>
               <div>
@@ -284,7 +284,7 @@ export default function WelcomeHub() {
                 className="btn btn-primary"
                 onClick={handleBegin}
                 id="hub-start-btn"
-                style={{ padding: '12px 24px', borderRadius: '10px', fontSize: '14px', fontWeight: 700, background: 'var(--border-active)', color: '#010203', border: 'none', cursor: 'pointer' }}
+                style={{ padding: '12px 24px', borderRadius: '10px', fontSize: '14px', fontWeight: 700, background: 'var(--border-active)', color: 'var(--bg-base)', border: 'none', cursor: 'pointer' }}
               >
                 Start Bootcamp →
               </button>

@@ -175,19 +175,19 @@ export default function ProfileSetup() {
 
   if (loading) {
     return (
-      <div style={{ minHeight: '100vh', background: '#010203', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#A59F97', fontFamily: 'var(--font-mono)', fontSize: '14px' }}>
+      <div style={{ minHeight: '100vh', background: 'var(--bg-base)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--text-secondary)', fontFamily: 'var(--font-mono)', fontSize: '14px' }}>
         Loading profile...
       </div>
     );
   }
 
   return (
-    <div style={{ minHeight: '100vh', background: '#010203', color: '#f3f2ee', display: 'flex', flexDirection: 'column' }}>
+    <div style={{ minHeight: '100vh', background: 'var(--bg-base)', color: 'var(--text-primary)', display: 'flex', flexDirection: 'column' }}>
       {/* Header */}
       <div style={{ padding: '32px 40px', borderBottom: '1px solid rgba(243,242,238,0.08)' }}>
-        <div style={{ fontSize: '20px', fontWeight: 900, color: '#CFFF00', letterSpacing: '-0.02em', marginBottom: '8px' }}>SYNAPSE</div>
+        <div style={{ fontSize: '20px', fontWeight: 900, color: '#0D6EFD', letterSpacing: '-0.02em', marginBottom: '8px' }}>SYNAPSE</div>
         <div style={{ fontSize: '28px', fontWeight: 800, fontFamily: 'var(--font-display)' }}>Set Up Your Profile</div>
-        <div style={{ fontSize: '14px', color: '#A59F97', marginTop: '8px' }}>Step {step + 1} of 4 — {STEPS[step]}</div>
+        <div style={{ fontSize: '14px', color: 'var(--text-secondary)', marginTop: '8px' }}>Step {step + 1} of 4 — {STEPS[step]}</div>
       </div>
 
       {/* Step indicator */}
@@ -195,7 +195,7 @@ export default function ProfileSetup() {
         {STEPS.map((s, i) => (
           <div key={s} style={{
             flex: 1, height: '3px', borderRadius: '2px',
-            background: i <= step ? '#CFFF00' : 'rgba(243,242,238,0.1)',
+            background: i <= step ? '#0D6EFD' : 'rgba(243,242,238,0.1)',
             transition: 'background 0.3s',
           }} />
         ))}
@@ -210,11 +210,11 @@ export default function ProfileSetup() {
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: '8px' }}>
               <h2 style={{ fontSize: '22px', fontWeight: 700, margin: 0 }}>Paste your resume</h2>
               <button onClick={() => fileInputRef.current?.click()} disabled={pdfUploading}
-                style={{ padding: '8px 16px', borderRadius: '8px', border: '1px solid rgba(243,242,238,0.2)', background: 'rgba(243,242,238,0.05)', color: '#f3f2ee', fontSize: '13px', fontWeight: 600, cursor: pdfUploading ? 'not-allowed' : 'pointer' }}>
+                style={{ padding: '8px 16px', borderRadius: '8px', border: '1px solid rgba(243,242,238,0.2)', background: 'var(--bg-card)', color: 'var(--text-primary)', fontSize: '13px', fontWeight: 600, cursor: pdfUploading ? 'not-allowed' : 'pointer' }}>
                 {pdfUploading ? 'Extracting...' : '📄 Upload PDF'}
               </button>
             </div>
-            <p style={{ fontSize: '14px', color: '#A59F97', marginBottom: '16px' }}>We'll extract your skills automatically. You can upload a PDF or paste the text below.</p>
+            <p style={{ fontSize: '14px', color: 'var(--text-secondary)', marginBottom: '16px' }}>We'll extract your skills automatically. You can upload a PDF or paste the text below.</p>
             <input type="file" accept="application/pdf" ref={fileInputRef} onChange={handleFileUpload} style={{ display: 'none' }} />
             <textarea
               value={resumeText}
@@ -223,18 +223,18 @@ export default function ProfileSetup() {
               rows={12}
               style={{
                 width: '100%', padding: '16px', borderRadius: '12px', border: '1px solid rgba(243,242,238,0.15)',
-                background: 'rgba(243,242,238,0.05)', color: '#f3f2ee', fontSize: '14px', fontFamily: 'var(--font-mono)',
+                background: 'var(--bg-card)', color: 'var(--text-primary)', fontSize: '14px', fontFamily: 'var(--font-mono)',
                 resize: 'vertical', outline: 'none',
               }}
             />
             {resumeError && <div style={{ marginTop: '12px', padding: '12px', background: 'rgba(239,68,68,0.1)', borderRadius: '8px', color: '#EF4444', fontSize: '13px' }}>{resumeError}</div>}
             <div style={{ display: 'flex', gap: '12px', marginTop: '20px' }}>
               <button onClick={handleResumeParse} disabled={!resumeText.trim() || resumeParsing}
-                style={{ padding: '12px 24px', borderRadius: '10px', border: 'none', background: resumeText.trim() ? '#CFFF00' : 'rgba(243,242,238,0.1)', color: resumeText.trim() ? '#010203' : '#A59F97', fontWeight: 700, cursor: resumeText.trim() ? 'pointer' : 'not-allowed', fontSize: '14px' }}>
+                style={{ padding: '12px 24px', borderRadius: '10px', border: 'none', background: resumeText.trim() ? '#0D6EFD' : 'rgba(243,242,238,0.1)', color: resumeText.trim() ? 'var(--bg-base)' : 'var(--text-secondary)', fontWeight: 700, cursor: resumeText.trim() ? 'pointer' : 'not-allowed', fontSize: '14px' }}>
                 {resumeParsing ? 'Parsing...' : 'Parse Resume'}
               </button>
               <button onClick={() => setStep(1)}
-                style={{ padding: '12px 24px', borderRadius: '10px', border: '1px solid rgba(243,242,238,0.2)', background: 'transparent', color: '#f3f2ee', fontWeight: 600, cursor: 'pointer', fontSize: '14px' }}>
+                style={{ padding: '12px 24px', borderRadius: '10px', border: '1px solid rgba(243,242,238,0.2)', background: 'transparent', color: 'var(--text-primary)', fontWeight: 600, cursor: 'pointer', fontSize: '14px' }}>
                 Skip — I'll add skills manually
               </button>
             </div>
@@ -245,7 +245,7 @@ export default function ProfileSetup() {
         {step === 1 && (
           <div style={{ animation: 'fadeIn 0.3s ease' }}>
             <h2 style={{ fontSize: '22px', fontWeight: 700, marginBottom: '8px' }}>Your Skills</h2>
-            <p style={{ fontSize: '14px', color: '#A59F97', marginBottom: '24px' }}>Rate your proficiency (1-5). Add at least 3 skills.</p>
+            <p style={{ fontSize: '14px', color: 'var(--text-secondary)', marginBottom: '24px' }}>Rate your proficiency (1-5). Add at least 3 skills.</p>
 
             {/* Add skill */}
             <div style={{ display: 'flex', gap: '12px', marginBottom: '24px' }}>
@@ -254,10 +254,10 @@ export default function ProfileSetup() {
                 onChange={(e) => setNewSkill(e.target.value)}
                 onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); addSkill(); } }}
                 placeholder="Add a skill..."
-                style={{ flex: 1, padding: '12px 16px', borderRadius: '10px', border: '1px solid rgba(243,242,238,0.15)', background: 'rgba(243,242,238,0.05)', color: '#f3f2ee', fontSize: '14px', outline: 'none' }}
+                style={{ flex: 1, padding: '12px 16px', borderRadius: '10px', border: '1px solid rgba(243,242,238,0.15)', background: 'var(--bg-card)', color: 'var(--text-primary)', fontSize: '14px', outline: 'none' }}
               />
               <button onClick={addSkill}
-                style={{ padding: '12px 20px', borderRadius: '10px', border: 'none', background: newSkill.trim() ? '#CFFF00' : 'rgba(243,242,238,0.1)', color: newSkill.trim() ? '#010203' : '#A59F97', fontWeight: 700, cursor: newSkill.trim() ? 'pointer' : 'not-allowed', fontSize: '14px' }}>
+                style={{ padding: '12px 20px', borderRadius: '10px', border: 'none', background: newSkill.trim() ? '#0D6EFD' : 'rgba(243,242,238,0.1)', color: newSkill.trim() ? 'var(--bg-base)' : 'var(--text-secondary)', fontWeight: 700, cursor: newSkill.trim() ? 'pointer' : 'not-allowed', fontSize: '14px' }}>
                 Add
               </button>
             </div>
@@ -265,34 +265,34 @@ export default function ProfileSetup() {
             {/* Skill list grouped by category */}
             {skillCategories.map((cat) => (
               <div key={cat} style={{ marginBottom: '16px' }}>
-                <div style={{ fontSize: '12px', fontWeight: 700, color: '#A59F97', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '8px' }}>{cat}</div>
+                <div style={{ fontSize: '12px', fontWeight: 700, color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '8px' }}>{cat}</div>
                 {skills.filter((s) => s.category === cat).map((s) => (
-                  <div key={s.name} style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '12px 16px', marginBottom: '8px', background: 'rgba(243,242,238,0.05)', borderRadius: '10px', border: '1px solid rgba(243,242,238,0.08)' }}>
+                  <div key={s.name} style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '12px 16px', marginBottom: '8px', background: 'var(--bg-card)', borderRadius: '10px', border: '1px solid rgba(243,242,238,0.08)' }}>
                     <div style={{ flex: 1, fontWeight: 600, fontSize: '14px' }}>{s.name}</div>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                       <input type="range" min="1" max="5" value={s.proficiency}
                         onChange={(e) => updateProficiency(s.name, parseInt(e.target.value))}
                         style={{ width: '100px' }}
                       />
-                      <span style={{ fontSize: '12px', color: '#CFFF00', fontWeight: 700, minWidth: '60px', textAlign: 'center' }} title={PROFICIENCY_DESCS[s.proficiency]}>
+                      <span style={{ fontSize: '12px', color: '#0D6EFD', fontWeight: 700, minWidth: '60px', textAlign: 'center' }} title={PROFICIENCY_DESCS[s.proficiency]}>
                         {PROFICIENCY_LABELS[s.proficiency]}
                       </span>
                     </div>
                     <button onClick={() => removeSkill(s.name)}
-                      style={{ background: 'none', border: 'none', color: '#A59F97', cursor: 'pointer', fontSize: '16px', padding: '4px' }}>✕</button>
+                      style={{ background: 'none', border: 'none', color: 'var(--text-secondary)', cursor: 'pointer', fontSize: '16px', padding: '4px' }}>✕</button>
                   </div>
                 ))}
               </div>
             ))}
 
             {skills.length === 0 && (
-              <div style={{ padding: '32px', textAlign: 'center', color: '#A59F97', fontSize: '14px' }}>
+              <div style={{ padding: '32px', textAlign: 'center', color: 'var(--text-secondary)', fontSize: '14px' }}>
                 No skills yet. Paste your resume in Step 1, or add skills manually above.
               </div>
             )}
 
             <button onClick={() => setStep(2)} disabled={skills.length < 3}
-              style={{ marginTop: '16px', padding: '12px 24px', borderRadius: '10px', border: 'none', background: skills.length >= 3 ? '#CFFF00' : 'rgba(243,242,238,0.1)', color: skills.length >= 3 ? '#010203' : '#A59F97', fontWeight: 700, cursor: skills.length >= 3 ? 'pointer' : 'not-allowed', fontSize: '14px' }}>
+              style={{ marginTop: '16px', padding: '12px 24px', borderRadius: '10px', border: 'none', background: skills.length >= 3 ? '#0D6EFD' : 'rgba(243,242,238,0.1)', color: skills.length >= 3 ? 'var(--bg-base)' : 'var(--text-secondary)', fontWeight: 700, cursor: skills.length >= 3 ? 'pointer' : 'not-allowed', fontSize: '14px' }}>
               {skills.length >= 3 ? `Continue (${skills.length} skills)` : `Add ${3 - skills.length} more skill${3 - skills.length > 1 ? 's' : ''}`}
             </button>
           </div>
@@ -302,22 +302,22 @@ export default function ProfileSetup() {
         {step === 2 && (
           <div style={{ animation: 'fadeIn 0.3s ease' }}>
             <h2 style={{ fontSize: '22px', fontWeight: 700, marginBottom: '8px' }}>Connect your profiles</h2>
-            <p style={{ fontSize: '14px', color: '#A59F97', marginBottom: '24px' }}>Optional — add links to showcase your work.</p>
+            <p style={{ fontSize: '14px', color: 'var(--text-secondary)', marginBottom: '24px' }}>Optional — add links to showcase your work.</p>
 
             {[{ label: 'GitHub URL', val: githubUrl, set: setGithubUrl, placeholder: 'https://github.com/yourhandle' },
               { label: 'Portfolio URL', val: portfolioUrl, set: setPortfolioUrl, placeholder: 'https://yourportfolio.com' },
               { label: 'LinkedIn URL', val: linkedinUrl, set: setLinkedinUrl, placeholder: 'https://linkedin.com/in/yourprofile' },
             ].map((f) => (
               <div key={f.label} style={{ marginBottom: '16px' }}>
-                <label style={{ display: 'block', fontSize: '13px', fontWeight: 600, color: '#A59F97', marginBottom: '6px' }}>{f.label}</label>
+                <label style={{ display: 'block', fontSize: '13px', fontWeight: 600, color: 'var(--text-secondary)', marginBottom: '6px' }}>{f.label}</label>
                 <input value={f.val} onChange={(e) => f.set(e.target.value)} placeholder={f.placeholder}
-                  style={{ width: '100%', padding: '12px 16px', borderRadius: '10px', border: '1px solid rgba(243,242,238,0.15)', background: 'rgba(243,242,238,0.05)', color: '#f3f2ee', fontSize: '14px', outline: 'none' }} />
+                  style={{ width: '100%', padding: '12px 16px', borderRadius: '10px', border: '1px solid rgba(243,242,238,0.15)', background: 'var(--bg-card)', color: 'var(--text-primary)', fontSize: '14px', outline: 'none' }} />
               </div>
             ))}
 
             <div style={{ display: 'flex', gap: '12px', marginTop: '24px' }}>
-              <button onClick={() => setStep(1)} style={{ padding: '12px 24px', borderRadius: '10px', border: '1px solid rgba(243,242,238,0.2)', background: 'transparent', color: '#f3f2ee', fontWeight: 600, cursor: 'pointer', fontSize: '14px' }}>Back</button>
-              <button onClick={() => setStep(3)} style={{ padding: '12px 24px', borderRadius: '10px', border: 'none', background: '#CFFF00', color: '#010203', fontWeight: 700, cursor: 'pointer', fontSize: '14px' }}>Continue</button>
+              <button onClick={() => setStep(1)} style={{ padding: '12px 24px', borderRadius: '10px', border: '1px solid rgba(243,242,238,0.2)', background: 'transparent', color: 'var(--text-primary)', fontWeight: 600, cursor: 'pointer', fontSize: '14px' }}>Back</button>
+              <button onClick={() => setStep(3)} style={{ padding: '12px 24px', borderRadius: '10px', border: 'none', background: '#0D6EFD', color: 'var(--bg-base)', fontWeight: 700, cursor: 'pointer', fontSize: '14px' }}>Continue</button>
             </div>
           </div>
         )}
@@ -332,27 +332,27 @@ export default function ProfileSetup() {
               <div onClick={() => setGoal('interview')} style={{
                 padding: '24px', borderRadius: '16px', cursor: 'pointer',
                 background: goal === 'interview' ? 'rgba(207,255,0,0.08)' : 'rgba(243,242,238,0.03)',
-                border: `2px solid ${goal === 'interview' ? '#CFFF00' : 'rgba(243,242,238,0.1)'}`,
+                border: `2px solid ${goal === 'interview' ? '#0D6EFD' : 'rgba(243,242,238,0.1)'}`,
                 transition: 'all 0.2s',
               }}>
                 <div style={{ fontSize: '28px', marginBottom: '8px' }}>🎯</div>
                 <div style={{ fontWeight: 700, fontSize: '16px', marginBottom: '4px' }}>I'm preparing for an interview</div>
-                <div style={{ fontSize: '13px', color: '#A59F97', marginBottom: '16px' }}>Submit a job description and get a personalized prep plan with STAR questions.</div>
+                <div style={{ fontSize: '13px', color: 'var(--text-secondary)', marginBottom: '16px' }}>Submit a job description and get a personalized prep plan with STAR questions.</div>
 
                 {goal === 'interview' && (
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', animation: 'fadeIn 0.2s ease' }}>
                     <input value={targetRole} onChange={(e) => setTargetRole(e.target.value)} placeholder="Target role (e.g. Senior ML Engineer)"
-                      style={{ padding: '12px 16px', borderRadius: '10px', border: '1px solid rgba(243,242,238,0.15)', background: 'rgba(243,242,238,0.05)', color: '#f3f2ee', fontSize: '14px', outline: 'none' }} />
+                      style={{ padding: '12px 16px', borderRadius: '10px', border: '1px solid rgba(243,242,238,0.15)', background: 'var(--bg-card)', color: 'var(--text-primary)', fontSize: '14px', outline: 'none' }} />
                     <input value={targetCompany} onChange={(e) => setTargetCompany(e.target.value)} placeholder="Target company (optional)"
-                      style={{ padding: '12px 16px', borderRadius: '10px', border: '1px solid rgba(243,242,238,0.15)', background: 'rgba(243,242,238,0.05)', color: '#f3f2ee', fontSize: '14px', outline: 'none' }} />
+                      style={{ padding: '12px 16px', borderRadius: '10px', border: '1px solid rgba(243,242,238,0.15)', background: 'var(--bg-card)', color: 'var(--text-primary)', fontSize: '14px', outline: 'none' }} />
                     <textarea value={jdText} onChange={(e) => setJdText(e.target.value)} placeholder="Paste the job description here..."
                       rows={5}
-                      style={{ padding: '12px 16px', borderRadius: '10px', border: '1px solid rgba(243,242,238,0.15)', background: 'rgba(243,242,238,0.05)', color: '#f3f2ee', fontSize: '14px', fontFamily: 'var(--font-mono)', resize: 'vertical', outline: 'none' }} />
+                      style={{ padding: '12px 16px', borderRadius: '10px', border: '1px solid rgba(243,242,238,0.15)', background: 'var(--bg-card)', color: 'var(--text-primary)', fontSize: '14px', fontFamily: 'var(--font-mono)', resize: 'vertical', outline: 'none' }} />
                     <input type="date" value={interviewDeadline} onChange={(e) => setInterviewDeadline(e.target.value)}
-                      style={{ padding: '12px 16px', borderRadius: '10px', border: '1px solid rgba(243,242,238,0.15)', background: 'rgba(243,242,238,0.05)', color: '#f3f2ee', fontSize: '14px', outline: 'none' }} />
+                      style={{ padding: '12px 16px', borderRadius: '10px', border: '1px solid rgba(243,242,238,0.15)', background: 'var(--bg-card)', color: 'var(--text-primary)', fontSize: '14px', outline: 'none' }} />
                     {interviewDeadline && (() => {
                       const diff = Math.ceil((new Date(interviewDeadline) - new Date()) / (1000 * 60 * 60 * 24));
-                      return <div style={{ fontSize: '13px', padding: '8px 12px', borderRadius: '8px', background: diff <= 1 ? 'rgba(239,68,68,0.15)' : 'rgba(207,255,0,0.08)', color: diff <= 1 ? '#EF4444' : '#CFFF00', fontWeight: 600 }}>
+                      return <div style={{ fontSize: '13px', padding: '8px 12px', borderRadius: '8px', background: diff <= 1 ? 'rgba(239,68,68,0.15)' : 'rgba(207,255,0,0.08)', color: diff <= 1 ? '#EF4444' : '#0D6EFD', fontWeight: 600 }}>
                         {diff <= 1 ? '🚀 Crash mode: intensive prep (<24hr)' : `📅 Structured prep: ${diff} days`}
                       </div>;
                     })()}
@@ -364,26 +364,26 @@ export default function ProfileSetup() {
               <div onClick={() => setGoal('curriculum')} style={{
                 padding: '24px', borderRadius: '16px', cursor: 'pointer',
                 background: goal === 'curriculum' ? 'rgba(207,255,0,0.08)' : 'rgba(243,242,238,0.03)',
-                border: `2px solid ${goal === 'curriculum' ? '#CFFF00' : 'rgba(243,242,238,0.1)'}`,
+                border: `2px solid ${goal === 'curriculum' ? '#0D6EFD' : 'rgba(243,242,238,0.1)'}`,
                 transition: 'all 0.2s',
               }}>
                 <div style={{ fontSize: '28px', marginBottom: '8px' }}>📚</div>
                 <div style={{ fontWeight: 700, fontSize: '16px', marginBottom: '4px' }}>I want systematic learning</div>
-                <div style={{ fontSize: '13px', color: '#A59F97', marginBottom: '16px' }}>Get a personalized curriculum designed to bring you to 92% mastery in your target role.</div>
+                <div style={{ fontSize: '13px', color: 'var(--text-secondary)', marginBottom: '16px' }}>Get a personalized curriculum designed to bring you to 92% mastery in your target role.</div>
 
                 {goal === 'curriculum' && (
                   <div style={{ animation: 'fadeIn 0.2s ease' }}>
                     <input value={targetRole} onChange={(e) => setTargetRole(e.target.value)} placeholder="Target role (e.g. Full Stack Developer)"
-                      style={{ width: '100%', padding: '12px 16px', borderRadius: '10px', border: '1px solid rgba(243,242,238,0.15)', background: 'rgba(243,242,238,0.05)', color: '#f3f2ee', fontSize: '14px', outline: 'none' }} />
+                      style={{ width: '100%', padding: '12px 16px', borderRadius: '10px', border: '1px solid rgba(243,242,238,0.15)', background: 'var(--bg-card)', color: 'var(--text-primary)', fontSize: '14px', outline: 'none' }} />
                   </div>
                 )}
               </div>
             </div>
 
             <div style={{ display: 'flex', gap: '12px', marginTop: '24px' }}>
-              <button onClick={() => setStep(2)} style={{ padding: '12px 24px', borderRadius: '10px', border: '1px solid rgba(243,242,238,0.2)', background: 'transparent', color: '#f3f2ee', fontWeight: 600, cursor: 'pointer', fontSize: '14px' }}>Back</button>
+              <button onClick={() => setStep(2)} style={{ padding: '12px 24px', borderRadius: '10px', border: '1px solid rgba(243,242,238,0.2)', background: 'transparent', color: 'var(--text-primary)', fontWeight: 600, cursor: 'pointer', fontSize: '14px' }}>Back</button>
               <button onClick={handleSubmit} disabled={!goal || saving}
-                style={{ padding: '12px 24px', borderRadius: '10px', border: 'none', background: goal && !saving ? '#CFFF00' : 'rgba(243,242,238,0.1)', color: goal && !saving ? '#010203' : '#A59F97', fontWeight: 700, cursor: goal && !saving ? 'pointer' : 'not-allowed', fontSize: '14px', flex: 1 }}>
+                style={{ padding: '12px 24px', borderRadius: '10px', border: 'none', background: goal && !saving ? '#0D6EFD' : 'rgba(243,242,238,0.1)', color: goal && !saving ? 'var(--bg-base)' : 'var(--text-secondary)', fontWeight: 700, cursor: goal && !saving ? 'pointer' : 'not-allowed', fontSize: '14px', flex: 1 }}>
                 {saving ? 'Saving...' : goal === 'interview' ? 'Start Interview Prep →' : goal === 'curriculum' ? 'Build My Curriculum →' : 'Select a goal to continue'}
               </button>
             </div>

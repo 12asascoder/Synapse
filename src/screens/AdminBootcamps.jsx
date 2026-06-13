@@ -201,7 +201,7 @@ export default function AdminBootcamps() {
               ) : bootcamps.length === 0 ? (
                 <tr><td colSpan={6} style={{ ...TD, textAlign: 'center', color: 'var(--text-muted)' }}>No bootcamps found. Create one above.</td></tr>
               ) : bootcamps.map(b => (
-                <tr key={b.id} style={{ borderBottom: '1px solid rgba(255,255,255,0.05)', transition: 'background 0.2s' }}>
+                <tr key={b.id} style={{ borderBottom: '1px solid #FFFFFF', transition: 'background 0.2s' }}>
                   <td style={TD}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                       <div style={{ width: 36, height: 36, borderRadius: '8px', background: `${b.color}22`, border: `1px solid ${b.color}44`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '16px', color: b.color, fontWeight: 700, flexShrink: 0 }}>

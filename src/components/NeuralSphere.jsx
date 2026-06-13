@@ -4,7 +4,7 @@
  */
 import { useEffect, useRef } from 'react';
 
-export default function NeuralSphere({ size = 200, color1 = '#000000', color2 = '#A59F97', speed = 0.3 }) {
+export default function NeuralSphere({ size = 200, color1 = '#000000', color2 = '#495057', speed = 0.3 }) {
   const canvasRef = useRef(null);
   const animRef = useRef(null);
 

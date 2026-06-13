@@ -1,22 +1,22 @@
-import CustomCursor from './CustomCursor';
+// Custom cursor removed
 
 const containerStyle = {
   minHeight: '100vh',
-  background: '#010203',
+  background: 'var(--bg-base)',
   display: 'flex',
   flexDirection: 'column',
   alignItems: 'center',
   justifyContent: 'center',
   position: 'relative',
   overflow: 'hidden',
-  color: '#f3f2ee',
+  color: 'var(--text-primary)',
 };
 
 export default function ThemeContainer({ children }) {
   return (
     <div style={containerStyle}>
       {children}
-      <CustomCursor />
+
     </div>
   );
 }

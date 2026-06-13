@@ -50,7 +50,7 @@ function Message({ msg }) {
           <div style={{
             fontSize: '12px',
             fontFamily: 'var(--font-body)',
-            color: '#A59F97',
+            color: 'var(--text-secondary)',
             marginBottom: '6px',
             fontWeight: 600,
           }}>
@@ -86,7 +86,7 @@ function Message({ msg }) {
           )}
         </div>
         {msg.timestamp && (
-          <div style={{ fontSize: '11px', color: '#A59F97', marginTop: '4px' }}>
+          <div style={{ fontSize: '11px', color: 'var(--text-secondary)', marginTop: '4px' }}>
             {msg.timestamp}
           </div>
         )}
@@ -257,7 +257,7 @@ export default function VisheshChat({ context = '', placeholder = 'Ask Vishesh a
             <div style={{ fontSize: 14, fontWeight: 600, color: '#000' }}>
               Vishesh
             </div>
-            <div style={{ fontSize: 11, color: '#A59F97' }}>
+            <div style={{ fontSize: 11, color: 'var(--text-secondary)' }}>
               TruGen AI · online
             </div>
           </div>
@@ -292,7 +292,7 @@ export default function VisheshChat({ context = '', placeholder = 'Ask Vishesh a
                   width: '6px',
                   height: '6px',
                   borderRadius: '50%',
-                  background: '#A59F97',
+                  background: 'var(--text-secondary)',
                   animation: 'pulse-dot 1.2s ease-in-out infinite',
                   animationDelay: `${i * 200}ms`,
                 }} />
@@ -364,7 +364,7 @@ export default function VisheshChat({ context = '', placeholder = 'Ask Vishesh a
             </button>
           )}
         </div>
-        <div style={{ marginTop: '8px', fontSize: '11px', color: '#A59F97', textAlign: 'center' }}>
+        <div style={{ marginTop: '8px', fontSize: '11px', color: 'var(--text-secondary)', textAlign: 'center' }}>
           Enter to send · Shift+Enter for new line · powered by TruGen AI
         </div>
       </div>

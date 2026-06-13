@@ -5,7 +5,7 @@ const { authenticate } = require('../middleware/auth');
 
 router.get('/:userId', authenticate, async (req, res) => {
   try {
-    if (req.user.id !== req.params.userId && req.user.role !== 'SUPER_ADMIN') {
+    if (req.user.id != req.params.userId && req.user.role !== 'SUPER_ADMIN') {
       return res.status(403).json({ error: 'Forbidden' });
     }
     let profile = await UserProfile.findOne({ where: { userId: req.params.userId } });
@@ -20,7 +20,7 @@ router.get('/:userId', authenticate, async (req, res) => {
 
 router.put('/:userId', authenticate, async (req, res) => {
   try {
-    if (req.user.id !== req.params.userId) {
+    if (req.user.id != req.params.userId) {
       return res.status(403).json({ error: 'Forbidden' });
     }
     const allowed = ['resumeUrl', 'resumeParsed', 'skills', 'githubUrl', 'portfolioUrl', 'linkedinUrl', 'goal', 'targetRole', 'targetCompany', 'interviewDeadline'];

@@ -85,7 +85,7 @@ export default function AdminAnalytics() {
     responsive: true, maintainAspectRatio: false,
     plugins: { legend: { display: false } },
     scales: {
-      y: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: 'var(--text-muted)' } },
+      y: { grid: { color: '#FFFFFF' }, ticks: { color: 'var(--text-muted)' } },
       x: { grid: { display: false }, ticks: { color: 'var(--text-muted)' } }
     }
   };

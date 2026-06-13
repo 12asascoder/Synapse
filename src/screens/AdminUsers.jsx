@@ -190,11 +190,11 @@ export default function AdminUsers() {
 
               <div style={{ display: 'grid', gap: '20px', fontSize: '14px', marginBottom: '40px', padding: '24px', background: '#FDFCFC', borderRadius: '16px', border: '1px solid #E8E6E3' }}>
                 <div>
-                  <div style={{ color: '#A59F97', marginBottom: '6px', fontSize: '12px', fontWeight: 700, textTransform: 'uppercase' }}>User ID</div>
+                  <div style={{ color: 'var(--text-secondary)', marginBottom: '6px', fontSize: '12px', fontWeight: 700, textTransform: 'uppercase' }}>User ID</div>
                   <div style={{ color: '#000', fontWeight: 600, fontFamily: 'var(--font-mono)' }}>{selectedUser.id}</div>
                 </div>
                 <div>
-                  <div style={{ color: '#A59F97', marginBottom: '6px', fontSize: '12px', fontWeight: 700, textTransform: 'uppercase' }}>Role</div>
+                  <div style={{ color: 'var(--text-secondary)', marginBottom: '6px', fontSize: '12px', fontWeight: 700, textTransform: 'uppercase' }}>Role</div>
                   <div style={{ color: '#000', fontWeight: 600 }}>{selectedUser.role || 'USER'}</div>
                 </div>
               </div>

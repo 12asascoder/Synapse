@@ -131,8 +131,11 @@ router.post('/advance', authenticate, async (req, res) => {
   }
 });
 
-router.get('/:userId', async (req, res) => {
+router.get('/:userId', authenticate, async (req, res) => {
   try {
+    if (req.user.id != req.params.userId && req.user.role !== 'SUPER_ADMIN') {
+      return res.status(403).json({ error: 'Forbidden' });
+    }
     const { bootcampId } = req.query;
     const progress = await Progress.findOne({ where: { userId: req.params.userId } });
     if (!progress) return res.status(404).json({ error: 'Progress not found' });
@@ -258,7 +261,7 @@ router.post('/adjust-difficulty', authenticate, async (req, res) => {
   }
 });
 
-router.get('/', async (req, res) => {
+router.get('/', authenticate, async (req, res) => {
   try {
     const days = await CurriculumDay.findAll({
       order: [['day', 'ASC']],

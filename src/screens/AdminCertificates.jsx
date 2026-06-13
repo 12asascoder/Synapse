@@ -73,7 +73,7 @@ export default function AdminCertificates() {
                   <div>No graduates yet. Users must complete Day 30 to earn a certificate.</div>
                 </td></tr>
               ) : graduates.map((g, i) => (
-                <tr key={i} style={{ borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
+                <tr key={i} style={{ borderBottom: '1px solid #FFFFFF' }}>
                   <td style={TD}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                       <div style={{ width: 36, height: 36, borderRadius: '10px', background: 'linear-gradient(135deg, var(--cyan-600), var(--cyan-800))', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '14px', color: 'white', fontWeight: 700, flexShrink: 0 }}>

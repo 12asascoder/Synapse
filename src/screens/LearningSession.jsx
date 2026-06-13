@@ -367,7 +367,7 @@ export default function LearningSession() {
             <span style={{ fontSize: '12px', fontWeight: 700, color: '#059669', textTransform: 'uppercase' }}>Live Session</span>
           </div>
           <div style={{ width: '1px', height: '16px', background: '#E8E6E3' }} />
-          <span style={{ fontSize: '12px', color: '#A59F97' }}>
+          <span style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>
             Session ID: {sessionId}
           </span>
         </div>
@@ -443,7 +443,7 @@ export default function LearningSession() {
                   <div style={{ width: 32, height: 32, borderRadius: '50%', background: '#000', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '12px', color: '#fff' }}>V</div>
                   <div style={{ display: 'flex', gap: '6px' }}>
                     {[0,1,2].map((i) => (
-                      <div key={i} style={{ width: 6, height: 6, borderRadius: '50%', background: '#A59F97', animation: 'pulse-dot 1.2s infinite', animationDelay: `${i * 200}ms` }} />
+                      <div key={i} style={{ width: 6, height: 6, borderRadius: '50%', background: 'var(--text-secondary)', animation: 'pulse-dot 1.2s infinite', animationDelay: `${i * 200}ms` }} />
                     ))}
                   </div>
                 </div>
@@ -490,7 +490,7 @@ export default function LearningSession() {
                     background: isListening ? '#FEF2F2' : 'none', 
                     border: `1px solid ${isListening ? '#FCA5A5' : 'transparent'}`,
                     borderRadius: '8px', cursor: 'pointer', 
-                    color: isListening ? '#DC2626' : '#A59F97', 
+                    color: isListening ? '#DC2626' : 'var(--text-secondary)', 
                     fontSize: '18px', padding: '6px 10px',
                     transition: 'all 0.2s ease',
                     animation: isListening ? 'pulse-dot 1.5s infinite' : 'none'
@@ -503,7 +503,7 @@ export default function LearningSession() {
                   onClick={isStreaming ? () => abortRef.current?.abort() : sendMessage}
                   style={{
                     background: input.trim() ? '#000' : '#F5F3F1', border: 'none', cursor: 'pointer', 
-                    color: input.trim() ? '#fff' : '#A59F97', 
+                    color: input.trim() ? '#fff' : 'var(--text-secondary)', 
                     fontSize: '18px', padding: '6px 12px', borderRadius: '8px',
                     transition: 'all 0.2s ease'
                   }}
@@ -585,10 +585,10 @@ export default function LearningSession() {
               </div>
 
               <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                {loadingCurriculum && <div style={{ color: '#A59F97', fontSize: '13px', textAlign: 'center', padding: '20px' }}>Loading curriculum...</div>}
+                {loadingCurriculum && <div style={{ color: 'var(--text-secondary)', fontSize: '13px', textAlign: 'center', padding: '20px' }}>Loading curriculum...</div>}
                 
                 {!loadingCurriculum && curriculum.length === 0 && (
-                  <div style={{ padding: '24px', textAlign: 'center', color: '#A59F97' }}>
+                  <div style={{ padding: '24px', textAlign: 'center', color: 'var(--text-secondary)' }}>
                     <div style={{ fontSize: '32px', marginBottom: '12px' }}>📚</div>
                     <div style={{ fontSize: '14px', fontWeight: 600, color: '#44403B', marginBottom: '8px' }}>No active bootcamp</div>
                     <div style={{ fontSize: '12px', lineHeight: 1.5, marginBottom: '16px' }}>Select a bootcamp from the Dashboard to see your curriculum here.</div>
@@ -629,14 +629,14 @@ export default function LearningSession() {
                             marginBottom: '4px'
                           }}>{item.topic}</div>
                           {item.sublabel && (
-                            <div style={{ fontSize: '12px', color: '#A59F97' }}>
+                            <div style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>
                               {isComplete ? 'Completed · 100%' : (isActive ? `Active · ${item.sublabel}` : item.sublabel)}
                             </div>
                           )}
                         </div>
                         {isComplete && <div style={{ color: '#10B981', fontSize: '16px', fontWeight: 700 }}>✓</div>}
                         {isActive && <div style={{ width: 8, height: 8, borderRadius: '50%', background: '#000' }} />}
-                        {isLocked && <div style={{ color: '#A59F97', fontSize: '14px' }}>🔒</div>}
+                        {isLocked && <div style={{ color: 'var(--text-secondary)', fontSize: '14px' }}>🔒</div>}
                       </div>
                     </div>
                   );

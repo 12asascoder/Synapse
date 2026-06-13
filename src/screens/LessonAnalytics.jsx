@@ -107,7 +107,7 @@ export default function LessonAnalytics() {
           }}>
             <div style={{
               fontSize: '12px', fontWeight: 700,
-              letterSpacing: '0.05em', color: '#A59F97', textTransform: 'uppercase'
+              letterSpacing: '0.05em', color: 'var(--text-secondary)', textTransform: 'uppercase'
             }}>Skill Passport Verified</div>
 
             {/* Badge */}
@@ -174,7 +174,7 @@ export default function LessonAnalytics() {
             <div style={{ position: 'relative', zIndex: 1 }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '16px' }}>
                 <span style={{ fontSize: '20px' }}>🚀</span>
-                <div style={{ fontSize: '12px', fontWeight: 700, color: '#A59F97', letterSpacing: '0.05em', textTransform: 'uppercase' }}>
+                <div style={{ fontSize: '12px', fontWeight: 700, color: 'var(--text-secondary)', letterSpacing: '0.05em', textTransform: 'uppercase' }}>
                   Next Objective Initiated
                 </div>
               </div>
@@ -208,7 +208,7 @@ export default function LessonAnalytics() {
             boxShadow: '0 8px 24px rgba(0,0,0,0.02)'
           }}>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '24px' }}>
-              <div style={{ fontSize: '12px', fontWeight: 700, letterSpacing: '0.05em', color: '#A59F97', textTransform: 'uppercase' }}>
+              <div style={{ fontSize: '12px', fontWeight: 700, letterSpacing: '0.05em', color: 'var(--text-secondary)', textTransform: 'uppercase' }}>
                 Top Peers
               </div>
               <button style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#000', fontSize: '20px' }}>👥</button>
@@ -247,7 +247,7 @@ export default function LessonAnalytics() {
                     <div style={{ fontSize: '12px', color: '#6B6B6B' }}>{peer.tier}</div>
                   </div>
                   <div style={{ fontWeight: 700, fontSize: '16px', color: '#000' }}>
-                    {peer.pts.toLocaleString()} <span style={{ fontSize: '11px', color: '#A59F97', fontWeight: 600 }}>PTS</span>
+                    {peer.pts.toLocaleString()} <span style={{ fontSize: '11px', color: 'var(--text-secondary)', fontWeight: 600 }}>PTS</span>
                   </div>
                 </div>
               ))}

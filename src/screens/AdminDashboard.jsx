@@ -59,7 +59,7 @@ export default function AdminDashboard() {
               position: 'relative', overflow: 'hidden',
               boxShadow: '0 4px 12px rgba(0,0,0,0.02)'
             }}>
-              <div style={{ fontSize: '12px', color: '#A59F97', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '12px' }}>
+              <div style={{ fontSize: '12px', color: 'var(--text-secondary)', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '12px' }}>
                 {stat.label}
               </div>
               <div style={{ fontSize: '32px', fontWeight: 700, fontFamily: 'var(--font-display)', color: '#000', marginBottom: '8px' }}>

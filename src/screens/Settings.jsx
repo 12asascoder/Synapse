@@ -29,7 +29,7 @@ export default function Settings() {
   };
 
   return (
-    <div style={{ minHeight: '100vh', background: '#010203', display: 'flex', color: '#f3f2ee' }}>
+    <div style={{ minHeight: '100vh', background: 'var(--bg-base)', display: 'flex', color: 'var(--text-primary)' }}>
       <Sidebar />
       <div style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden', padding: '24px' }}>
         <div style={{ maxWidth: '800px', margin: '0 auto', display: 'flex', flexDirection: 'column', gap: '24px' }}>
@@ -70,7 +70,7 @@ export default function Settings() {
                     onClick={() => toggle(s.id)}
                     style={{ width: 44, height: 24, background: preferences[s.id] ? 'var(--border-active)' : 'var(--border-subtle)', borderRadius: '12px', position: 'relative', cursor: 'pointer', transition: 'all 0.2s ease', opacity: saving === s.id ? 0.5 : 1 }}
                   >
-                    <div style={{ position: 'absolute', top: 2, left: preferences[s.id] ? 22 : 2, width: 20, height: 20, background: '#010203', borderRadius: '50%', transition: 'all 0.2s ease', boxShadow: '0 2px 4px rgba(0,0,0,0.4)' }} />
+                    <div style={{ position: 'absolute', top: 2, left: preferences[s.id] ? 22 : 2, width: 20, height: 20, background: 'var(--bg-base)', borderRadius: '50%', transition: 'all 0.2s ease', boxShadow: '0 2px 4px rgba(0,0,0,0.4)' }} />
                   </div>
                 </div>
               ))}

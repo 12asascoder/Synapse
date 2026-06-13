@@ -4,78 +4,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { useApp } from '../context/AppContext';
 
-function CustomCursor() {
-  const dotRef = useRef(null);
-  const ringRef = useRef(null);
-  const pos = useRef({ x: -100, y: -100 });
-  const ring = useRef({ x: -100, y: -100 });
-  const rafRef = useRef(null);
-  const isHover = useRef(false);
-
-  useEffect(() => {
-    const onMove = (e) => {
-      pos.current = { x: e.clientX, y: e.clientY };
-    };
-    const onEnter = () => { isHover.current = true; };
-    const onLeave = () => { isHover.current = false; };
-    window.addEventListener('mousemove', onMove);
-    document.addEventListener('mouseenter', onEnter, true);
-    document.addEventListener('mouseleave', onLeave, true);
-    const loop = () => {
-      if (dotRef.current) {
-        dotRef.current.style.transform = `translate(${pos.current.x - 4}px, ${pos.current.y - 4}px)`;
-      }
-      ring.current.x += (pos.current.x - ring.current.x) * 0.1;
-      ring.current.y += (pos.current.y - ring.current.y) * 0.1;
-      if (ringRef.current) {
-        const r = isHover.current ? 36 : 24;
-        ringRef.current.style.transform = `translate(${ring.current.x - r}px, ${ring.current.y - r}px)`;
-        ringRef.current.style.width = `${r * 2}px`;
-        ringRef.current.style.height = `${r * 2}px`;
-      }
-      rafRef.current = requestAnimationFrame(loop);
-    };
-    rafRef.current = requestAnimationFrame(loop);
-    return () => {
-      window.removeEventListener('mousemove', onMove);
-      document.removeEventListener('mouseenter', onEnter, true);
-      document.removeEventListener('mouseleave', onLeave, true);
-      cancelAnimationFrame(rafRef.current);
-    };
-  }, []);
-
-  return (
-    <>
-      <div ref={dotRef} style={{
-        position: 'fixed',
-        top: 0,
-        left: 0,
-        width: 8,
-        height: 8,
-        borderRadius: '50%',
-        background: '#CFFF00',
-        pointerEvents: 'none',
-        zIndex: 9999,
-        mixBlendMode: 'difference',
-        willChange: 'transform',
-      }} />
-      <div ref={ringRef} style={{
-        position: 'fixed',
-        top: 0,
-        left: 0,
-        width: 48,
-        height: 48,
-        borderRadius: '50%',
-        border: '1.5px solid rgba(207, 255, 0, 0.7)',
-        pointerEvents: 'none',
-        zIndex: 9998,
-        mixBlendMode: 'difference',
-        willChange: 'transform, width, height',
-        transition: 'width 0.2s, height 0.2s',
-      }} />
-    </>
-  );
-}
 export default function AuthScreen() {
   const { dispatch, navigate } = useApp();
   const [mode, setMode] = useState('signin'); // signin | signup
@@ -148,23 +76,23 @@ export default function AuthScreen() {
   return (
     <div style={{
       minHeight: '100vh',
-      background: '#010203',
-      color: '#f3f2ee',
+      background: 'var(--bg-base)',
+      color: 'var(--text-primary)',
       fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, sans-serif',
       overflowX: 'hidden',
       position: 'relative',
-      cursor: 'none',
+      
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
     }}>
-      <CustomCursor />
+      
       {/* Auth card */}
       <div style={{
         width: '100%',
         maxWidth: '440px',
-        background: 'rgba(255,255,255,0.07)',
-        border: '1px solid rgba(255,255,255,0.2)',
+        background: 'var(--bg-card)',
+        border: '1px solid var(--border-default)',
         backdropFilter: 'blur(12px)',
         borderRadius: '24px',
         padding: '56px 48px',
@@ -200,7 +128,7 @@ export default function AuthScreen() {
           </h1>
           <p style={{
             fontSize: '15px',
-            color: '#A59F97',
+            color: 'var(--text-secondary)',
           }}>
             Sign in to continue to your learning hub.
           </p>
@@ -209,8 +137,8 @@ export default function AuthScreen() {
         {/* Mode toggle */}
         <div style={{
           display: 'flex',
-          background: 'rgba(255,255,255,0.05)',
-          border: '1px solid rgba(255,255,255,0.2)',
+          background: '#FFFFFF',
+          border: '1px solid var(--border-default)',
           borderRadius: '10px',
           marginBottom: '32px',
           padding: '4px',
@@ -229,8 +157,8 @@ export default function AuthScreen() {
                 fontSize: '14px',
                 fontWeight: 600,
                 transition: 'all 0.2s ease',
-                background: mode === m ? '#CFFF00' : 'transparent',
-                color: mode === m ? '#010203' : '#6B6B6B',
+                background: mode === m ? '#0D6EFD' : 'transparent',
+                color: mode === m ? 'var(--bg-base)' : '#6B6B6B',
                 boxShadow: mode === m ? '0 1px 3px rgba(0,0,0,0.3)' : 'none',
               }}
             >
@@ -253,7 +181,7 @@ export default function AuthScreen() {
                   placeholder="Your full name"
                   autoComplete="name"
                   id="auth-name"
-                  style={{ background: 'rgba(255,255,255,0.05)', color: '#f3f2ee', border: '1px solid rgba(255,255,255,0.2)', borderRadius: '6px', padding: '8px 12px' }}
+                  style={{ background: '#FFFFFF', color: 'var(--text-primary)', border: '1px solid var(--border-default)', borderRadius: '6px', padding: '8px 12px' }}
                 />
               </div>
             </div>
@@ -272,7 +200,7 @@ export default function AuthScreen() {
                 autoComplete="email"
                 id="auth-email"
                 required
-                style={{ background: 'rgba(255,255,255,0.05)', color: '#f3f2ee', border: '1px solid rgba(255,255,255,0.2)', borderRadius: '6px', padding: '8px 12px' }}
+                style={{ background: '#FFFFFF', color: 'var(--text-primary)', border: '1px solid var(--border-default)', borderRadius: '6px', padding: '8px 12px' }}
               />
             </div>
           </div>
@@ -298,7 +226,7 @@ export default function AuthScreen() {
                 id="auth-password"
                 required
                 minLength={8}
-                style={{ background: 'rgba(255,255,255,0.05)', color: '#f3f2ee', border: '1px solid rgba(255,255,255,0.2)', borderRadius: '6px', padding: '8px 12px' }}
+                style={{ background: '#FFFFFF', color: 'var(--text-primary)', border: '1px solid var(--border-default)', borderRadius: '6px', padding: '8px 12px' }}
               />
               <button
                 type="button"
@@ -311,7 +239,7 @@ export default function AuthScreen() {
                   background: 'none',
                   border: 'none',
                   cursor: 'pointer',
-                  color: '#A59F97',
+                  color: 'var(--text-secondary)',
                   fontSize: '14px',
                   padding: '4px',
                 }}
@@ -361,7 +289,7 @@ export default function AuthScreen() {
           textAlign: 'center',
           marginTop: '32px',
           fontSize: '13px',
-          color: '#A59F97',
+          color: 'var(--text-secondary)',
           lineHeight: 1.6,
         }}>
           By continuing, you agree to Synapse's <br /> Terms of Service and Privacy Policy.

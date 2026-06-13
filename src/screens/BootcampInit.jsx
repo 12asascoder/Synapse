@@ -88,7 +88,7 @@ export default function BootcampInit() {
           borderRadius: '16px', padding: '32px', marginBottom: '32px',
           boxShadow: '0 8px 24px rgba(0,0,0,0.02)'
         }}>
-          <div style={{ fontSize: '11px', fontWeight: 600, color: '#A59F97', letterSpacing: '0.05em', marginBottom: '24px', textTransform: 'uppercase' }}>
+          <div style={{ fontSize: '11px', fontWeight: 600, color: 'var(--text-secondary)', letterSpacing: '0.05em', marginBottom: '24px', textTransform: 'uppercase' }}>
             Setup Progress
           </div>
           {STEPS.map((step, i) => (
@@ -119,7 +119,7 @@ export default function BootcampInit() {
         {/* Learning objectives */}
         {ready && (
           <div style={{ animation: 'fadeInUp 0.5s ease' }}>
-            <div style={{ fontSize: '11px', fontWeight: 600, color: '#A59F97', letterSpacing: '0.05em', marginBottom: '16px', textTransform: 'uppercase' }}>
+            <div style={{ fontSize: '11px', fontWeight: 600, color: 'var(--text-secondary)', letterSpacing: '0.05em', marginBottom: '16px', textTransform: 'uppercase' }}>
               Curriculum Outline
             </div>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginBottom: '40px' }}>
@@ -133,7 +133,7 @@ export default function BootcampInit() {
                 }}>
                   <div style={{
                     fontSize: '12px', fontWeight: 700,
-                    color: obj.milestone ? '#000' : '#A59F97',
+                    color: obj.milestone ? '#000' : 'var(--text-secondary)',
                     minWidth: '40px', flexShrink: 0, paddingTop: '2px',
                   }}>
                     {obj.day.includes('-') ? `D${obj.day}` : `D${obj.day}`}

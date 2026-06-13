@@ -85,7 +85,7 @@ export default function LoadingScreen() {
     <ThemeContainer>
       <div style={{
         minHeight: '100vh',
-        background: '#010203',
+        background: 'var(--bg-base)',
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
@@ -104,7 +104,7 @@ export default function LoadingScreen() {
           <div style={{
             fontFamily: 'var(--font-display)',
             fontSize: '18px',
-            color: '#CFFF00',
+            color: '#0D6EFD',
             marginBottom: '12px',
             fontWeight: 700,
           }}>
@@ -112,7 +112,7 @@ export default function LoadingScreen() {
           </div>
           <div style={{
             fontSize: '14px',
-            color: '#A59F97',
+            color: 'var(--text-secondary)',
             transition: 'opacity 0.3s ease',
             opacity: fadeMsg ? 1 : 0,
             minWidth: '260px',
@@ -126,7 +126,7 @@ export default function LoadingScreen() {
           <div className="progress-bar" style={{ height: '3px', background: '#0A0A0A' }}>
             <div
               className="progress-fill"
-              style={{ width: `${Math.min(progress, 100)}%`, background: '#CFFF00' }}
+              style={{ width: `${Math.min(progress, 100)}%`, background: '#0D6EFD' }}
             />
           </div>
         </div>
